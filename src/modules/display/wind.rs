@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 pub struct Wind {
 	pub direction: WindDirection,
@@ -67,7 +67,7 @@ impl Wind {
 				direction = WindDirection::NW;
 				icon = "";
 			}
-			_ => panic!("Wind from another dimension"),
+			_ => return Err(anyhow!("Wind from another dimension")),
 		}
 
 		Ok(Wind {
