@@ -1,0 +1,47 @@
+[package]
+name = "wthrr"
+version = "0.1.0"
+authors = ["Turiiya <moj@vpocket.de>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "CLI weather tool"
+readme = "README.md"
+homepage = "https://github.com/tobealive/wthrr-the-weathercrab"
+repository = "https://github.com/tobealive/wthrr-the-weathercrab"
+keywords = ["cli", "weather", "meteorological"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+anyhow = "1.0.58"
+chrono = "0.4.19"
+clap = { version = "3.2", features = ["derive"] }
+dialoguer = "0.10.1"
+regex = "1.6.0"
+reqwest = { version ="0.11", features=["json"]}
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.82"
+term-painter = "0.3.0"
+tokio = {version = "1", features=["full"]}
+# confy = { git = "https://github.com/rust-cli/confy"}
+# commit c6b62039281b8643539b436440bcea1b0d634bc7
+# confy seems to be maintained even when the crates versions wasn't updated for over 2 years 
+# as it is a small library we just integrate the git repo until the crate version is updated
+# { == confy deps ==>
+directories-next = "^2.0"
+serde_yaml = { version = "0.8", optional = true }
+toml = { version = "^0.5", optional = true }
+thiserror = "1.0"
+
+[features]
+default = ["toml_conf"]
+toml_conf = ["toml"]
+yaml_conf = ["serde_yaml"]
+
+[dev-dependencies]
+serde_derive = "^1.0"
+tempfile = "3.2.0"
+# <== }
+
+[profile.release]
+strip = true
+
