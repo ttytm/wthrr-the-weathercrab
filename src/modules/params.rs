@@ -28,7 +28,7 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 		if args_address.is_empty() {
 			let auto_location_prompt = Confirm::with_theme(&ColorfulTheme::default())
 				.with_prompt(
-					"You didn't specified a city. Should I check for a weather station close to your location?",
+					"You didn't specify a city. Should I check for a weather station close to your location?",
 				)
 				.interact()?;
 			if !auto_location_prompt {
