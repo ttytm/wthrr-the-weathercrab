@@ -1,6 +1,6 @@
 [package]
 name = "wthrr"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Turiiya <moj@vpocket.de>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -22,10 +22,9 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.82"
 term-painter = "0.3.0"
 tokio = {version = "1", features=["full"]}
-# confy = { git = "https://github.com/rust-cli/confy"}
-# commit c6b62039281b8643539b436440bcea1b0d634bc7
-# confy seems to be maintained even when the crates versions wasn't updated for over 2 years 
-# as it is a small library we just integrate the git repo until the crate version is updated
+# confy = { git = "https://github.com/rust-cli/confy", rev = "c6b6203"} 
+# although confys repo seems to be maintained, its crate wasn't updated for over 2 years 
+# as it is a small library we just integrate it until the crate version is updated
 # { == confy deps ==>
 directories-next = "^2.0"
 serde_yaml = { version = "0.8", optional = true }
