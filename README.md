@@ -105,3 +105,7 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 -  [ ] Theme variants
 
 Your contributions like 🪲bug reports, ⭐️stars and 💡suggestions are welcome alike.
+
+## Credits
+
+- The app uses the open-source weather API for non-commercial use provided by <a href="https://open-meteo.com/en">Open Meteo</a>.
