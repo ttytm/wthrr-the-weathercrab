@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 pub struct WeatherCode {
 	pub interpretation: String,
@@ -199,7 +199,7 @@ impl WeatherCode {
 					false => icon = "",
 				}
 			}
-			_ => panic!("asdf"),
+			_ => return Err(anyhow!("Unknown weather code")),
 		}
 
 		Ok(WeatherCode {
