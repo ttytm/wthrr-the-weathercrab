@@ -47,7 +47,7 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 }
 
 fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<String> {
-	let unit = if !args_unit.is_empty() && config_unit.is_some() {
+	let unit = if args_unit.is_empty() && config_unit.is_some() {
 		match config_unit {
 			unit if unit == Some(&"°F".to_string()) => "fahrenheit",
 			_ => "celsius",
