@@ -75,6 +75,8 @@ https://github.com/ryanoasis/nerd-fonts
 <sub>If you are using brew, this gist contains easy digestible copy-pasta for nerd-font installation.<br>
 https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>
 
+Some terminal emulators might require you to additionally add/prioritize emojis in their font config.
+
 ## Installation
 
 Until binary releases are provided, rusts package manager is a simple way to install the binary crate.
