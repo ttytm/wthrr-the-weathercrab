@@ -9,10 +9,10 @@ Even when you don't spend a lot of time in the terminal. She has a sunny persona
 
 ## Contents
 
--  <a href="https://github.com/tobealive/wthrr-the-weathercrab#how-to-use">How to use?</a>
--  <a href="https://github.com/tobealive/wthrr-the-weathercrab#requirements">Requirements</a>
--  <a href="https://github.com/tobealive/wthrr-the-weathercrab#installation">Installation</a>
--  <a href="https://github.com/tobealive/wthrr-the-weathercrab#outlook">Outlook</a>
+-  [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
+-  [Requirements](https://github.com/tobealive/wthrr-the-weathercrab#requirements)
+-  [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
+-  [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
 
 ## How to use?
 
@@ -79,7 +79,9 @@ Some terminal emulators might require you to additionally add/prioritize emojis 
 
 ## Installation
 
-Until binary releases are provided, rusts package manager is a simple way to install the binary crate.
+Without the rust toolchain installed, grabbing a binary from the [release](https://github.com/tobealive/wthrr-the-weathercrab/releases) page might be your way to go. 
+
+Otherwise, rusts package manager is a simple way to install the binary crate.
 
 ```
 cargo install wthrr
@@ -87,8 +89,8 @@ cargo install wthrr
 
 ### Build from source
 
-Alternatively, you can build the app from source yourself.
-Assuming you have the rust toolchain installed.
+Another way is to compile the app yourself. 
+Assuming the rust toolchain is installed on your system.
 Just clone the repo and build the release version.
 
 ```
@@ -106,8 +108,8 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 -  [ ] Custom number of forecast days
 -  [ ] Theme variants
 
-Your contributions like 🪲bug reports, ⭐️stars and 💡suggestions are welcome alike.
+Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
 
 ## Credits
 
-- The app uses the open-source weather API for non-commercial use provided by <a href="https://open-meteo.com/en">Open Meteo</a>.
+- The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
