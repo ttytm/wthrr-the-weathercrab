@@ -62,6 +62,12 @@ OPTIONS:
     -V, --version         Print version information
 ```
 
+A Nix flake is also avaiable:
+
+```
+nix run "github:tobealive/wthrr-the-weathercrab"
+```
+
 ---
 
 _First run example asking for the forecast of the week_
@@ -87,6 +93,12 @@ Otherwise, rusts package manager is a simple way to install the binary crate.
 cargo install wthrr
 ```
 
+A Nix flake is also avaiable:
+
+```
+nix profile install "github:tobealive/wthrr-the-weathercrab"
+```
+
 ### Build from source
 
 Another way is to compile the app yourself. 
@@ -103,10 +115,10 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
--  [ ] Language support
--  [ ] Allow to show more / customized meteorological data
--  [ ] Custom number of forecast days
--  [ ] Theme variants
+- [ ] Language support
+- [ ] Allow to show more / customized meteorological data
+- [ ] Custom number of forecast days
+- [ ] Theme variants
 
 Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
 
