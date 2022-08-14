@@ -7,7 +7,10 @@ use crate::location::Geolocation;
 
 pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 	let address = prep_address(args.address.as_deref().unwrap_or_default().to_string(), config).await?;
-	let unit = prep_unit(args.unit.to_string(), config.unit.as_ref())?;
+	let unit = prep_unit(
+		args.unit.as_deref().unwrap_or_default().to_string(),
+		config.unit.as_ref(),
+	)?;
 
 	Ok(Config {
 		address: Some(address),
