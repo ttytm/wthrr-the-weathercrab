@@ -8,7 +8,7 @@ pub struct Args {
 	pub address: Option<String>,
 
 	/// Unit of measurement ['c' (°Celsius) | 'f' (°Fahrenheit)]
-	#[clap(short, long, value_parser, default_value_t = String::from("c"))]
+	#[clap(short, long, value_parser, default_value_t = String::new())]
 	pub unit: String,
 
 	/// Include the forecast for one week
