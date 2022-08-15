@@ -99,6 +99,13 @@ A Nix flake is also avaiable:
 nix profile install "github:tobealive/wthrr-the-weathercrab"
 ```
 
+If you are on NetBSD, a package is available from the official repositories.
+To install it, simply run,
+
+```
+pkgin install wthrr
+```
+
 ### Build from source
 
 Another way is to compile the app yourself. 
