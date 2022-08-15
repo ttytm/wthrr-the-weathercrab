@@ -1,8 +1,8 @@
-use crate::args::Args;
-use crate::confy::lib;
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
+
+use crate::{args::Args, confy::lib, Product};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
@@ -22,14 +22,14 @@ impl Default for Config {
 }
 
 impl Config {
-	pub fn handle_next(args: &Args, params: Config, config: Config) -> Result<()> {
+	pub fn handle_next(args: &Args, config: Config, product: Product) -> Result<()> {
 		if !args.save_config && (config.address.is_some() || config.method.as_deref().unwrap_or_default() == "manual") {
 			return Ok(());
 		}
 
 		let new_config = Config {
-			address: params.address,
-			unit: params.unit,
+			address: Some(product.address),
+			unit: Some(product.weather.hourly_units.temperature_2m),
 			..Default::default()
 		};
 

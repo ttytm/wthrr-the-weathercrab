@@ -1,12 +1,9 @@
 use anyhow::Result;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use crate::modules::*;
-use display::border::Border;
-use display::weathercode::WeatherCode;
-use display::wind::Wind;
+use crate::{modules::*, Product};
+use display::{border::Border, weathercode::WeatherCode, wind::Wind};
 use regex::Regex;
-use weather::Weather;
 
 pub struct Current {
 	title: String,
@@ -28,7 +25,7 @@ struct Dimensions {
 }
 
 impl Current {
-	pub fn render(weather: &Weather, city: String) -> Result<()> {
+	pub fn render(product: &Product) -> Result<()> {
 		let dims = Dimensions {
 			max_width: 60,
 			min_width: 34,
@@ -46,7 +43,7 @@ impl Current {
 			sun_time,
 			wmo_code,
 			width,
-		} = Self::prepare(weather, city, &dims)?;
+		} = Self::prepare(product, &dims)?;
 
 		// Border Top
 		BrightBlack.with(|| {
@@ -131,8 +128,9 @@ impl Current {
 		Ok(())
 	}
 
-	fn prepare(weather: &Weather, city: String, dims: &Dimensions) -> Result<Self> {
-		let title = Self::check_title_len(city, dims.max_width)?;
+	fn prepare(product: &Product, dims: &Dimensions) -> Result<Self> {
+		let weather = &product.weather;
+		let title = Self::check_title_len(product.address.clone(), dims.max_width)?;
 		let title_len = title.chars().count();
 		let width = (if title_len > dims.min_width {
 			title_len

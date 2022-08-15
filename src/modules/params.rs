@@ -1,9 +1,7 @@
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 
-use crate::args::Args;
-use crate::config::Config;
-use crate::location::Geolocation;
+use crate::{args::Args, config::Config, location::Geolocation};
 
 pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 	let address = prep_address(args.address.as_deref().unwrap_or_default().to_string(), config).await?;
@@ -25,10 +23,10 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 	}
 
 	let address = if args_address == "auto"
-		|| config.method.as_deref().unwrap_or_default() == "auto"
-		|| args_address.is_empty() && config.address.is_none()
+		|| args_address.is_empty()
+			&& (config.method.as_deref().unwrap_or_default() == "auto" || config.method.is_none())
 	{
-		if args_address.is_empty() {
+		if args_address.is_empty() && config.method.is_none() {
 			let auto_location_prompt = Confirm::with_theme(&ColorfulTheme::default())
 				.with_prompt("You didn't specify a city. Should I check for a weather station close to your location?")
 				.interact()?;
@@ -50,7 +48,7 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<String> {
 	let unit = if args_unit.is_empty() && config_unit.is_some() {
 		match config_unit {
-			unit if unit == Some(&String::from("fahrenheit")) => "fahrenheit",
+			unit if unit == Some(&String::from("°F")) => "fahrenheit",
 			_ => "celsius",
 		}
 	} else if args_unit == "f" || args_unit == "fahrenheit" {
