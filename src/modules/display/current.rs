@@ -1,9 +1,9 @@
 use anyhow::Result;
+use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use crate::{modules::*, Product};
-use display::{border::Border, weathercode::WeatherCode, wind::Wind};
-use regex::Regex;
+use crate::modules::display::{border::Border, weathercode::WeatherCode, wind::Wind};
+use crate::Product;
 
 pub struct Current {
 	title: String,
