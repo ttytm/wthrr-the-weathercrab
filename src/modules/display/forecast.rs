@@ -4,9 +4,8 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use crate::modules::display::border::Border;
-use crate::modules::display::weathercode::WeatherCode;
-use crate::modules::weather::Weather;
+use crate::modules::display::{border::Border, weathercode::WeatherCode};
+use crate::Product;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Forecast {
@@ -23,8 +22,8 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub fn render_forecast(data: &Weather) -> Result<()> {
-		let forecast = Forecast::generate_days(data)?;
+	pub fn render_forecast(product: &Product) -> Result<()> {
+		let forecast = Forecast::generate_days(product)?;
 		let width = forecast.width + 8;
 
 		// Border Top
@@ -81,12 +80,12 @@ impl Forecast {
 		Ok(())
 	}
 
-	fn generate_days(data: &Weather) -> Result<Self> {
+	fn generate_days(product: &Product) -> Result<Self> {
 		let mut days = Vec::new();
 		let mut width: usize = 0;
 
-		for (i, _) in data.daily.time.iter().enumerate() {
-			let time = &data.daily.time[i];
+		for (i, _) in product.weather.daily.time.iter().enumerate() {
+			let time = &product.weather.daily.time[i];
 			let date = Utc
 				.ymd(
 					time[0..4].parse().unwrap_or_default(),
@@ -97,14 +96,14 @@ impl Forecast {
 			// let date = date.format("%a, %b %e").to_string();
 			let date = &date.to_rfc2822()[..11];
 
-			let weather_code = WeatherCode::resolve(&data.daily.weathercode[i], None)?;
+			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None)?;
 			let weather = format!(
 				"{} {}{}/{}{}",
 				weather_code.icon,
-				data.daily.temperature_2m_max[i],
-				data.daily_units.temperature_2m_max,
-				data.daily.temperature_2m_min[i],
-				data.daily_units.temperature_2m_min,
+				product.weather.daily.temperature_2m_max[i],
+				product.weather.daily_units.temperature_2m_max,
+				product.weather.daily.temperature_2m_min[i],
+				product.weather.daily_units.temperature_2m_min,
 			);
 			let merge = format!("{}{}{}", date, weather, weather_code.interpretation);
 			if merge.len() > width {
