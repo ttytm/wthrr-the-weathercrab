@@ -62,16 +62,32 @@ OPTIONS:
     -V, --version         Print version information
 ```
 
-A Nix flake is also avaiable:
-
-```
-nix run "github:tobealive/wthrr-the-weathercrab"
-```
-
 ---
 
 _First run example asking for the forecast of the week_
 <img src="preview/first-run-example.png" />
+
+---
+
+### Config file
+
+Saving a configuration as default, will result in a config file being crated in your config directory.
+E.g., on GNU/Linux this usually is: `~/<username>/.config/weathercrab/wthrr.toml`
+
+You probably don't have to bother with the config file, as you can save your settings through adding the `-s` flag.
+For the sake of completeness the config contents are as follows.
+
+Currently, just three values are being saved:
+
+```toml
+# Address that resulted in the call you saved. E.g. when called for `berlin`,
+address = 'Berlin, Germany'
+# Temperature unit from weather response: '°C' || '°F'
+unit = '°C'
+# Method used when calling `wthrr` without adding an address: 'default' || 'auto' || 'manual'
+# 'default' -> use config address ; 'auto' -> search for a station ; 'manual' -> require address input
+method = 'default'
+```
 
 ## Requirements
 
@@ -85,18 +101,12 @@ Some terminal emulators might require you to additionally add/prioritize emojis 
 
 ## Installation
 
-Without the rust toolchain installed, grabbing a binary from the [release](https://github.com/tobealive/wthrr-the-weathercrab/releases) page might be your way to go. 
+Without the rust toolchain installed, grabbing a binary from the [release](https://github.com/tobealive/wthrr-the-weathercrab/releases) page might be your way to go.
 
 Otherwise, rusts package manager is a simple way to install the binary crate.
 
 ```
 cargo install wthrr
-```
-
-A Nix flake is also avaiable:
-
-```
-nix profile install "github:tobealive/wthrr-the-weathercrab"
 ```
 
 If you are on NetBSD, a package is available from the official repositories.
@@ -106,11 +116,20 @@ To install it, simply run,
 pkgin install wthrr
 ```
 
+A Nix flake is also avaiable:
+
+```
+nix profile install "github:tobealive/wthrr-the-weathercrab"
+```
+
+```
+nix run "github:tobealive/wthrr-the-weathercrab"
+```
+
 ### Build from source
 
-Another way is to compile the app yourself. 
-Assuming the rust toolchain is installed on your system.
-Just clone the repo and build the release version.
+Another way is to compile the app yourself.
+Assuming the rust toolchain is installed on your system, just clone the repo and build the release version.
 
 ```
 git clone https://github.com/tobealive/wthrr-the-weathercrab.git
@@ -122,13 +141,13 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
-- [ ] Language support
-- [ ] Allow to show more / customized meteorological data
-- [ ] Custom number of forecast days
-- [ ] Theme variants
+-  [ ] Language support
+-  [ ] Allow to show more / customized meteorological data
+-  [ ] Custom number of forecast days
+-  [ ] Theme variants
 
 Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
 
 ## Credits
 
-- The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
+-  The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
