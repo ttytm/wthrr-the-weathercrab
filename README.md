@@ -141,10 +141,10 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
--  [ ] Language support
--  [ ] Allow to show more / customized meteorological data
--  [ ] Custom number of forecast days
--  [ ] Theme variants
+- [ ] Language support
+- [ ] Allow to show more / customized meteorological data
+- [ ] Custom number of forecast days
+- [ ] Theme variants
 
 Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
 
