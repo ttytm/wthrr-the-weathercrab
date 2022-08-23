@@ -56,5 +56,69 @@ fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<String> 
 	} else {
 		"celsius"
 	};
+
 	Ok(unit.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn test_temp_unit_from_arg() -> Result<()> {
+		let arg_unit = "f".to_string();
+		let cfg_unit = Some("°C".to_string());
+
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "fahrenheit");
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_temp_unit_from_cfg() -> Result<()> {
+		let arg_unit = String::new();
+		let cfg_unit = Some("°F".to_string());
+
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "fahrenheit");
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_temp_unit_fallback() -> Result<()> {
+		let arg_unit = "a".to_string();
+		let cfg_unit = Some(String::new());
+
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "celsius");
+
+		Ok(())
+	}
+
+	#[tokio::test]
+	async fn test_address_from_arg() -> Result<()> {
+		let arg_address = "new york".to_string();
+		let config = Config {
+			address: Some("Berlin, DE".to_string()),
+			unit: Some("°F".to_string()),
+			method: Some("default".to_string()),
+		};
+
+		assert!(prep_address(arg_address, &config).await?.contains("new york"));
+
+		Ok(())
+	}
+
+	#[tokio::test]
+	async fn test_address_from_cfg() -> Result<()> {
+		let arg_address = String::new();
+		let config = Config {
+			address: Some("Berlin, DE".to_string()),
+			unit: Some("°F".to_string()),
+			method: Some("default".to_string()),
+		};
+
+		assert!(prep_address(arg_address, &config).await?.contains("Berlin"));
+
+		Ok(())
+	}
 }
