@@ -3,18 +3,34 @@ use dialoguer::{theme::ColorfulTheme, Confirm};
 
 use crate::{args::Args, config::Config, location::Geolocation};
 
-pub async fn get(args: &Args, config: &Config) -> Result<Config> {
+pub struct Params {
+	pub address: String,
+	pub unit: TempUnit,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum TempUnit {
+	Fahrenheit,
+	Celsius,
+}
+
+impl TempUnit {
+	pub fn fmt(&self) -> &str {
+		match self {
+			TempUnit::Celsius => "celsius",
+			TempUnit::Fahrenheit => "fahrenheit",
+		}
+	}
+}
+
+pub async fn get(args: &Args, config: &Config) -> Result<Params> {
 	let address = prep_address(args.address.as_deref().unwrap_or_default().to_string(), config).await?;
 	let unit = prep_unit(
 		args.unit.as_deref().unwrap_or_default().to_string(),
 		config.unit.as_ref(),
 	)?;
 
-	Ok(Config {
-		address: Some(address),
-		unit: Some(unit),
-		method: None,
-	})
+	Ok(Params { address, unit })
 }
 
 async fn prep_address(args_address: String, config: &Config) -> Result<String> {
@@ -45,19 +61,21 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 	Ok(address)
 }
 
-fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<String> {
+fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<TempUnit> {
 	let unit = if args_unit.is_empty() && config_unit.is_some() {
 		match config_unit {
-			unit if unit == Some(&String::from("°F")) => "fahrenheit",
-			_ => "celsius",
+			unit if unit == Some(&String::from("fahrenheit")) => TempUnit::Fahrenheit,
+			// Support configs prior params unit enum. Deprecate in the future.
+			unit if unit == Some(&String::from("°F")) => TempUnit::Fahrenheit,
+			_ => TempUnit::Celsius,
 		}
 	} else if args_unit == "f" || args_unit == "fahrenheit" {
-		"fahrenheit"
+		TempUnit::Fahrenheit
 	} else {
-		"celsius"
+		TempUnit::Celsius
 	};
 
-	Ok(unit.to_string())
+	Ok(unit)
 }
 
 #[cfg(test)]
@@ -69,7 +87,7 @@ mod tests {
 		let arg_unit = "f".to_string();
 		let cfg_unit = Some("°C".to_string());
 
-		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "fahrenheit");
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, TempUnit::Fahrenheit);
 
 		Ok(())
 	}
@@ -79,7 +97,7 @@ mod tests {
 		let arg_unit = String::new();
 		let cfg_unit = Some("°F".to_string());
 
-		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "fahrenheit");
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, TempUnit::Fahrenheit);
 
 		Ok(())
 	}
@@ -89,7 +107,7 @@ mod tests {
 		let arg_unit = "a".to_string();
 		let cfg_unit = Some(String::new());
 
-		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, "celsius");
+		assert_eq!(prep_unit(arg_unit, cfg_unit.as_ref())?, TempUnit::Celsius);
 
 		Ok(())
 	}

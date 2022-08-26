@@ -2,6 +2,8 @@ use anyhow::{Context, Result};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 
+use crate::params::TempUnit;
+
 // Open meteo json
 // E.g., London:
 // https://api.open-meteo.com/v1/forecast?latitude=51.5002&longitude=-0.1262&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,windspeed_10m&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto
@@ -73,12 +75,12 @@ pub struct Daily {
 }
 
 impl Weather {
-	pub async fn get(lat: f64, lon: f64, unit: &str) -> Result<Weather> {
+	pub async fn get(lat: f64, lon: f64, unit: TempUnit) -> Result<Weather> {
 		let url: String = format!(
             "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit={}&timezone=auto",
 			lat,
 			lon,
-            unit
+            unit.fmt()
 		);
 
 		let url = Url::parse(&*url)?;
