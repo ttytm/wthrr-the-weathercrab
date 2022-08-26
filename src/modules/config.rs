@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
-use crate::{args::Args, confy::lib, Product};
+use crate::{args::Args, confy::lib, params::TempUnit, Product};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
@@ -15,7 +15,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			unit: Some("celsius".to_string()),
+			unit: Some(TempUnit::Celsius.fmt().to_string()),
 			method: Some("default".to_string()),
 		}
 	}
@@ -27,9 +27,15 @@ impl Config {
 			return Ok(());
 		}
 
+		let unit = if product.weather.hourly_units.temperature_2m.contains("F") {
+			TempUnit::Fahrenheit.fmt().to_string()
+		} else {
+			TempUnit::Celsius.fmt().to_string()
+		};
+
 		let new_config = Config {
 			address: Some(product.address),
-			unit: Some(product.weather.hourly_units.temperature_2m),
+			unit: Some(unit),
 			..Default::default()
 		};
 

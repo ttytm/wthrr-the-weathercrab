@@ -31,10 +31,10 @@ pub async fn run(args: &Args, config: Config) -> Result<()> {
 
 	let params = params::get(args, &config).await?;
 
-	let loc = Geolocation::search(params.address.as_ref().unwrap()).await?;
+	let loc = Geolocation::search(&params.address).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
-	let weather = Weather::get(lat, lon, params.unit.as_ref().unwrap()).await?;
+	let weather = Weather::get(lat, lon, params.unit).await?;
 	let product = Product {
 		weather,
 		address: loc[0].display_name.to_string(),
