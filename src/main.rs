@@ -34,9 +34,8 @@ pub async fn run(args: &Args, config: Config) -> Result<()> {
 	let loc = Geolocation::search(&params.address).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
-	let weather = Weather::get(lat, lon, params.unit).await?;
 	let product = Product {
-		weather,
+		weather: Weather::get(lat, lon, params.unit).await?,
 		address: loc[0].display_name.to_string(),
 	};
 
