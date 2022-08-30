@@ -27,14 +27,7 @@ impl Forecast {
 		let width = forecast.width + 8;
 
 		// Border Top
-		BrightBlack.with(|| {
-			println!(
-				"{}{}{} ",
-				Border::TL.fmt(),
-				Border::T.fmt().repeat(width),
-				Border::TR.fmt()
-			)
-		});
+		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -55,28 +48,21 @@ impl Forecast {
 			);
 			println!(
 				"{} {: <3$}{}",
-				BrightBlack.paint(Border::L.fmt()),
+				BrightBlack.paint(Border::L),
 				merge,
-				BrightBlack.paint(Border::R.fmt()),
+				BrightBlack.paint(Border::R),
 				width - 1
 			);
 			if chunks.peek().is_some() {
 				// Separator
-				BrightBlack.with(|| println!("{}{}{}", Border::L.fmt(), "—".repeat(width), Border::R.fmt()));
+				BrightBlack.with(|| println!("{}{}{}", Border::L, "—".repeat(width), Border::R));
 			}
 
 			n += 1;
 		}
 
 		// Border Bottom
-		BrightBlack.with(|| {
-			println!(
-				"{}{}{}",
-				Border::BL.fmt(),
-				Border::B.fmt().repeat(width),
-				Border::BR.fmt()
-			)
-		});
+		BrightBlack.with(|| println!("{}{}{}", Border::BL, Border::B.to_string().repeat(width), Border::BR));
 		Ok(())
 	}
 
