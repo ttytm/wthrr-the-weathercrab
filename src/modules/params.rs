@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
+use strum_macros::Display;
 
 use crate::{args::Args, config::Config, location::Geolocation};
 
@@ -8,19 +9,11 @@ pub struct Params {
 	pub unit: TempUnit,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Display)]
+#[cfg_attr(test, derive(Debug, PartialEq))]
 pub enum TempUnit {
 	Fahrenheit,
 	Celsius,
-}
-
-impl TempUnit {
-	pub fn fmt(&self) -> &str {
-		match self {
-			TempUnit::Celsius => "celsius",
-			TempUnit::Fahrenheit => "fahrenheit",
-		}
-	}
 }
 
 pub async fn get(args: &Args, config: &Config) -> Result<Params> {
@@ -64,7 +57,7 @@ async fn prep_address(args_address: String, config: &Config) -> Result<String> {
 fn prep_unit(args_unit: String, config_unit: Option<&String>) -> Result<TempUnit> {
 	let unit = if args_unit.is_empty() && config_unit.is_some() {
 		match config_unit {
-			unit if unit == Some(&String::from("fahrenheit")) => TempUnit::Fahrenheit,
+			unit if unit == Some(&String::from("Fahrenheit")) => TempUnit::Fahrenheit,
 			// Support configs prior params unit enum. Deprecate in the future.
 			unit if unit == Some(&String::from("°F")) => TempUnit::Fahrenheit,
 			_ => TempUnit::Celsius,

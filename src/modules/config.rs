@@ -16,7 +16,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			unit: Some(TempUnit::Celsius.fmt().to_string()),
+			unit: Some(TempUnit::Celsius.to_string()),
 			method: Some("default".to_string()),
 			greeting: Some(true),
 		}
@@ -30,14 +30,14 @@ impl Config {
 		}
 
 		let unit = if product.weather.hourly_units.temperature_2m.contains("F") {
-			TempUnit::Fahrenheit.fmt().to_string()
+			TempUnit::Fahrenheit
 		} else {
-			TempUnit::Celsius.fmt().to_string()
+			TempUnit::Celsius
 		};
 
 		let new_config = Config {
 			address: Some(product.address),
-			unit: Some(unit),
+			unit: Some(unit.to_string()),
 			..Default::default()
 		};
 

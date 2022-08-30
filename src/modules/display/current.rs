@@ -46,84 +46,70 @@ impl Current {
 		} = Self::prepare(product, &dims)?;
 
 		// Border Top
-		BrightBlack.with(|| {
-			println!(
-				"{}{}{} ",
-				Border::TL.fmt(),
-				Border::T.fmt().repeat(width),
-				Border::TR.fmt()
-			)
-		});
+		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
 
 		// Title
 		println!(
 			"{} {: ^3$} {}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			// Bold.paint(title),
 			title,
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 			width - 2
 		);
 
 		// Separator
-		BrightBlack.with(|| println!("{}{}{}", Border::L.fmt(), "—".repeat(width), Border::R.fmt()));
+		BrightBlack.with(|| println!("{}{}{}", Border::L, "—".repeat(width), Border::R));
 
 		// Temperature
 		println!(
 			"{} {} {}{}{}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			Bold.paint(&temperature),
 			wmo_code.interpretation,
 			" ".repeat(width - temperature.chars().count() - wmo_code.interpretation.chars().count() - 2),
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 		);
 		println!(
 			"{} {: <3$}{}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			apparent_temperature,
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 			width - 1
 		);
 
 		// Blank line
-		BrightBlack.with(|| println!("{}{}{}", Border::L.fmt(), " ".repeat(width), Border::R.fmt()));
+		BrightBlack.with(|| println!("{}{}{}", Border::L, " ".repeat(width), Border::R));
 
 		let humidity_dewpoint_row = format!("{: <2$}{}", humidity, dewpoint, dims.cell_width);
 		println!(
 			"{} {: <3$}{}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			humidity_dewpoint_row,
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 			width - 1
 		);
 
 		let wind_pressure_row = format!("{: <2$}{}", wind, pressure, dims.cell_width);
 		println!(
 			"{} {: <3$}{}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			wind_pressure_row,
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 			width - 1
 		);
 
 		// Sun times
 		println!(
 			"{} {: <3$}{}",
-			BrightBlack.paint(Border::L.fmt()),
+			BrightBlack.paint(Border::L),
 			sun_time,
-			BrightBlack.paint(Border::R.fmt()),
+			BrightBlack.paint(Border::R),
 			width - 1
 		);
 
 		// Border Bottom
-		BrightBlack.with(|| {
-			println!(
-				"{}{}{}",
-				Border::BL.fmt(),
-				Border::B.fmt().repeat(width),
-				Border::BR.fmt()
-			)
-		});
+		BrightBlack.with(|| println!("{}{}{}", Border::BL, Border::B.to_string().repeat(width), Border::BR));
 
 		Ok(())
 	}
@@ -173,7 +159,7 @@ impl Current {
 			wind_direction.icon,
 			weather.current_weather.windspeed,
 			weather.hourly_units.windspeed_10m,
-			wind_direction.direction.fmt()
+			wind_direction.direction
 		);
 		let pressure = format!(
 			" {}{}",

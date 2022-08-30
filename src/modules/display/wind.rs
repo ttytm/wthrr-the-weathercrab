@@ -1,10 +1,12 @@
 use anyhow::{anyhow, Result};
+use strum_macros::Display;
 
 pub struct Wind {
 	pub direction: WindDirection,
-	pub icon: String,
+	pub icon: char,
 }
 
+#[derive(Display)]
 pub enum WindDirection {
 	NW,
 	N,
@@ -16,63 +18,45 @@ pub enum WindDirection {
 	W,
 }
 
-impl WindDirection {
-	pub fn fmt(&self) -> &str {
-		match self {
-			WindDirection::NW => "NW",
-			WindDirection::N => "N",
-			WindDirection::NE => "NE",
-			WindDirection::E => "E",
-			WindDirection::SE => "SE",
-			WindDirection::S => "S",
-			WindDirection::SW => "SW",
-			WindDirection::W => "W",
-		}
-	}
-}
-
 impl Wind {
 	pub fn get_direction(wd: f64) -> Result<Self> {
 		let (direction, icon);
 		match wd % 360.0 {
 			wd if (337.5..=360.0).contains(&wd) || (0.0..22.5).contains(&wd) => {
 				direction = WindDirection::N;
-				icon = "";
+				icon = '';
 			}
 			wd if (22.5..67.5).contains(&wd) => {
 				direction = WindDirection::NE;
-				icon = "";
+				icon = '';
 			}
 			wd if (67.5..112.5).contains(&wd) => {
 				direction = WindDirection::E;
-				icon = "";
+				icon = '';
 			}
 			wd if (112.5..157.5).contains(&wd) => {
 				direction = WindDirection::SE;
-				icon = "";
+				icon = '';
 			}
 			wd if (157.5..202.5).contains(&wd) => {
 				direction = WindDirection::S;
-				icon = "";
+				icon = '';
 			}
 			wd if (202.5..247.5).contains(&wd) => {
 				direction = WindDirection::SW;
-				icon = "";
+				icon = '';
 			}
 			wd if (247.5..292.5).contains(&wd) => {
 				direction = WindDirection::W;
-				icon = "";
+				icon = '';
 			}
 			wd if (292.5..337.5).contains(&wd) => {
 				direction = WindDirection::NW;
-				icon = "";
+				icon = '';
 			}
 			_ => return Err(anyhow!("Wind from another dimension")),
 		}
 
-		Ok(Wind {
-			direction,
-			icon: icon.to_string(),
-		})
+		Ok(Wind { direction, icon })
 	}
 }
