@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 	let product = run(params).await?;
 	display::render(&product, args.forecast)?;
 
-	Config::handle_next(&args, config, product)?;
+	config.handle_next(&args, product)?;
 
 	Ok(())
 }

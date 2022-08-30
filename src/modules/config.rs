@@ -24,8 +24,8 @@ impl Default for Config {
 }
 
 impl Config {
-	pub fn handle_next(args: &Args, config: Config, product: Product) -> Result<()> {
-		if !args.save_config && (config.address.is_some() || config.method.as_deref().unwrap_or_default() == "manual") {
+	pub fn handle_next(&self, args: &Args, product: Product) -> Result<()> {
+		if !args.save_config && (self.address.is_some() || self.method.as_deref().unwrap_or_default() == "manual") {
 			return Ok(());
 		}
 
@@ -43,7 +43,7 @@ impl Config {
 
 		if args.save_config {
 			lib::store("weathercrab", "wthrr", &new_config)?;
-		} else if config.address.is_none() {
+		} else if self.address.is_none() {
 			Config::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string())?;
 		}
 
