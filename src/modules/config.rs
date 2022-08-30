@@ -9,6 +9,7 @@ pub struct Config {
 	pub address: Option<String>,
 	pub unit: Option<String>,
 	pub method: Option<String>,
+	pub greeting: Option<bool>,
 }
 
 impl Default for Config {
@@ -17,6 +18,7 @@ impl Default for Config {
 			address: None,
 			unit: Some(TempUnit::Celsius.fmt().to_string()),
 			method: Some("default".to_string()),
+			greeting: Some(true),
 		}
 	}
 }

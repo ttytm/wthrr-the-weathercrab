@@ -21,6 +21,7 @@ async fn main() -> Result<()> {
 		return Ok(());
 	}
 
+	greeting(&config)?;
 
 	let params = params::get(&args, &config).await?;
 	let product = run(params).await?;
@@ -32,8 +33,6 @@ async fn main() -> Result<()> {
 }
 
 pub async fn run(params: Params) -> Result<Product> {
-	println!("  🦀  Hey friend. I'm glad you are asking.");
-
 	let loc = Geolocation::search(&params.address).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
@@ -43,4 +42,14 @@ pub async fn run(params: Params) -> Result<Product> {
 	};
 
 	Ok(product)
+}
+
+fn greeting(config: &Config) -> Result<()> {
+	if config.greeting == Some(false) {
+		return Ok(());
+	}
+
+	println!("  🦀  Hey friend. I'm glad you are asking.");
+
+	Ok(())
 }
