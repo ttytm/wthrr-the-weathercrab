@@ -118,7 +118,7 @@ mod tests {
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
 			unit: Some("°F".to_string()),
-			method: Some("default".to_string()),
+			..Default::default()
 		};
 
 		assert!(prep_address(arg_address, &config).await?.contains("new york"));
@@ -133,6 +133,7 @@ mod tests {
 			address: Some("Berlin, DE".to_string()),
 			unit: Some("°F".to_string()),
 			method: Some("default".to_string()),
+			..Default::default()
 		};
 
 		assert!(prep_address(arg_address, &config).await?.contains("Berlin"));
