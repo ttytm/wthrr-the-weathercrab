@@ -11,6 +11,7 @@ pub struct Config {
 	pub unit: Option<TempUnit>,
 	pub method: Option<String>,
 	pub greeting: Option<bool>,
+	pub language: Option<String>,
 }
 
 impl Default for Config {
@@ -20,6 +21,7 @@ impl Default for Config {
 			unit: Some(TempUnit::Celsius),
 			method: Some("default".to_string()),
 			greeting: Some(true),
+			language: Some("en".to_string()),
 		}
 	}
 }

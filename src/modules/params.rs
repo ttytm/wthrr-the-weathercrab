@@ -13,10 +13,13 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 		args.unit.as_deref().unwrap_or_default().to_string(),
 		config.unit.as_ref(),
 	)?;
+	// TODO:
+	let lang = "en";
 
 	Ok(Config {
 		address: Some(address),
 		unit: Some(unit),
+		language: Some(lang.to_string()),
 		..Config::clone(config)
 	})
 }

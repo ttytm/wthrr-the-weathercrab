@@ -33,7 +33,7 @@ async fn main() -> Result<()> {
 }
 
 pub async fn run(params: &Config) -> Result<Product> {
-	let loc = Geolocation::search(params.address.as_ref().unwrap()).await?;
+	let loc = Geolocation::search(params.address.as_ref().unwrap(), params.language.as_ref().unwrap()).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
 	let product = Product {

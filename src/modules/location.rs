@@ -39,11 +39,10 @@ impl Geolocation {
 		Ok(res)
 	}
 
-	pub async fn search(address: &str) -> Result<Vec<Address>> {
-		// TODO: add language support
+	pub async fn search(address: &str, lang: &str) -> Result<Vec<Address>> {
 		let url: String = format!(
-			"https://nominatim.openstreetmap.org/search?q={}&accept-language=en&limit=1&format=json",
-			address,
+			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=json",
+			address, lang
 		);
 
 		let client = Client::new();
