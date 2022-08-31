@@ -1,13 +1,16 @@
+use std::str::FromStr;
+
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
+use strum_macros::{Display, EnumString};
 
-use crate::{args::Args, confy::lib, params::TempUnit, Product};
+use crate::{args::Args, confy::lib, Product};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
 	pub address: Option<String>,
-	pub unit: Option<String>,
+	pub unit: Option<TempUnit>,
 	pub method: Option<String>,
 	pub greeting: Option<bool>,
 }
@@ -16,11 +19,19 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			unit: Some(TempUnit::Celsius.to_string()),
+			unit: Some(TempUnit::Celsius),
 			method: Some("default".to_string()),
 			greeting: Some(true),
 		}
 	}
+}
+
+#[derive(Display, EnumString, Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub enum TempUnit {
+	#[strum(serialize = "celsius", serialize = "°C")]
+	Celsius,
+	#[strum(serialize = "fahrenheit", serialize = "°F")]
+	Fahrenheit,
 }
 
 impl Config {
@@ -29,15 +40,9 @@ impl Config {
 			return Ok(());
 		}
 
-		let unit = if product.weather.hourly_units.temperature_2m.contains("F") {
-			TempUnit::Fahrenheit
-		} else {
-			TempUnit::Celsius
-		};
-
 		let new_config = Config {
 			address: Some(product.address),
-			unit: Some(unit.to_string()),
+			unit: Some(TempUnit::from_str(&product.weather.hourly_units.temperature_2m)?),
 			..Default::default()
 		};
 
