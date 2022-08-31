@@ -4,7 +4,7 @@ use clap::Parser;
 use modules::*;
 mod modules;
 
-use {args::Args, config::Config, location::Geolocation, params::Params, weather::Weather};
+use {args::Args, config::Config, location::Geolocation, weather::Weather};
 
 pub struct Product {
 	weather: Weather,
@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
 		return Ok(());
 	}
 
-	greeting(&config)?;
+	greeting(config.greeting.unwrap())?;
 
 	let params = params::get(&args, &config).await?;
 	let product = run(params).await?;
@@ -32,20 +32,20 @@ async fn main() -> Result<()> {
 	Ok(())
 }
 
-pub async fn run(params: Params) -> Result<Product> {
-	let loc = Geolocation::search(&params.address).await?;
+pub async fn run(params: Config) -> Result<Product> {
+	let loc = Geolocation::search(&params.address.unwrap()).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
 	let product = Product {
-		weather: Weather::get(lat, lon, params.unit).await?,
+		weather: Weather::get(lat, lon, params.unit.unwrap()).await?,
 		address: loc[0].display_name.to_string(),
 	};
 
 	Ok(product)
 }
 
-fn greeting(config: &Config) -> Result<()> {
-	if config.greeting == Some(false) {
+fn greeting(include: bool) -> Result<()> {
+	if !include {
 		return Ok(());
 	}
 
