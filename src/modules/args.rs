@@ -15,7 +15,7 @@ pub struct Args {
 	#[clap(short, long, value_parser, action)]
 	pub forecast: bool,
 
-	/// Language code
+	/// Output language [default: 'en']
 	#[clap(short, long, value_parser)]
 	pub language: Option<String>,
 

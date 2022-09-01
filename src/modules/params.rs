@@ -13,8 +13,10 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 		args.unit.as_deref().unwrap_or_default().to_string(),
 		config.unit.as_ref(),
 	)?;
-	// TODO:
-	let lang = "en";
+	let lang = prep_lang(
+		args.language.as_deref().unwrap_or_default().to_string(),
+		config.language.as_ref(),
+	)?;
 
 	Ok(Config {
 		address: Some(address),
@@ -65,6 +67,18 @@ fn prep_unit(args_unit: String, config_unit: Option<&TempUnit>) -> Result<TempUn
 	};
 
 	Ok(unit)
+}
+
+fn prep_lang(args_lang: String, config_lang: Option<&String>) -> Result<String> {
+	let lang = if !args_lang.is_empty() {
+		args_lang
+	} else if args_lang.is_empty() && config_lang.is_some() {
+		config_lang.unwrap().to_string()
+	} else {
+		"en".to_string()
+	};
+
+	Ok(lang)
 }
 
 #[cfg(test)]
@@ -124,6 +138,32 @@ mod tests {
 		};
 
 		assert!(prep_address(arg_address, &config).await?.contains("Berlin"));
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_lang_from_arg() -> Result<()> {
+		let arg_lang = "pl".to_string();
+		let config = Config {
+			language: Some("de".to_string()),
+			..Default::default()
+		};
+
+		assert!(prep_lang(arg_lang, config.language.as_ref())?.contains("pl"));
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_lang_from_cfg() -> Result<()> {
+		let arg_lang = String::new();
+		let config = Config {
+			language: Some("de".to_string()),
+			..Default::default()
+		};
+
+		assert!(prep_lang(arg_lang, config.language.as_ref())?.contains("de"));
 
 		Ok(())
 	}
