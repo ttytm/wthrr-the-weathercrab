@@ -1,11 +1,9 @@
-use std::str::FromStr;
-
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 
-use crate::{args::Args, confy::lib, Product};
+use crate::{args::Args, confy::lib};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -35,14 +33,14 @@ pub enum TempUnit {
 }
 
 impl Config {
-	pub fn handle_next(&self, args: &Args, product: Product) -> Result<()> {
+	pub fn handle_next(&self, args: Args, params: Config) -> Result<()> {
 		if !args.save_config && (self.address.is_some() || self.method.as_deref().unwrap_or_default() == "manual") {
 			return Ok(());
 		}
 
 		let new_config = Config {
-			address: Some(product.address),
-			unit: Some(TempUnit::from_str(&product.weather.hourly_units.temperature_2m)?),
+			address: Some(params.address.unwrap()),
+			unit: Some(params.unit.unwrap()),
 			..Default::default()
 		};
 
