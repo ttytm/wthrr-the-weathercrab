@@ -61,3 +61,30 @@ impl Geolocation {
 		Ok(res)
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[tokio::test]
+	async fn test_german_address_response() -> Result<()> {
+		let (address, lang) = ("berlin", "de");
+
+		let loc = Geolocation::search(address, lang).await?;
+
+		assert!(loc[0].display_name.contains("Deutschland"));
+
+		Ok(())
+	}
+
+	#[tokio::test]
+	async fn test_polish_address_response() -> Result<()> {
+		let (address, lang) = ("berlin", "pl");
+
+		let loc = Geolocation::search(address, lang).await?;
+
+		assert!(loc[0].display_name.contains("Niemcy"));
+
+		Ok(())
+	}
+}
