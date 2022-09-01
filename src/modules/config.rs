@@ -43,6 +43,7 @@ impl Config {
 		let new_config = Config {
 			address: Some(params.address.unwrap()),
 			unit: Some(params.unit.unwrap()),
+			language: Some(params.language.unwrap()),
 			..Default::default()
 		};
 
