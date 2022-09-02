@@ -24,10 +24,13 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 
 	let unit = prep_unit(args.unit.as_deref().unwrap_or_default(), config.unit.as_ref())?;
 
+	let greeting = prep_greeting(args.greeting, config.greeting)?;
+
 	Ok(Config {
 		address: Some(address),
 		unit: Some(unit),
 		language: Some(lang.to_string()),
+		greeting: Some(greeting),
 		..Config::clone(config)
 	})
 }
@@ -91,6 +94,19 @@ fn prep_lang(args_lang: &str, config_lang: &str) -> Result<String> {
 	Ok(lang.to_string())
 }
 
+fn prep_greeting(args_toggle_greeting: bool, config_greet: Option<bool>) -> Result<bool> {
+	if !args_toggle_greeting && config_greet.is_none() {
+		return Ok(true);
+	}
+
+	let greet = match args_toggle_greeting {
+		true => !config_greet.unwrap(),
+		_ => config_greet.unwrap(),
+	};
+
+	Ok(greet)
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -120,6 +136,24 @@ mod tests {
 		let arg_unit = "a";
 
 		assert_eq!(prep_unit(arg_unit, None)?, TempUnit::Celsius);
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_handle_greeting_from_arg() -> Result<()> {
+		// Toggle flag while greeting enabled in cfg
+		assert_eq!(prep_greeting(true, Some(true))?, false);
+		// Toggle flag while greeting disabled in cfg
+		assert_eq!(prep_greeting(true, Some(false))?, true);
+
+		Ok(())
+	}
+
+	#[test]
+	fn test_handle_greeting_from_cfg() -> Result<()> {
+		assert_eq!(prep_greeting(false, Some(true))?, true);
+		assert_eq!(prep_greeting(false, Some(false))?, false);
 
 		Ok(())
 	}
