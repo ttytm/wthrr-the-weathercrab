@@ -4,7 +4,7 @@ use clap::Parser;
 use modules::*;
 mod modules;
 
-use {args::Args, config::Config, location::Geolocation, weather::Weather};
+use {args::Args, config::Config, location::Geolocation, translation::*, weather::Weather};
 
 pub struct Product {
 	weather: Weather,
@@ -21,10 +21,12 @@ async fn main() -> Result<()> {
 		return Ok(());
 	}
 
-	greeting(config.greeting.unwrap())?;
-
 	let params = params::get(&args, &config).await?;
+
+	greeting(&params).await?;
+
 	let product = run(&params).await?;
+
 	display::render(&product, args.forecast)?;
 
 	config.handle_next(args, params)?;
@@ -44,12 +46,15 @@ pub async fn run(params: &Config) -> Result<Product> {
 	Ok(product)
 }
 
-fn greeting(include: bool) -> Result<()> {
-	if !include {
+async fn greeting(params: &Config) -> Result<()> {
+	if !params.greeting.unwrap() {
 		return Ok(());
 	}
 
-	println!("  🦀  Hey friend. I'm glad you are asking.");
+	let greeting_en = "Hey friend. I'm glad you are asking.";
+	let greeting_translated = translate(params.language.as_ref().unwrap(), greeting_en).await?;
+
+	println!("  🦀  {}", greeting_translated);
 
 	Ok(())
 }
