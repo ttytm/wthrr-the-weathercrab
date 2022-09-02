@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use reqwest::Url;
 use serde_json::Value;
 
 pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
@@ -6,10 +7,10 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 		return Ok(input.to_string());
 	}
 
-	let url: String = format!(
-		"https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=t&sl=en&tl={}&q={}",
-		target_lang, input
-	);
+	let url = Url::parse_with_params(
+		"https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=t&sl=en",
+		&[("tl", target_lang), ("q", input)],
+	)?;
 
 	let res = reqwest::get(url)
 		.await?
