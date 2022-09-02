@@ -2,7 +2,7 @@ use anyhow::Result;
 use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use crate::modules::display::{border::Border, weathercode::WeatherCode, wind::Wind};
+use crate::modules::display::{border::Border, weathercode::WeatherCode, wind::WindDirection};
 use crate::Product;
 
 pub struct Current {
@@ -133,7 +133,7 @@ impl Current {
 		);
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night))?;
-		let wind_direction = Wind::get_direction(weather.current_weather.winddirection)?;
+		let wind_direction = WindDirection::get_direction(weather.current_weather.winddirection)?;
 
 		let temperature = format!(
 			"{} {}{}",
@@ -156,10 +156,10 @@ impl Current {
 
 		let wind = format!(
 			"{} {}{} {}",
-			wind_direction.icon,
+			wind_direction.get_icon(),
 			weather.current_weather.windspeed,
 			weather.hourly_units.windspeed_10m,
-			wind_direction.direction
+			wind_direction
 		);
 		let pressure = format!(
 			" {}{}",

@@ -23,7 +23,7 @@ pub struct ForecastDay {
 
 impl Forecast {
 	pub fn render_forecast(product: &Product) -> Result<()> {
-		let forecast = Forecast::generate_days(product)?;
+		let forecast = Self::generate_days(product)?;
 		let width = forecast.width + 8;
 
 		// Border Top

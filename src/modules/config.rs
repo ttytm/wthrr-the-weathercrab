@@ -16,7 +16,7 @@ pub struct Config {
 
 impl Default for Config {
 	fn default() -> Self {
-		Self {
+		Config {
 			address: None,
 			unit: Some(TempUnit::Celsius),
 			method: Some("default".to_string()),
@@ -28,9 +28,9 @@ impl Default for Config {
 
 #[derive(Display, EnumString, Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum TempUnit {
-	#[strum(serialize = "celsius", serialize = "°C")]
+	#[strum(serialize = "celsius")]
 	Celsius,
-	#[strum(serialize = "fahrenheit", serialize = "°F")]
+	#[strum(serialize = "fahrenheit")]
 	Fahrenheit,
 }
 
@@ -50,7 +50,7 @@ impl Config {
 		if args.save_config {
 			lib::store("weathercrab", "wthrr", &new_config)?;
 		} else if self.address.is_none() {
-			Config::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string()).await?;
+			Self::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string()).await?;
 		}
 
 		Ok(())

@@ -1,5 +1,4 @@
 use anyhow::{Context, Result};
-use reqwest::Url;
 use serde::{Deserialize, Serialize};
 
 use crate::config::TempUnit;
@@ -76,20 +75,18 @@ pub struct Daily {
 
 impl Weather {
 	pub async fn get(lat: f64, lon: f64, unit: &TempUnit) -> Result<Weather> {
-		let url: String = format!(
+		let url = format!(
             "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit={}&timezone=auto",
 			lat,
 			lon,
             unit
 		);
 
-		let url = Url::parse(&*url)?;
-
 		let res = reqwest::get(url)
 			.await?
 			.json::<Weather>()
 			.await
-			.with_context(|| "Failed getting weather data.")?;
+			.with_context(|| "Weather data request failed.")?;
 
 		Ok(res)
 	}

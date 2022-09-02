@@ -1,8 +1,8 @@
 use anyhow::Result;
 use term_painter::{Color::*, ToStyle};
 
-use crate::display::{current::Current, forecast::Forecast};
 use crate::Product;
+use {current::Current, forecast::Forecast};
 
 mod border;
 mod current;

@@ -31,8 +31,7 @@ pub struct Address {
 
 impl Geolocation {
 	pub async fn get() -> Result<Geolocation> {
-		let url: String = "https://api.geoip.rs/".to_string();
-		let url = Url::parse(&*url)?;
+		let url = Url::parse("https://api.geoip.rs")?;
 
 		let res = reqwest::get(url).await?.json::<Geolocation>().await?;
 
@@ -40,7 +39,7 @@ impl Geolocation {
 	}
 
 	pub async fn search(address: &str, lang: &str) -> Result<Vec<Address>> {
-		let url: String = format!(
+		let url = format!(
 			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=json",
 			address, lang
 		);
