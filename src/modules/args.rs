@@ -15,6 +15,10 @@ pub struct Args {
 	#[clap(short, long, value_parser, action)]
 	pub forecast: bool,
 
+	/// Output language [default: 'en']
+	#[clap(short, long, value_parser)]
+	pub language: Option<String>,
+
 	/// Save the supplied values as default
 	#[clap(short, long, value_parser, action, groups = &["config changes"])]
 	pub save_config: bool,
