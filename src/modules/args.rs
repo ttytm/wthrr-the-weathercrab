@@ -19,6 +19,10 @@ pub struct Args {
 	#[clap(short, long, value_parser)]
 	pub language: Option<String>,
 
+	/// Toggle greeting message
+	#[clap(short, long, value_parser, action)]
+	pub greeting: bool,
+
 	/// Save the supplied values as default
 	#[clap(short, long, value_parser, action, groups = &["config changes"])]
 	pub save_config: bool,

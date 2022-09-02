@@ -4,7 +4,7 @@ use clap::Parser;
 use modules::*;
 mod modules;
 
-use {args::Args, config::Config, location::Geolocation, translation::*, weather::Weather};
+use {args::Args, config::Config, greeting::handle_greeting, location::Geolocation, weather::Weather};
 
 pub struct Product {
 	weather: Weather,
@@ -22,7 +22,7 @@ async fn main() -> Result<()> {
 		return Ok(());
 	}
 
-	greeting(&params).await?;
+	handle_greeting(params.greeting.unwrap(), &params.language.as_ref().unwrap()).await?;
 
 	let product = run(&params).await?;
 
@@ -43,22 +43,4 @@ pub async fn run(params: &Config) -> Result<Product> {
 	};
 
 	Ok(product)
-}
-
-async fn greeting(params: &Config) -> Result<()> {
-	// Add is_none check to cover manual deletion of greeting option in config file
-	// TODO: extend greeting in params
-	if params.greeting.is_none() || !params.greeting.unwrap() {
-		return Ok(());
-	}
-
-	let greeting = translate(
-		params.language.as_ref().unwrap(),
-		"Hey friend. I'm glad you are asking.",
-	)
-	.await?;
-
-	println!("  🦀  {}", greeting);
-
-	Ok(())
 }
