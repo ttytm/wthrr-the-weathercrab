@@ -39,11 +39,10 @@ impl Geolocation {
 		Ok(res)
 	}
 
-	pub async fn search(address: &str) -> Result<Vec<Address>> {
-		// TODO: add language support
+	pub async fn search(address: &str, lang: &str) -> Result<Vec<Address>> {
 		let url: String = format!(
-			"https://nominatim.openstreetmap.org/search?q={}&accept-language=en&limit=1&format=json",
-			address,
+			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=json",
+			address, lang
 		);
 
 		let client = Client::new();
@@ -60,5 +59,23 @@ impl Geolocation {
 		}
 
 		Ok(res)
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[tokio::test]
+	async fn test_address_translation_response() -> Result<()> {
+		let (address, lang_de, lang_pl) = ("berlin", "de", "pl");
+
+		let loc_de = Geolocation::search(address, lang_de).await?;
+		let loc_pl = Geolocation::search(address, lang_pl).await?;
+
+		assert!(loc_de[0].display_name.contains("Deutschland"));
+		assert!(loc_pl[0].display_name.contains("Niemcy"));
+
+		Ok(())
 	}
 }
