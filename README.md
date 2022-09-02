@@ -22,9 +22,9 @@ Even when you don't spend a lot of time in the terminal. She has a sunny persona
 wthrr
 ```
 
-When you don't specify an address. Wthrr will use the address that you have configured as default.<br>
+When no address is specified wthrr will use the address that is configured as default.<br>
 If you don't have a configuration yet, wthrr can try to search for a weather station close to you and
-save the last searched location as your default.
+save the last searched location as default.
 
 **You can always specify any address with your call.** E.g.,
 
@@ -33,16 +33,16 @@ wthrr melbourne
 ```
 
 Depending on the location you search for, you need to be more specific.
-For example, the call above will get you Melbourne in Australia. If you aim for Melbourne in the US, you could ask for `melbourne,florida`.
-To ask about a city containing spaces, write it separated with a dash or wrapped in quotes (e.g., `new-york` or `'new york'`).
+For example, the call above will give you Melbourne in Australia. If you are aiming for Melbourne in the US, ask for `melbourne,florida`.
+For cities containing spaces, write it separated with a dash or wrap it in quotation marks (e.g., `new-york` or `'new york'`).
 
-If you have a default address configured, but you want wthrr to explicitly search for a nearby weather station, you can do so by calling:
+If there is a default address configured, but you want wthrr to explicitly search for a nearby weather station, you can do so by calling:
 
 ```
 wthrr auto
 ```
 
-### The help information gives you an overview of further usage parameters
+### The help information contains further usage parameters
 
 ```
 > wthrr -h
@@ -71,22 +71,24 @@ _First run example asking for the forecast of the week_
 
 ### Config file
 
-Saving a configuration as default, will result in a config file being crated in your config directory.
-E.g., on GNU/Linux this usually is: `~/<username>/.config/weathercrab/wthrr.toml`
+Adding the `-s` flag will save the values from the run as default.
+E.g., on GNU/Linux the location of the config file usually is: `~/<username>/.config/weathercrab/wthrr.toml`
 
-You probably don't have to bother with the config file, as you can save your settings through adding the `-s` flag.
-For the sake of completeness the config contents are as follows.
-
-Currently, just three values are being saved:
+You probably don't have to bother with the config file itself, as you can save your defaults directly via the terminal.
+For the sake of completeness, the config contents are as follows.
 
 ```toml
-# Address that resulted in the call you saved. E.g. when called for `berlin`,
-address = 'Berlin, Germany'
-# Temperature unit from weather response: '°C' || '°F'
-unit = '°C'
+# Address to check the weather for
+address = 'berlin'
+# Temperature unit: 'Celsius' || 'Fahrenheit'
+unit = 'Celsius'
 # Method used when calling `wthrr` without adding an address: 'default' || 'auto' || 'manual'
 # 'default' -> use config address ; 'auto' -> search for a station ; 'manual' -> require address input
 method = 'default'
+# Greeting message display: true || false 
+greeting = true
+# Language of the output: 'de' || 'pl' || 'zh' ...
+language = 'en'
 ```
 
 ## Requirements
@@ -94,23 +96,23 @@ method = 'default'
 This app uses font icons and emojis. Therefore, a nerd variant of your font is required to correctly display the output.
 https://github.com/ryanoasis/nerd-fonts
 
-<sub>If you are using brew, this gist contains easy digestible copy-pasta for nerd-font installation.<br>
+<sub>If you are using brew, this gist contains easily digestible copy-pasta for nerd-font installation.<br>
 https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>
 
-Some terminal emulators might require you to additionally add/prioritize emojis in their font config.
+Some terminal emulators might require to additionally add/prioritize emojis in their font config.
 
 ## Installation
 
 Without the rust toolchain installed, grabbing a binary from the [release](https://github.com/tobealive/wthrr-the-weathercrab/releases) page might be your way to go.
 
-Otherwise, rusts package manager is a simple way to install the binary crate.
+Otherwise, rusts package manager is a simple way to install the binary crate:
 
 ```
 cargo install wthrr
 ```
 
 If you are on NetBSD, a package is available from the official repositories.
-To install it, simply run,
+To install it, simply run:
 
 ```
 pkgin install wthrr
@@ -141,7 +143,7 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
-- [ ] Language support
+- [x] Language support
 - [ ] Allow to show more / customized meteorological data
 - [ ] Custom number of forecast days
 - [ ] Theme variants
@@ -151,3 +153,4 @@ Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are wel
 ## Credits
 
 -  The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
+
