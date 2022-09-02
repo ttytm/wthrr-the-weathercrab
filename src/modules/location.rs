@@ -67,23 +67,14 @@ mod tests {
 	use super::*;
 
 	#[tokio::test]
-	async fn test_german_address_response() -> Result<()> {
-		let (address, lang) = ("berlin", "de");
+	async fn test_address_translation_response() -> Result<()> {
+		let (address, lang_de, lang_pl) = ("berlin", "de", "pl");
 
-		let loc = Geolocation::search(address, lang).await?;
+		let loc_de = Geolocation::search(address, lang_de).await?;
+		let loc_pl = Geolocation::search(address, lang_pl).await?;
 
-		assert!(loc[0].display_name.contains("Deutschland"));
-
-		Ok(())
-	}
-
-	#[tokio::test]
-	async fn test_polish_address_response() -> Result<()> {
-		let (address, lang) = ("berlin", "pl");
-
-		let loc = Geolocation::search(address, lang).await?;
-
-		assert!(loc[0].display_name.contains("Niemcy"));
+		assert!(loc_de[0].display_name.contains("Deutschland"));
+		assert!(loc_pl[0].display_name.contains("Niemcy"));
 
 		Ok(())
 	}
