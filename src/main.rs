@@ -15,13 +15,12 @@ pub struct Product {
 async fn main() -> Result<()> {
 	let args = Args::parse();
 	let config: Config = confy::lib::load("weathercrab", "wthrr")?;
+	let params = params::get(&args, &config).await?;
 
 	if args.reset_config {
-		Config::reset()?;
+		Config::reset(&params.language.unwrap()).await?;
 		return Ok(());
 	}
-
-	let params = params::get(&args, &config).await?;
 
 	greeting(&params).await?;
 
@@ -29,7 +28,7 @@ async fn main() -> Result<()> {
 
 	display::render(&product, args.forecast)?;
 
-	config.handle_next(args, params)?;
+	config.handle_next(args, params).await?;
 
 	Ok(())
 }
@@ -47,14 +46,19 @@ pub async fn run(params: &Config) -> Result<Product> {
 }
 
 async fn greeting(params: &Config) -> Result<()> {
-	if !params.greeting.unwrap() {
+	// Add is_none check to cover manual deletion of greeting option in config file
+	// TODO: extend greeting in params
+	if params.greeting.is_none() || !params.greeting.unwrap() {
 		return Ok(());
 	}
 
-	let greeting_en = "Hey friend. I'm glad you are asking.";
-	let greeting_translated = translate(params.language.as_ref().unwrap(), greeting_en).await?;
+	let greeting = translate(
+		params.language.as_ref().unwrap(),
+		"Hey friend. I'm glad you are asking.",
+	)
+	.await?;
 
-	println!("  🦀  {}", greeting_translated);
+	println!("  🦀  {}", greeting);
 
 	Ok(())
 }

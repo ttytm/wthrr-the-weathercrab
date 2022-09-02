@@ -2,6 +2,10 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 
 pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
+	if target_lang == "en" {
+		return Ok(input.to_string());
+	}
+
 	let url: String = format!(
 		"https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=t&sl=en&tl={}&q={}",
 		target_lang, input
@@ -13,7 +17,7 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 		.await
 		.with_context(|| "Translation request failed.")?;
 
-	let translated_str;
+	let output;
 	match res.first() {
 		Some(i) => {
 			let result = i
@@ -24,15 +28,14 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 				.collect::<Vec<&str>>()
 				.join("");
 
-			translated_str = result;
+			output = result;
 		}
 		_ => {
-			translated_str = "".to_string();
-			eprintln!("{}", ("Error..."))
+			output = String::new();
 		}
 	}
 
-	Ok(translated_str)
+	Ok(output)
 }
 
 #[cfg(test)]
@@ -44,7 +47,6 @@ mod tests {
 		let (target_lang, input) = ("de", "tounge-twister");
 
 		let res = translate(target_lang, input).await?;
-		println!("res {}", res);
 
 		assert!(res.contains("Zungenbrecher"));
 
