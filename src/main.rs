@@ -17,11 +17,6 @@ async fn main() -> Result<()> {
 	let config: Config = confy::lib::load("weathercrab", "wthrr")?;
 	let params = params::get(&args, &config).await?;
 
-	if args.reset_config {
-		Config::reset(&params.language.unwrap()).await?;
-		return Ok(());
-	}
-
 	handle_greeting(params.greeting.unwrap(), &params.language.as_ref().unwrap()).await?;
 
 	let product = run(&params).await?;
