@@ -66,7 +66,7 @@ mod tests {
 	use super::*;
 
 	#[tokio::test]
-	async fn test_address_translation_response() -> Result<()> {
+	async fn search_address_lang_response() -> Result<()> {
 		let (address, lang_de, lang_pl) = ("berlin", "de", "pl");
 
 		let loc_de = Geolocation::search(address, lang_de).await?;

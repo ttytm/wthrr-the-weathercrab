@@ -44,7 +44,7 @@ mod tests {
 	use super::*;
 
 	#[tokio::test]
-	async fn test_translation() -> Result<()> {
+	async fn translate_string() -> Result<()> {
 		let (target_lang, input) = ("de", "tounge-twister");
 
 		let res = translate(target_lang, input).await?;
