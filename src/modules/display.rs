@@ -10,11 +10,11 @@ mod forecast;
 mod weathercode;
 mod wind;
 
-pub fn render(product: &Product, add_forecast: bool) -> Result<()> {
-	Current::render(product)?;
+pub async fn render(product: &Product, add_forecast: bool, lang: &str) -> Result<()> {
+	Current::render(product, lang).await?;
 
 	if add_forecast {
-		Forecast::render_forecast(product)?;
+		Forecast::render_forecast(product, lang).await?;
 	}
 
 	// Disclaimer

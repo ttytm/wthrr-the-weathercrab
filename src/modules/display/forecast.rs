@@ -22,8 +22,8 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub fn render_forecast(product: &Product) -> Result<()> {
-		let forecast = Self::generate_days(product)?;
+	pub async fn render_forecast(product: &Product, lang: &str) -> Result<()> {
+		let forecast = Self::generate_days(product, lang).await?;
 		let width = forecast.width + 8;
 
 		// Border Top
@@ -66,7 +66,7 @@ impl Forecast {
 		Ok(())
 	}
 
-	fn generate_days(product: &Product) -> Result<Self> {
+	async fn generate_days(product: &Product, lang: &str) -> Result<Self> {
 		let mut days = Vec::new();
 		let mut width: usize = 0;
 
@@ -82,7 +82,7 @@ impl Forecast {
 			// let date = date.format("%a, %b %e").to_string();
 			let date = &date.to_rfc2822()[..11];
 
-			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None)?;
+			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None, lang).await?;
 			let weather = format!(
 				"{} {}{}/{}{}",
 				weather_code.icon,
