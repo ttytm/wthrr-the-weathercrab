@@ -1,199 +1,201 @@
 use anyhow::{anyhow, Result};
 
+use crate::translation::translate;
+
 pub struct WeatherCode {
 	pub interpretation: String,
 	pub icon: String,
 }
 
 impl WeatherCode {
-	pub fn resolve(weather_code: &f64, night: Option<bool>) -> Result<Self> {
+	pub async fn resolve(weather_code: &f64, night: Option<bool>, lang: &str) -> Result<Self> {
 		let is_night = night.unwrap_or_default();
 		let c = *weather_code as u8;
 		let (interpretation, icon);
 
 		match c {
 			0 => {
-				interpretation = "Clear sky";
+				interpretation = translate(lang, "Clear sky").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			1 => {
-				interpretation = "Mainly Clear";
+				interpretation = translate(lang, "Mainly Clear").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			2 => {
-				interpretation = "Partly Cloudy";
+				interpretation = translate(lang, "Partly Cloudy").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			3 => {
-				interpretation = "Overcast";
+				interpretation = translate(lang, "Overcast").await?;
 				icon = "";
 			}
 			45 => {
-				interpretation = "Fog";
+				interpretation = translate(lang, "Fog").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			48 => {
-				interpretation = "Depositing Rime Fog";
+				interpretation = translate(lang, "Depositing Rime Fog").await?;
 				icon = "";
 			}
 			51 => {
-				interpretation = "Light Drizzle";
+				interpretation = translate(lang, "Light Drizzle").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			53 => {
-				interpretation = "Moderate Drizzle";
+				interpretation = translate(lang, "Moderate Drizzle").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			55 => {
-				interpretation = "Dense Drizzle";
+				interpretation = translate(lang, "Dense Drizzle").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			56 => {
-				interpretation = "Light Freezing Drizzle";
+				interpretation = translate(lang, "Light Freezing Drizzle").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "ﭽ",
 				}
 			}
 			57 => {
-				interpretation = "Dense Freezing Drizzle";
+				interpretation = translate(lang, "Dense Freezing Drizzle").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "ﭽ",
 				}
 			}
 			61 => {
-				interpretation = "Slight Rain";
+				interpretation = translate(lang, "Slight Rain").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			63 => {
-				interpretation = "Moderate Rain";
+				interpretation = translate(lang, "Moderate Rain").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			65 => {
-				interpretation = "Heavy Rain";
+				interpretation = translate(lang, "Heavy Rain").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			66 => {
-				interpretation = "Light Freezing Rain";
+				interpretation = translate(lang, "Light Freezing Rain").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			67 => {
-				interpretation = "Heavy Freezing Rain";
+				interpretation = translate(lang, "Heavy Freezing Rain").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			71 => {
-				interpretation = "Slight Snow Fall";
+				interpretation = translate(lang, "Slight Snow Fall").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			73 => {
-				interpretation = "Moderate Snow Fall";
+				interpretation = translate(lang, "Moderate Snow Fall").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			75 => {
-				interpretation = "Heavy Snow Fall";
+				interpretation = translate(lang, "Heavy Snow Fall").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			77 => {
-				interpretation = "Snow Grains";
+				interpretation = translate(lang, "Snow Grains").await?;
 				icon = "";
 			}
 			80 => {
-				interpretation = "Slight Rain Showers";
+				interpretation = translate(lang, "Slight Rain Showers").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			81 => {
-				interpretation = "Moderate Rain Showers";
+				interpretation = translate(lang, "Moderate Rain Showers").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			82 => {
-				interpretation = "Violent Rain Showers";
+				interpretation = translate(lang, "Violent Rain Showers").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			85 => {
-				interpretation = "Slight Snow Showers";
+				interpretation = translate(lang, "Slight Snow Showers").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			86 => {
-				interpretation = "Heavy Snow Showers";
+				interpretation = translate(lang, "Heavy Snow Showers").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			95 => {
-				interpretation = "Thunderstorm";
+				interpretation = translate(lang, "Thunderstorm").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			96 => {
-				interpretation = "Thunderstorm, Slight Hail";
+				interpretation = translate(lang, "Thunderstorm, Slight Hail").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
 				}
 			}
 			99 => {
-				interpretation = "Thunderstorm, Heavy Hail";
+				interpretation = translate(lang, "Thunderstorm, Heavy Hail").await?;
 				match is_night {
 					true => icon = "",
 					false => icon = "",
@@ -203,7 +205,7 @@ impl WeatherCode {
 		}
 
 		Ok(WeatherCode {
-			interpretation: interpretation.to_string(),
+			interpretation,
 			icon: icon.to_string(),
 		})
 	}

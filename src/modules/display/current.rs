@@ -3,7 +3,7 @@ use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
 use crate::modules::display::{border::Border, weathercode::WeatherCode, wind::WindDirection};
-use crate::Product;
+use crate::{translation::translate, Product};
 
 pub struct Current {
 	title: String,
@@ -25,7 +25,7 @@ struct Dimensions {
 }
 
 impl Current {
-	pub fn render(product: &Product) -> Result<()> {
+	pub async fn render(product: &Product, lang: &str) -> Result<()> {
 		let dims = Dimensions {
 			max_width: 60,
 			min_width: 34,
@@ -43,7 +43,7 @@ impl Current {
 			sun_time,
 			wmo_code,
 			width,
-		} = Self::prepare(product, &dims)?;
+		} = Self::prepare(product, &dims, lang).await?;
 
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
@@ -114,7 +114,7 @@ impl Current {
 		Ok(())
 	}
 
-	fn prepare(product: &Product, dims: &Dimensions) -> Result<Self> {
+	async fn prepare(product: &Product, dims: &Dimensions, lang: &str) -> Result<Self> {
 		let weather = &product.weather;
 		let title = Self::check_title_len(product.address.clone(), dims.max_width)?;
 		let title_len = title.chars().count();
@@ -132,7 +132,7 @@ impl Current {
 			weather.daily.sunset[0][11..13].parse().unwrap_or_default(),
 		);
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
-		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night))?;
+		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night), lang).await?;
 		let wind_direction = WindDirection::get_direction(weather.current_weather.winddirection)?;
 
 		let temperature = format!(
@@ -141,17 +141,23 @@ impl Current {
 		);
 
 		let apparent_temperature = format!(
-			"Feels like {}{}",
-			weather.hourly.apparent_temperature[current_hour], weather.hourly_units.temperature_2m
+			"{} {}{}",
+			translate(lang, "Feels like").await?,
+			weather.hourly.apparent_temperature[current_hour],
+			weather.hourly_units.temperature_2m
 		);
 
 		let humidity = format!(
-			"Humidity: {}{}",
-			weather.hourly.relativehumidity_2m[current_hour], weather.hourly_units.relativehumidity_2m,
+			"{}: {}{}",
+			translate(lang, "Humidity").await?,
+			weather.hourly.relativehumidity_2m[current_hour],
+			weather.hourly_units.relativehumidity_2m,
 		);
 		let dewpoint = format!(
-			"Dew Point: {}{}",
-			weather.hourly.dewpoint_2m[current_hour], weather.hourly_units.dewpoint_2m
+			"{}: {}{}",
+			translate(lang, "Dew Point").await?,
+			weather.hourly.dewpoint_2m[current_hour],
+			weather.hourly_units.dewpoint_2m
 		);
 
 		let wind = format!(
