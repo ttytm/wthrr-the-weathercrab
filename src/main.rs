@@ -3,11 +3,9 @@ use clap::Parser;
 use std::str::FromStr;
 
 use modules::*;
-mod modules;
+use {args::Args, config::Config, config::TempUnit, location::Geolocation, weather::Weather};
 
-use {
-	args::Args, config::Config, config::TempUnit, greeting::handle_greeting, location::Geolocation, weather::Weather,
-};
+mod modules;
 
 pub struct Product {
 	weather: Weather,
@@ -20,7 +18,7 @@ async fn main() -> Result<()> {
 	let config: Config = confy::lib::load("weathercrab", "wthrr")?;
 	let params = params::get(&args, &config).await?;
 
-	handle_greeting(params.greeting.unwrap(), &params.language.as_ref().unwrap()).await?;
+	greeting::handle_greeting(params.greeting.unwrap(), &params.language.as_ref().unwrap()).await?;
 
 	let product = run(&params).await?;
 

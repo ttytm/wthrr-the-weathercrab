@@ -2,7 +2,7 @@ use anyhow::Result;
 use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use crate::modules::display::{border::Border, weathercode::WeatherCode, wind::WindDirection};
+use super::{border::Border, weathercode::WeatherCode, wind::WindDirection};
 use crate::{translation::translate, Product};
 
 pub struct Current {
