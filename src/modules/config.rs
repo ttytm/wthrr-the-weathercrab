@@ -1,14 +1,15 @@
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
-use strum_macros::{Display, EnumString};
+use std::convert::AsRef;
+use strum_macros::{AsRefStr, Display, EnumString};
 
 use crate::{args::Args, confy::lib, translation::translate};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
 	pub address: Option<String>,
-	pub unit: Option<TempUnit>,
+	pub unit: Option<String>,
 	pub method: Option<String>,
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
@@ -18,7 +19,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Config {
 			address: None,
-			unit: Some(TempUnit::Celsius),
+			unit: Some(TempUnit::Celsius.as_ref().to_string()),
 			method: Some("default".to_string()),
 			greeting: Some(true),
 			language: Some("en".to_string()),
@@ -26,11 +27,10 @@ impl Default for Config {
 	}
 }
 
-#[derive(Display, EnumString, Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Display, EnumString, Serialize, Deserialize, Debug, PartialEq, Clone, AsRefStr)]
+#[strum(serialize_all = "snake_case")]
 pub enum TempUnit {
-	#[strum(serialize = "celsius")]
 	Celsius,
-	#[strum(serialize = "fahrenheit")]
 	Fahrenheit,
 }
 

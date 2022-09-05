@@ -1,10 +1,13 @@
 use anyhow::Result;
 use clap::Parser;
+use std::str::FromStr;
 
 use modules::*;
 mod modules;
 
-use {args::Args, config::Config, greeting::handle_greeting, location::Geolocation, weather::Weather};
+use {
+	args::Args, config::Config, config::TempUnit, greeting::handle_greeting, location::Geolocation, weather::Weather,
+};
 
 pub struct Product {
 	weather: Weather,
@@ -33,7 +36,7 @@ pub async fn run(params: &Config) -> Result<Product> {
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
 	let product = Product {
-		weather: Weather::get(lat, lon, params.unit.as_ref().unwrap()).await?,
+		weather: Weather::get(lat, lon, &TempUnit::from_str(params.unit.as_ref().unwrap()).unwrap()).await?,
 		address: loc[0].display_name.to_string(),
 	};
 

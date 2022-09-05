@@ -26,13 +26,13 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 	)
 	.await?;
 
-	let unit = unit::get(args.unit.as_deref().unwrap_or_default(), config.unit.as_ref())?;
+	let unit = unit::get(args.unit.as_deref().unwrap_or_default(), config.unit.as_ref().unwrap())?;
 
 	let greeting = greeting::get(args.greeting, config.greeting)?;
 
 	Ok(Config {
 		address: Some(address),
-		unit: Some(unit),
+		unit: Some(unit.as_ref().to_string()),
 		language: Some(lang.to_string()),
 		greeting: Some(greeting),
 		..Config::clone(config)

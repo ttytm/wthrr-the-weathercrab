@@ -45,7 +45,7 @@ mod tests {
 		let arg_address = "new york";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
-			unit: Some(TempUnit::Fahrenheit),
+			unit: Some(TempUnit::Fahrenheit.as_ref().to_string()),
 			..Default::default()
 		};
 
@@ -66,7 +66,7 @@ mod tests {
 		let arg_address = "";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
-			unit: Some(TempUnit::Fahrenheit),
+			unit: Some(TempUnit::Fahrenheit.as_ref().to_string()),
 			..Default::default()
 		};
 
