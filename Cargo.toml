@@ -1,7 +1,7 @@
 [package]
 name = "wthrr"
-version = "0.1.4"
-authors = ["Turiiya <moj@vpocket.de>"]
+version = "0.2.0"
+authors = ["Turiiya <tobmoj@web.de>"]
 edition = "2021"
 license = "MIT"
 description = "Weather companion for the terminal"

@@ -88,7 +88,7 @@ unit = 'celsius'
 method = 'default'
 # Greeting message display: true || false 
 greeting = true
-# Language of the output: 'de' || 'pl' || 'zh' ...
+# Language of the output: 'de' || 'pl' ...
 language = 'en'
 ```
 
@@ -144,7 +144,7 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
-- [ ] Multilang support
+- [x] Multilang support
 - [ ] Allow to show more / customized meteorological data
 - [ ] Custom number of forecast days
 - [ ] Theme variants
