@@ -1,6 +1,7 @@
 use anyhow::Result;
+use std::str::FromStr;
 
-use crate::config::TempUnit;
+use crate::config::{Config, TempUnit};
 
 pub fn get(args_unit: &str, config_unit: &str) -> Result<TempUnit> {
 	let unit = if args_unit.is_empty() && !config_unit.is_empty() {
@@ -11,7 +12,7 @@ pub fn get(args_unit: &str, config_unit: &str) -> Result<TempUnit> {
 	} else if args_unit == "f" || args_unit == "fahrenheit" {
 		TempUnit::Fahrenheit
 	} else {
-		TempUnit::Celsius
+		TempUnit::from_str(&Config::default().unit.unwrap()).unwrap()
 	};
 
 	Ok(unit)
