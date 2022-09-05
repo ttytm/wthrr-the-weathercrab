@@ -1,15 +1,17 @@
 use anyhow::Result;
 
+use crate::config::Config;
+
 pub fn get(args_lang: &str, config_lang: &str) -> Result<String> {
 	let lang = if !args_lang.is_empty() {
-		args_lang
+		args_lang.to_string()
 	} else if args_lang.is_empty() && !config_lang.is_empty() {
-		config_lang
+		config_lang.to_string()
 	} else {
-		"en"
+		Config::default().language.unwrap()
 	};
 
-	Ok(lang.to_string())
+	Ok(lang)
 }
 
 #[cfg(test)]
