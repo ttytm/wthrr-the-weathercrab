@@ -22,14 +22,13 @@ Even when you don't spend a lot of time in the terminal. She has a sunny persona
 wthrr
 ```
 
-When no address is specified wthrr will use the address that is configured as default.<br>
+When no address is specified wthrr will use your default [config](https://github.com/tobealive/wthrr-the-weathercrab#config).<br>
 If you don't have a configuration yet, wthrr can try to search for a weather station close to you and
 save the last searched location as default.
 
 **You can always specify any address with your call.** E.g.,
 
-```
-wthrr melbourne
+``` wthrr melbourne
 ```
 
 Depending on the location you search for, you need to be more specific.
@@ -54,12 +53,14 @@ ARGS:
     <ADDRESS>    Address to check the weather for
 
 OPTIONS:
-    -f, --forecast        Include the forecast for one week
-    -h, --help            Print help information
-    -r, --reset-config    Wipe wthrr's configuration data
-    -s, --save-config     Save the supplied values as default
-    -u, --unit <UNIT>     Unit of measurement ['c' (°Celsius) | 'f' (°Fahrenheit)] [default: c]
-    -V, --version         Print version information
+    -f, --forecast               Include the forecast for one week
+    -g, --greeting               Toggle greeting message
+    -h, --help                   Print help information
+    -l, --language <LANGUAGE>    Output language [default: 'en']
+    -r, --reset-config           Wipe wthrr's configuration data
+    -s, --save-config            Save the supplied values as default
+    -u, --unit <UNIT>            Unit of measurement ['c' (°Celsius) | 'f' (°Fahrenheit)]
+    -V, --version                Print version information
 ```
 
 ---
@@ -69,7 +70,7 @@ _First run example asking for the forecast of the week_
 
 ---
 
-### Config file
+### Config
 
 Adding the `-s` flag will save the values from the run as default.
 E.g., on GNU/Linux the location of the config file usually is: `~/<username>/.config/weathercrab/wthrr.toml`
@@ -79,9 +80,9 @@ For the sake of completeness, the config contents are as follows.
 
 ```toml
 # Address to check the weather for
-address = 'berlin'
-# Temperature unit: 'Celsius' || 'Fahrenheit'
-unit = 'Celsius'
+address = 'berlin,germany'
+# Temperature unit: 'celsius' || 'fahrenheit'
+unit = 'celsius'
 # Method used when calling `wthrr` without adding an address: 'default' || 'auto' || 'manual'
 # 'default' -> use config address ; 'auto' -> search for a station ; 'manual' -> require address input
 method = 'default'
@@ -143,7 +144,7 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 
 ## Outlook
 
-- [x] Language support
+- [ ] Multilang support
 - [ ] Allow to show more / customized meteorological data
 - [ ] Custom number of forecast days
 - [ ] Theme variants
