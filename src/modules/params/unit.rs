@@ -2,10 +2,10 @@ use anyhow::Result;
 
 use crate::config::TempUnit;
 
-pub fn get(args_unit: &str, config_unit: Option<&TempUnit>) -> Result<TempUnit> {
-	let unit = if args_unit.is_empty() && config_unit.is_some() {
+pub fn get(args_unit: &str, config_unit: &str) -> Result<TempUnit> {
+	let unit = if args_unit.is_empty() && !config_unit.is_empty() {
 		match config_unit {
-			unit if unit == Some(&TempUnit::Fahrenheit) => TempUnit::Fahrenheit,
+			unit if unit == TempUnit::Fahrenheit.as_ref() => TempUnit::Fahrenheit,
 			_ => TempUnit::Celsius,
 		}
 	} else if args_unit == "f" || args_unit == "fahrenheit" {
@@ -24,9 +24,9 @@ mod tests {
 	#[test]
 	fn temp_unit_from_arg() -> Result<()> {
 		let arg_unit = "f";
-		let cfg_unit = TempUnit::Celsius;
+		let cfg_unit = "celsius";
 
-		assert_eq!(get(arg_unit, Some(&cfg_unit))?, TempUnit::Fahrenheit);
+		assert_eq!(get(arg_unit, cfg_unit)?, TempUnit::Fahrenheit);
 
 		Ok(())
 	}
@@ -34,9 +34,9 @@ mod tests {
 	#[test]
 	fn temp_unit_from_cfg() -> Result<()> {
 		let arg_unit = "";
-		let cfg_unit = TempUnit::Fahrenheit;
+		let cfg_unit = "fahrenheit";
 
-		assert_eq!(get(arg_unit, Some(&cfg_unit))?, TempUnit::Fahrenheit);
+		assert_eq!(get(arg_unit, cfg_unit)?, TempUnit::Fahrenheit);
 
 		Ok(())
 	}
@@ -44,8 +44,9 @@ mod tests {
 	#[test]
 	fn temp_unit_fallback() -> Result<()> {
 		let arg_unit = "a";
+		let cfg_unit = "";
 
-		assert_eq!(get(arg_unit, None)?, TempUnit::Celsius);
+		assert_eq!(get(arg_unit, cfg_unit)?, TempUnit::Celsius);
 
 		Ok(())
 	}
