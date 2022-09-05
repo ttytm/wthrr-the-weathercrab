@@ -9,7 +9,7 @@ pub fn get(args_unit: &str, config_unit: &str) -> Result<TempUnit> {
 			unit if unit == TempUnit::Fahrenheit.as_ref() => TempUnit::Fahrenheit,
 			_ => TempUnit::Celsius,
 		}
-	} else if args_unit == "f" || args_unit == "fahrenheit" {
+	} else if args_unit == "f" || args_unit == TempUnit::Fahrenheit.as_ref() {
 		TempUnit::Fahrenheit
 	} else {
 		TempUnit::from_str(&Config::default().unit.unwrap()).unwrap()

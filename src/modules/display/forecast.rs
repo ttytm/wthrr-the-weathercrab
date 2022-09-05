@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use crate::modules::display::{border::Border, weathercode::WeatherCode};
+use super::{border::Border, weathercode::WeatherCode};
 use crate::Product;
 
 #[derive(Serialize, Deserialize, Debug)]
