@@ -28,7 +28,8 @@ save the last searched location as default.
 
 **You can always specify any address with your call.** E.g.,
 
-``` wthrr melbourne
+``` 
+wthrr melbourne
 ```
 
 Depending on the location you search for, you need to be more specific.
