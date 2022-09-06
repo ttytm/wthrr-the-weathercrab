@@ -5,7 +5,7 @@ use crate::{location::Geolocation, translation::translate};
 
 pub async fn get(args_address: &str, config_address: &str, config_method: &str, lang: &str) -> Result<String> {
 	if args_address.is_empty() && config_method == "manual" {
-		return Err(anyhow!(translate(&lang, "Please specify a city.").await?));
+		return Err(anyhow!(translate(lang, "Please specify a city.").await?));
 	}
 
 	let address =
@@ -14,7 +14,7 @@ pub async fn get(args_address: &str, config_address: &str, config_method: &str, 
 				let auto_location_prompt = Confirm::with_theme(&ColorfulTheme::default())
 					.with_prompt(
 						translate(
-							&lang,
+							lang,
 							"You didn't specify a city. Should I check for a weather station close to your location?",
 						)
 						.await?,

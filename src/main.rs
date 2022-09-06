@@ -18,11 +18,11 @@ async fn main() -> Result<()> {
 	let config: Config = confy::lib::load("weathercrab", "wthrr")?;
 	let params = params::get(&args, &config).await?;
 
-	greeting::handle_greeting(params.greeting.unwrap(), &params.language.as_ref().unwrap()).await?;
+	greeting::handle_greeting(params.greeting.unwrap(), params.language.as_ref().unwrap()).await?;
 
 	let product = run(&params).await?;
 
-	display::render(&product, args.forecast, &params.language.as_ref().unwrap()).await?;
+	display::render(&product, args.forecast, params.language.as_ref().unwrap()).await?;
 
 	config.handle_next(args, params).await?;
 
