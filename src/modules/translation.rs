@@ -18,7 +18,6 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 		.await
 		.with_context(|| "Translation request failed.")?;
 
-	let output;
 	match res.first() {
 		Some(i) => {
 			let result = i
@@ -29,14 +28,10 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 				.collect::<Vec<&str>>()
 				.join("");
 
-			output = result;
+			Ok(result)
 		}
-		_ => {
-			output = String::new();
-		}
+		_ => Ok(String::new()),
 	}
-
-	Ok(output)
 }
 
 #[cfg(test)]
