@@ -108,7 +108,7 @@ impl Config {
 
 	pub async fn reset(lang: &str) -> Result<()> {
 		let confirmation = Confirm::with_theme(&ColorfulTheme::default())
-			.with_prompt(translate(&lang, "This will wipe wthrr's configuration. Continue?").await?)
+			.with_prompt(translate(lang, "This will wipe wthrr's configuration. Continue?").await?)
 			.interact()?;
 
 		if confirmation {
