@@ -84,9 +84,6 @@ For the sake of completeness, the config contents are as follows.
 address = 'berlin,germany'
 # Temperature unit: 'celsius' || 'fahrenheit'
 unit = 'celsius'
-# Method used when calling `wthrr` without adding an address: 'default' || 'auto' || 'manual'
-# 'default' -> use config address ; 'auto' -> search for a station ; 'manual' -> require address input
-method = 'default'
 # Greeting message display: true || false 
 greeting = true
 # Language of the output: 'de' || 'pl' ...
