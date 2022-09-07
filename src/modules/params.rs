@@ -21,7 +21,6 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 	let address = address::get(
 		args.address.as_deref().unwrap_or_default(),
 		config.address.as_deref().unwrap_or_default(),
-		config.method.as_deref().unwrap_or_default(),
 		&lang,
 	)
 	.await?;

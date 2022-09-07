@@ -10,7 +10,6 @@ use crate::{args::Args, confy::lib, translation::translate};
 pub struct Config {
 	pub address: Option<String>,
 	pub unit: Option<String>,
-	pub method: Option<String>,
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
 }
@@ -20,7 +19,6 @@ impl Default for Config {
 		Config {
 			address: None,
 			unit: Some(TempUnit::Celsius.as_ref().to_string()),
-			method: Some("default".to_string()),
 			greeting: Some(true),
 			language: Some("en".to_string()),
 		}
@@ -36,12 +34,16 @@ pub enum TempUnit {
 
 impl Config {
 	pub async fn handle_next(&self, args: Args, params: Config) -> Result<()> {
-		if !args.save_config && (self.address.is_some() || self.method.as_deref().unwrap_or_default() == "manual") {
+		if !args.save_config && self.address.is_some() {
 			return Ok(());
 		}
 
 		let new_config = Config {
-			address: Some(params.address.unwrap()),
+			address: if self.address.is_some() && args.address.as_deref().unwrap_or_default() == "auto" {
+				Some("auto".to_string())
+			} else {
+				Some(params.address.unwrap())
+			},
 			unit: Some(params.unit.unwrap()),
 			language: Some(params.language.unwrap()),
 			..Default::default()
@@ -57,15 +59,13 @@ impl Config {
 	}
 
 	async fn save_prompt(mut new_config: Config, args_address: String) -> Result<()> {
-		let include_auto_location = args_address.is_empty() || args_address == "auto";
-
 		let mut items = vec![
 			translate(new_config.language.as_ref().unwrap(), "Yes please").await?,
 			translate(new_config.language.as_ref().unwrap(), "No, ask me next time").await?,
 			translate(new_config.language.as_ref().unwrap(), "No, dont ask me again").await?,
 		];
 
-		if include_auto_location {
+		if args_address.is_empty() || args_address == "auto" {
 			items.push(
 				translate(
 					new_config.language.as_ref().unwrap(),
@@ -75,14 +75,14 @@ impl Config {
 			)
 		}
 
-		let prompt_translated = translate(
-			new_config.language.as_ref().unwrap(),
-			"Would you like to use this as your default location?",
-		)
-		.await?;
-
 		let selection = Select::new()
-			.with_prompt(prompt_translated)
+			.with_prompt(
+				translate(
+					new_config.language.as_ref().unwrap(),
+					"Would you like to use this as your default location?",
+				)
+				.await?,
+			)
 			.items(&items)
 			.default(0)
 			.interact()?;
@@ -90,14 +90,8 @@ impl Config {
 		match selection {
 			0 => {}
 			1 => return Ok(()),
-			2 => {
-				new_config = Config {
-					address: None,
-					method: Some("manual".to_string()),
-					..new_config
-				}
-			}
-			3 => new_config.method = Some("auto".to_string()),
+			2 => new_config.address = None,
+			3 => new_config.address = Some("auto".to_string()),
 			_ => println!("User did not select anything or exited using Esc or q"),
 		}
 
