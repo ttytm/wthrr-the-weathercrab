@@ -1,36 +1,31 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use dialoguer::{theme::ColorfulTheme, Confirm};
 
 use crate::{location::Geolocation, translation::translate};
 
-pub async fn get(args_address: &str, config_address: &str, config_method: &str, lang: &str) -> Result<String> {
-	if args_address.is_empty() && config_method == "manual" {
-		return Err(anyhow!(translate(lang, "Please specify a city.").await?));
-	}
-
-	let address =
-		if args_address == "auto" || args_address.is_empty() && (config_method == "auto" || config_method.is_empty()) {
-			if args_address.is_empty() && config_method.is_empty() {
-				let auto_location_prompt = Confirm::with_theme(&ColorfulTheme::default())
-					.with_prompt(
-						translate(
-							lang,
-							"You didn't specify a city. Should I check for a weather station close to your location?",
-						)
-						.await?,
-					)
-					.interact()?;
-				if !auto_location_prompt {
-					std::process::exit(1);
-				}
-			}
-			let auto_loc = Geolocation::get().await?;
-			format!("{},{}", auto_loc.city_name, auto_loc.country_code)
-		} else if args_address.is_empty() && !config_address.is_empty() {
-			config_address.to_string()
-		} else {
-			args_address.to_string()
-		};
+pub async fn get(args_address: &str, config_address: &str, lang: &str) -> Result<String> {
+	let address = if args_address.is_empty()
+		&& config_address.is_empty()
+		&& Confirm::with_theme(&ColorfulTheme::default())
+			.with_prompt(
+				translate(
+					lang,
+					"You didn't specify a city. Should I check for a weather station close to your location?",
+				)
+				.await?,
+			)
+			.interact()?
+	{
+		let auto_loc = Geolocation::get().await?;
+		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
+	} else if args_address == "auto" || config_address == "auto" {
+		let auto_loc = Geolocation::get().await?;
+		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
+	} else if args_address.is_empty() && !config_address.is_empty() {
+		config_address.to_string()
+	} else {
+		args_address.to_string()
+	};
 
 	Ok(address)
 }
@@ -38,25 +33,19 @@ pub async fn get(args_address: &str, config_address: &str, config_method: &str, 
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::config::{Config, TempUnit};
+	use crate::config::Config;
 
 	#[tokio::test]
 	async fn address_from_arg() -> Result<()> {
 		let arg_address = "new york";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
-			unit: Some(TempUnit::Fahrenheit.as_ref().to_string()),
 			..Default::default()
 		};
 
-		assert!(get(
-			arg_address,
-			config.address.as_deref().unwrap_or_default(),
-			config.method.as_deref().unwrap_or_default(),
-			"en"
-		)
-		.await?
-		.contains("new york"));
+		let res = get(arg_address, config.address.as_deref().unwrap_or_default(), "en").await?;
+
+		assert!(res.contains("new york"));
 
 		Ok(())
 	}
@@ -66,18 +55,12 @@ mod tests {
 		let arg_address = "";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
-			unit: Some(TempUnit::Fahrenheit.as_ref().to_string()),
 			..Default::default()
 		};
 
-		assert!(get(
-			arg_address,
-			config.address.as_deref().unwrap_or_default(),
-			config.method.as_deref().unwrap_or_default(),
-			"en"
-		)
-		.await?
-		.contains("Berlin"));
+		let res = get(arg_address, config.address.as_deref().unwrap_or_default(), "en").await?;
+
+		assert!(res.contains("Berlin"));
 
 		Ok(())
 	}
