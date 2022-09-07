@@ -34,6 +34,5 @@ pub async fn get(args: &Args, config: &Config) -> Result<Config> {
 		unit: Some(unit.as_ref().to_string()),
 		language: Some(lang.to_string()),
 		greeting: Some(greeting),
-		..Config::clone(config)
 	})
 }
