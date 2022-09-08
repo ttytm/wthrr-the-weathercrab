@@ -18,20 +18,18 @@ pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
 		.await
 		.with_context(|| "Translation request failed.")?;
 
-	match res.first() {
-		Some(i) => {
-			let result = i
-				.as_array()
-				.unwrap()
-				.iter()
-				.map(|s| s[0].as_str().unwrap())
-				.collect::<Vec<&str>>()
-				.join("");
+	let output = match res.first() {
+		Some(i) => i
+			.as_array()
+			.unwrap()
+			.iter()
+			.map(|s| s[0].as_str().unwrap())
+			.collect::<Vec<&str>>()
+			.join(""),
+		_ => String::new(),
+	};
 
-			Ok(result)
-		}
-		_ => Ok(String::new()),
-	}
+	Ok(output)
 }
 
 #[cfg(test)]
