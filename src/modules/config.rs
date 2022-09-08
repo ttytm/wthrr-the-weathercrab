@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::AsRef;
 use strum_macros::{AsRefStr, Display, EnumString};
 
-use crate::{args::Args, confy::lib, translation::translate};
+use crate::{args::Args, translation::translate};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -50,7 +50,7 @@ impl Config {
 		};
 
 		if args.save_config {
-			lib::store("weathercrab", "wthrr", &new_config)?;
+			confy::store("weathercrab", "wthrr", &new_config)?;
 		} else if self.address.is_none() {
 			Self::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string()).await?;
 		}
@@ -95,7 +95,7 @@ impl Config {
 			_ => println!("User did not select anything or exited using Esc or q"),
 		}
 
-		lib::store("weathercrab", "wthrr", &new_config)?;
+		confy::store("weathercrab", "wthrr", &new_config)?;
 
 		Ok(())
 	}
@@ -106,7 +106,7 @@ impl Config {
 			.interact()?;
 
 		if confirmation {
-			let file = lib::get_configuration_file_path("weathercrab", "wthrr")?;
+			let file = confy::get_configuration_file_path("weathercrab", "wthrr")?;
 
 			std::fs::remove_dir_all(file.parent().unwrap()).with_context(|| "Error resetting config file.")?;
 		}

@@ -10,7 +10,7 @@ mod modules;
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Args::parse();
-	let config: Config = confy::lib::load("weathercrab", "wthrr")?;
+	let config: Config = confy::load("weathercrab", "wthrr")?;
 	let params = params::get(&args, &config).await?;
 
 	greeting::handle_greeting(params.greeting.unwrap(), params.language.as_ref().unwrap()).await?;
