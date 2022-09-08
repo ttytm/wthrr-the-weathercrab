@@ -2,8 +2,8 @@ use anyhow::Result;
 use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use super::{border::Border, weathercode::WeatherCode, wind::WindDirection};
-use crate::{translation::translate, Product};
+use super::{border::Border, weathercode::WeatherCode, wind::WindDirection, Product};
+use crate::translation::translate;
 
 pub struct Current {
 	title: String,

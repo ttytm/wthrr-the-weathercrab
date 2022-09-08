@@ -4,21 +4,20 @@ use dialoguer::{theme::ColorfulTheme, Confirm};
 use crate::{location::Geolocation, translation::translate};
 
 pub async fn get(args_address: &str, config_address: &str, lang: &str) -> Result<String> {
-	let address = if args_address.is_empty()
-		&& config_address.is_empty()
-		&& Confirm::with_theme(&ColorfulTheme::default())
-			.with_prompt(
-				translate(
-					lang,
-					"You didn't specify a city. Should I check for a weather station close to your location?",
+	let address = if args_address == "auto" || (args_address.is_empty() && config_address.is_empty()) {
+		if args_address.is_empty()
+			&& !Confirm::with_theme(&ColorfulTheme::default())
+				.with_prompt(
+					translate(
+						lang,
+						"You didn't specify a city. Should I check for a weather station close to your location?",
+					)
+					.await?,
 				)
-				.await?,
-			)
-			.interact()?
-	{
-		let auto_loc = Geolocation::get().await?;
-		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
-	} else if args_address == "auto" || config_address == "auto" {
+				.interact()?
+		{
+			std::process::exit(1);
+		}
 		let auto_loc = Geolocation::get().await?;
 		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
 	} else if args_address.is_empty() && !config_address.is_empty() {

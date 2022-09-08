@@ -1,7 +1,7 @@
 use anyhow::Result;
 use term_painter::{Color::*, ToStyle};
 
-use crate::Product;
+use crate::Weather;
 use {current::Current, forecast::Forecast};
 
 mod border;
@@ -10,18 +10,25 @@ mod forecast;
 mod weathercode;
 mod wind;
 
-pub async fn render(product: &Product, add_forecast: bool, lang: &str) -> Result<()> {
-	Current::render(product, lang).await?;
+pub struct Product {
+	pub weather: Weather,
+	pub address: String,
+}
 
-	if add_forecast {
-		Forecast::render_forecast(product, lang).await?;
+impl Product {
+	pub async fn render(&self, add_forecast: bool, lang: &str) -> Result<()> {
+		Current::render(self, lang).await?;
+
+		if add_forecast {
+			Forecast::render_forecast(self, lang).await?;
+		}
+
+		// Disclaimer
+		BrightBlack.with(|| println!(" Weather data by Open-Meteo.com"));
+
+		// Reset colors
+		NotSet.with(|| println!());
+
+		Ok(())
 	}
-
-	// Disclaimer
-	BrightBlack.with(|| println!(" Weather data by Open-Meteo.com"));
-
-	// Reset colors
-	NotSet.with(|| println!());
-
-	Ok(())
 }

@@ -4,8 +4,7 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use super::{border::Border, weathercode::WeatherCode};
-use crate::Product;
+use super::{border::Border, weathercode::WeatherCode, Product};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Forecast {

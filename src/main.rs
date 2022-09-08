@@ -3,14 +3,9 @@ use clap::Parser;
 use std::str::FromStr;
 
 use modules::*;
-use {args::Args, config::Config, config::TempUnit, location::Geolocation, weather::Weather};
+use {args::Args, config::Config, config::TempUnit, display::Product, location::Geolocation, weather::Weather};
 
 mod modules;
-
-pub struct Product {
-	weather: Weather,
-	address: String,
-}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -22,7 +17,7 @@ async fn main() -> Result<()> {
 
 	let product = run(&params).await?;
 
-	display::render(&product, args.forecast, params.language.as_ref().unwrap()).await?;
+	product.render(args.forecast, params.language.as_ref().unwrap()).await?;
 
 	config.handle_next(args, params).await?;
 
