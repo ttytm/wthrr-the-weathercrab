@@ -147,7 +147,7 @@ And you'll find the `wthrr` binary inside the `./target/release` directory
 - [ ] Custom number of forecast days
 - [ ] Theme variants
 
-Your contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
+Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike.
 
 ## Credits
 
