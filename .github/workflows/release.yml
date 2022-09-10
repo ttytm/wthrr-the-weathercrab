@@ -63,12 +63,14 @@ jobs:
       - name: List
         run: find ./
       - name: Install and configure dependencies
+        # dependencies are only needed on ubuntu 
+        # as that's the only place where we build the AppImage and would make cross-compilation
+        if: ${{ matrix.OS == 'ubuntu-latest' }}
         run: |
-          # dependencies are only needed on ubuntu as that's the only place where
-          # we make cross-compilation
-          if [[ $OS =~ ^ubuntu.*$ ]]; then
-            sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf
-          fi
+          sudo wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+          cargo install cargo-appimage
+          # sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf
           # some additional configuration for cross-compilation on linux
           # cat >>~/.cargo/config <<EOF
           # [target.aarch64-unknown-linux-gnu]
@@ -79,37 +81,44 @@ jobs:
       - name: Install rust target
         run: rustup target add $TARGET
       - name: Run build
-        run: cargo build --release --verbose --target $TARGET
+        run: |
+          if [[ $OS =~ ^ubuntu.*$ ]]; then
+            cargo appimage 
+          fi
+          cargo build --release --verbose --target $TARGET
       - name: List target
         run: find ./target
-      - name: Compress
+      - name: Prepare artifacts
         run: |
           mkdir -p ./artifacts
-          # windows is the only OS using a different convention for executable file name
           if [[ $OS =~ ^windows.*$ ]]; then
-              EXEC=$NAME.exe
+            EXEC=$NAME.exe
           else
-              EXEC=$NAME
+            EXEC=$NAME
           fi
           if [[ $GITHUB_REF_TYPE =~ ^tag$ ]]; then
             TAG=$GITHUB_REF_NAME
           else
             TAG=$GITHUB_SHA
           fi
-          # beautify release targets
+          if [[ $OS =~ ^ubuntu.*$ ]]; then 
+            mv ./wthrr-*-x86_64.AppImage ./artifacts/wthrr-$TAG-x86_64.AppImage 
+          fi
+          # beautify release targets (remove '-unknown' / '-gnu' from filename)
           TRUNC_TARGET=$(echo $TARGET | sed -e 's/-unknown//' -e 's/-gnu//')
-          DISPLAY_NAME=$NAME-$TRUNC_TARGET-$TAG
+          DISPLAY_NAME=$NAME-$TAG-$TRUNC_TARGET
           mkdir $DISPLAY_NAME
           cp README.md LICENSE $DISPLAY_NAME/
           mv ./target/$TARGET/release/$EXEC ./$DISPLAY_NAME/$EXEC
+          # compress
           tar -czf ./artifacts/$DISPLAY_NAME.tar.gz $DISPLAY_NAME
-      - name: Archive artifact
+      - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
           name: result
           path: |
             ./artifacts
-  # deploys to github releases on tag
+  # deploy to github release tag
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
@@ -125,4 +134,4 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./artifacts/*.tar.gz
+          files: ./artifacts/*.tar.gz, ./artifacts/*.AppImage
