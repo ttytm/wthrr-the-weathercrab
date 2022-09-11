@@ -74,7 +74,7 @@ _First run example asking for the forecast of the week_
 ### Config
 
 Adding the `-s` flag will save the values from the run as default.
-E.g., on GNU/Linux the location of the config file usually is: `~/<username>/.config/weathercrab/wthrr.toml`
+E.g., on GNU/Linux the location of the config file usually is: `~/.config/weathercrab/wthrr.toml`
 
 You probably don't have to bother with the config file itself, as you can save your defaults directly via the terminal.
 For the sake of completeness, the config contents are as follows.
