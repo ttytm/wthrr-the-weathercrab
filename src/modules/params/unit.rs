@@ -1,18 +1,16 @@
 use anyhow::Result;
 use std::str::FromStr;
 
-use crate::config::{Config, TempUnit};
+use crate::params::TempUnit;
 
 pub fn get(args_unit: &str, config_unit: &str) -> Result<TempUnit> {
 	let unit = if args_unit.is_empty() && !config_unit.is_empty() {
 		match config_unit {
-			unit if unit == TempUnit::Fahrenheit.as_ref() => TempUnit::Fahrenheit,
+			unit if unit.contains(TempUnit::Fahrenheit.as_ref()) => TempUnit::Fahrenheit,
 			_ => TempUnit::Celsius,
 		}
-	} else if args_unit == "f" || args_unit == TempUnit::Fahrenheit.as_ref() {
-		TempUnit::Fahrenheit
 	} else {
-		TempUnit::from_str(&Config::default().unit.unwrap()).unwrap()
+		TempUnit::from_str(args_unit).unwrap_or_default()
 	};
 
 	Ok(unit)
@@ -23,9 +21,9 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn temp_unit_from_arg() -> Result<()> {
+	fn temp_units_from_arg() -> Result<()> {
 		let arg_unit = "f";
-		let cfg_unit = "celsius";
+		let cfg_unit = "celsius,knots";
 
 		assert_eq!(get(arg_unit, cfg_unit)?, TempUnit::Fahrenheit);
 

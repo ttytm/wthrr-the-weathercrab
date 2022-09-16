@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::config::TempUnit;
+use crate::params::TempUnit;
 
 // Open meteo json
 // E.g., London:

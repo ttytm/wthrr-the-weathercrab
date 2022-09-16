@@ -1,10 +1,12 @@
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
-use std::convert::AsRef;
-use strum_macros::{AsRefStr, Display, EnumString};
 
-use crate::{args::Args, translation::translate};
+use crate::{
+	args::Args,
+	params::{Params, TempUnit},
+	translation::translate,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -16,24 +18,17 @@ pub struct Config {
 
 impl Default for Config {
 	fn default() -> Self {
-		Config {
+		Self {
 			address: None,
-			unit: Some(TempUnit::Celsius.as_ref().to_string()),
+			unit: Some(TempUnit::default().to_string()),
 			greeting: Some(true),
 			language: Some("en".to_string()),
 		}
 	}
 }
 
-#[derive(Display, EnumString, Serialize, Deserialize, Debug, PartialEq, Clone, AsRefStr)]
-#[strum(serialize_all = "snake_case")]
-pub enum TempUnit {
-	Celsius,
-	Fahrenheit,
-}
-
 impl Config {
-	pub async fn handle_next(&self, args: Args, params: Config) -> Result<()> {
+	pub async fn handle_next(&self, args: Args, params: Params) -> Result<()> {
 		if !args.save_config && self.address.is_some() {
 			return Ok(());
 		}
@@ -42,10 +37,10 @@ impl Config {
 			address: if self.address.is_some() && args.address.as_deref().unwrap_or_default() == "auto" {
 				Some("auto".to_string())
 			} else {
-				Some(params.address.unwrap())
+				Some(params.address)
 			},
-			unit: Some(params.unit.unwrap()),
-			language: Some(params.language.unwrap()),
+			unit: Some(params.temp_unit.to_string()),
+			language: Some(params.language),
 			..Default::default()
 		};
 

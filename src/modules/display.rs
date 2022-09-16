@@ -11,15 +11,15 @@ mod weathercode;
 mod wind;
 
 pub struct Product {
-	pub weather: Weather,
 	pub address: String,
+	pub weather: Weather,
 }
 
 impl Product {
-	pub async fn render(&self, add_forecast: bool, lang: &str) -> Result<()> {
+	pub async fn render(&self, include_forecast: bool, lang: &str) -> Result<()> {
 		Current::render(self, lang).await?;
 
-		if add_forecast {
+		if include_forecast {
 			Forecast::render_forecast(self, lang).await?;
 		}
 

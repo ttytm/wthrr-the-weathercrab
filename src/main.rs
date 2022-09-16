@@ -1,37 +1,34 @@
 use anyhow::Result;
 use clap::Parser;
-use std::str::FromStr;
 
 use modules::*;
-use {args::Args, config::Config, config::TempUnit, display::Product, location::Geolocation, weather::Weather};
+use modules::{args::Args, display::Product, location::Geolocation, params::Params, weather::Weather};
 
 mod modules;
 
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Args::parse();
-	let config: Config = confy::load("weathercrab", "wthrr")?;
-	let params = params::get(&args, &config).await?;
+	let config = confy::load("weathercrab", "wthrr")?;
+	let params = Params::get(&args, &config).await?;
 
-	greeting::handle_greeting(params.greeting.unwrap(), params.language.as_ref().unwrap()).await?;
+	greeting::handle_greeting(params.greeting, &params.language).await?;
 
 	let product = run(&params).await?;
 
-	product.render(args.forecast, params.language.as_ref().unwrap()).await?;
+	product.render(args.forecast, &params.language).await?;
 
 	config.handle_next(args, params).await?;
 
 	Ok(())
 }
 
-pub async fn run(params: &Config) -> Result<Product> {
-	let loc = Geolocation::search(params.address.as_ref().unwrap(), params.language.as_ref().unwrap()).await?;
+pub async fn run(params: &Params) -> Result<Product> {
+	let loc = Geolocation::search(&params.address, &params.language).await?;
 	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
 
-	let product = Product {
-		weather: Weather::get(lat, lon, &TempUnit::from_str(params.unit.as_ref().unwrap()).unwrap()).await?,
-		address: loc[0].display_name.to_string(),
-	};
+	let address = loc[0].display_name.to_string();
+	let weather = Weather::get(lat, lon, &params.temp_unit).await?;
 
-	Ok(product)
+	Ok(Product { address, weather })
 }
