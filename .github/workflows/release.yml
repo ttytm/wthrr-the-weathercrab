@@ -102,7 +102,7 @@ jobs:
             TAG=$GITHUB_SHA
           fi
           if [[ $OS =~ ^ubuntu.*$ ]]; then 
-            mv ./wthrr-*-x86_64.AppImage ./artifacts/wthrr-$TAG-x86_64.AppImage 
+            mv ./wthrr-*-x86_64.AppImage ./artifacts/wthrr-$TAG-x86_64-linux.AppImage 
           fi
           # beautify release targets (remove '-unknown' / '-gnu' from filename)
           TRUNC_TARGET=$(echo $TARGET | sed -e 's/-unknown//' -e 's/-gnu//')
