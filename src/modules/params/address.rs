@@ -4,8 +4,11 @@ use dialoguer::{theme::ColorfulTheme, Confirm};
 use crate::{location::Geolocation, translation::translate};
 
 pub async fn get(args_address: &str, config_address: &str, lang: &str) -> Result<String> {
-	let address = if args_address == "auto" || (args_address.is_empty() && config_address.is_empty()) {
-		if args_address.is_empty()
+	let address = if (args_address.is_empty() && config_address.is_empty())
+		|| args_address == "auto"
+		|| (args_address.is_empty() && config_address == "auto")
+	{
+		if (args_address.is_empty() && config_address.is_empty())
 			&& !Confirm::with_theme(&ColorfulTheme::default())
 				.with_prompt(
 					translate(

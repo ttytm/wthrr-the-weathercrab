@@ -3,15 +3,18 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	args::Args,
-	params::{Params, TempUnit},
+	args::Cli,
+	params::{
+		unit::{SpeedUnit, TempUnit},
+		Params,
+	},
 	translation::translate,
 };
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
 	pub address: Option<String>,
-	pub unit: Option<String>,
+	pub units: Option<String>,
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
 }
@@ -20,7 +23,11 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			unit: Some(TempUnit::default().to_string()),
+			units: Some(format!(
+				"{},{}",
+				TempUnit::default().as_ref(),
+				SpeedUnit::default().as_ref(),
+			)),
 			greeting: Some(true),
 			language: Some("en".to_string()),
 		}
@@ -28,8 +35,8 @@ impl Default for Config {
 }
 
 impl Config {
-	pub async fn handle_next(&self, args: Args, params: Params) -> Result<()> {
-		if !args.save_config && self.address.is_some() {
+	pub async fn handle_next(&self, args: Cli, params: Params) -> Result<()> {
+		if !args.save && self.address.is_some() {
 			return Ok(());
 		}
 
@@ -39,15 +46,19 @@ impl Config {
 			} else {
 				Some(params.address)
 			},
-			unit: Some(params.temp_unit.to_string()),
+			units: Some(format!(
+				"{},{}",
+				params.units.temperature.as_ref(),
+				params.units.speed.as_ref()
+			)),
+			greeting: Some(params.greeting),
 			language: Some(params.language),
-			..Default::default()
 		};
 
-		if args.save_config {
-			confy::store("weathercrab", "wthrr", &new_config)?;
-		} else if self.address.is_none() {
+		if self.address.is_none() {
 			Self::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string()).await?;
+		} else {
+			confy::store("weathercrab", "wthrr", &new_config)?;
 		}
 
 		Ok(())
@@ -74,7 +85,7 @@ impl Config {
 			.with_prompt(
 				translate(
 					new_config.language.as_ref().unwrap(),
-					"Would you like to use this as your default location?",
+					"Would you like to use this as your default?",
 				)
 				.await?,
 			)

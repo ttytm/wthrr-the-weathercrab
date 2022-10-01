@@ -1,8 +1,9 @@
 use anyhow::Result;
 use term_painter::{Color::*, ToStyle};
 
-use crate::Weather;
-use {current::Current, forecast::Forecast};
+use crate::weather::Weather;
+
+use self::{current::Current, forecast::Forecast};
 
 mod border;
 mod current;

@@ -1,33 +1,49 @@
-use clap::Parser;
+use clap::{Parser, ValueEnum};
+use strum_macros::AsRefStr;
 
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-pub struct Args {
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+pub struct Cli {
 	/// Address to check the weather for
-	#[clap(value_parser)]
 	pub address: Option<String>,
 
-	/// Unit of measurement ['c' (°Celsius) | 'f' (°Fahrenheit)]
-	#[clap(short, long, value_parser)]
-	pub unit: Option<String>,
-
 	/// Include the forecast for one week
-	#[clap(short, long, value_parser, action)]
+	#[arg(short, long, action)]
 	pub forecast: bool,
 
-	/// Output language [default: 'en']
-	#[clap(short, long, value_parser)]
+	/// Units for temperature and/or speed
+	#[arg(long, short, next_line_help = false, use_value_delimiter = true, num_args(..=2))]
+	pub units: Vec<ArgUnits>,
+
+	/// Output language
+	#[arg(short, long)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[clap(short, long, value_parser, action)]
+	#[arg(short, long, action)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default
-	#[clap(short, long, value_parser, action, groups = &["config changes"])]
-	pub save_config: bool,
+	#[arg(short, long, action, group = "config_file_action", global = true)]
+	pub save: bool,
 
 	/// Wipe wthrr's configuration data
-	#[clap(short, long, value_parser, action, groups = &["config changes"])]
-	pub reset_config: bool,
+	#[arg(short, long, action, group = "config_file_action", global = true)]
+	pub reset: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, ValueEnum, AsRefStr)]
+#[allow(non_camel_case_types)]
+pub enum ArgUnits {
+	// Temperature
+	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
+	celsius,
+	#[value(name = "(f)ahrenheit", aliases = ["f", "fahrenheit"])]
+	fahrenheit,
+	// Windspeed
+	kmh,
+	mph,
+	#[value(name = "(kn)ots", aliases = ["kn", "knots"])]
+	kn,
+	ms,
 }
