@@ -2,8 +2,9 @@ use anyhow::Result;
 use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
-use super::{border::Border, weathercode::WeatherCode, wind::WindDirection, Product};
 use crate::translation::translate;
+
+use super::{border::Border, weathercode::WeatherCode, wind::WindDirection, Product};
 
 pub struct Current {
 	title: String,
@@ -124,12 +125,13 @@ impl Current {
 			dims.min_width
 		}) + 3 * 2;
 
+		let (sunrise_time, sunset_time) = (&weather.daily.sunrise[0][11..16], &weather.daily.sunset[0][11..16]);
 		let (current_hour, sunrise_hour, sunset_hour) = (
 			weather.current_weather.time[11..13]
 				.parse::<usize>()
 				.unwrap_or_default(),
-			weather.daily.sunrise[0][11..13].parse().unwrap_or_default(),
-			weather.daily.sunset[0][11..13].parse().unwrap_or_default(),
+			sunrise_time[1..3].parse().unwrap_or_default(),
+			sunset_time[1..3].parse().unwrap_or_default(),
 		);
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night), lang).await?;
@@ -172,12 +174,7 @@ impl Current {
 			weather.hourly.surface_pressure[current_hour], weather.hourly_units.surface_pressure
 		);
 
-		let sun_time = format!(
-			" {: <2$} {}",
-			weather.daily.sunrise[0][11..16].to_string(),
-			weather.daily.sunset[0][11..16].to_string(),
-			dims.cell_width - 2
-		);
+		let sun_time = format!(" {: <2$} {}", sunrise_time, sunset_time, dims.cell_width - 2);
 
 		Ok(Current {
 			title,
@@ -208,7 +205,7 @@ impl Current {
 
 	fn trunc_title(title: String) -> Result<String> {
 		// let title_commas = title.matches(',').count();
-		// the results seems better for many places with overlong names when partially removing text
+		// For many places with overlong names the results seem better when partially removing text
 		// between first and second comma instead of removing it between penultimate and last comma
 
 		let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
