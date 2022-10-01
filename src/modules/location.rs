@@ -54,7 +54,7 @@ impl Geolocation {
 			.await?;
 
 		if res.is_empty() {
-			return Err(anyhow!("Failed getting location information."));
+			return Err(anyhow!("Location request failed."));
 		}
 
 		Ok(res)
