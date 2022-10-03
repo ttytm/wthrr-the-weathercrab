@@ -1,5 +1,4 @@
 use anyhow::Result;
-use regex::Regex;
 use term_painter::{Attr::*, Color::*, ToStyle};
 
 use crate::translation::translate;
@@ -117,7 +116,7 @@ impl Current {
 
 	async fn prepare(product: &Product, dims: &Dimensions, lang: &str) -> Result<Self> {
 		let weather = &product.weather;
-		let title = Self::check_title_len(product.address.clone(), dims.max_width)?;
+		let title = Product::check_address_len(product.address.clone(), dims.max_width)?;
 		let title_len = title.chars().count();
 		let width = (if title_len > dims.min_width {
 			title_len
@@ -188,30 +187,5 @@ impl Current {
 			wmo_code,
 			width,
 		})
-	}
-
-	fn check_title_len(title: String, max_width: usize) -> Result<String> {
-		let title_len = title.chars().count();
-		let mut new_title = if title_len > max_width {
-			Self::trunc_title(title)?
-		} else {
-			title
-		};
-		if title_len > max_width {
-			new_title = Self::check_title_len(new_title, max_width)?;
-		}
-		Ok(new_title)
-	}
-
-	fn trunc_title(title: String) -> Result<String> {
-		// let title_commas = title.matches(',').count();
-		// For many places with overlong names the results seem better when partially removing text
-		// between first and second comma instead of removing it between penultimate and last comma
-
-		let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
-		let re = Regex::new(&prep_re).unwrap();
-		let truncated_title = re.replace(&title, "$1$2").to_string();
-
-		Ok(truncated_title)
 	}
 }
