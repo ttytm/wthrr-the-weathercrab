@@ -1,6 +1,9 @@
 use anyhow::Result;
-use term_painter::{Color::*, ToStyle};
 use regex::Regex;
+use term_painter::{
+	Color::{BrightBlack, NotSet},
+	ToStyle,
+};
 
 use crate::weather::Weather;
 

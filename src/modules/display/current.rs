@@ -1,5 +1,5 @@
 use anyhow::Result;
-use term_painter::{Attr::*, Color::*, ToStyle};
+use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 
 use crate::translation::translate;
 
