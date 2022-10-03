@@ -1,11 +1,8 @@
 # 🦀 wthrr-the-weathercrab
 
-`wthrr` lives in your terminal and her passion is the weather.
+`wthrr` lives in your terminal and her passion is meteorology.
 
-If you spent a lot of time in the CLI it comes handy to have a little companion nearby who knows about the weather.
-
-<sub>Even when you don't spend a lot of time in the terminal. She has a sunny personality, so you can visit her once in a while.
-_Little tip: ask her about the weather._</sub>
+If you spent some time in the CLI it comes in handy to have a little companion nearby who knows about the weather.
 
 ## Contents
 
@@ -79,12 +76,12 @@ For the sake of completeness, the config contents are as follows.
 
 ```toml
 # Address to check the weather for
-address = 'berlin,germany'
-# Temperature unit: 'celsius' || 'fahrenheit'
-unit = 'celsius'
-# Greeting message display: true || false
+address = 'berlin,de'
+# Measurement units. Temperature: [celsius, fahrenheit] Speed: [kmh, mph, knots, ms]
+units = 'celsius,kmh'
+# Greeting message display [true, false]
 greeting = true
-# Language of the output: 'de' || 'pl' ...
+# Language of the output: [de, pl, ...]
 language = 'en'
 ```
 
