@@ -1,40 +1,55 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
+use std::str::FromStr;
+use strum::VariantNames;
+use strum_macros::{AsRefStr, EnumString, EnumVariantNames};
 
 use crate::args::ArgUnits;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub struct Units {
-	pub temperature: ArgUnits,
-	pub speed: ArgUnits,
+	pub temperature: Option<Temperature>,
+	pub speed: Option<Speed>,
 }
 
 impl Default for Units {
 	fn default() -> Self {
 		Self {
-			temperature: ArgUnits::Celsius,
-			speed: ArgUnits::Kmh,
+			temperature: Some(Temperature::celsius),
+			speed: Some(Speed::kmh),
 		}
 	}
 }
 
-pub fn get(arg_units: &[ArgUnits], config_units: &str) -> Result<Units> {
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString)]
+#[allow(non_camel_case_types)]
+pub enum Temperature {
+	celsius,
+	fahrenheit,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString)]
+#[allow(non_camel_case_types)]
+pub enum Speed {
+	kmh,
+	mph,
+	knots,
+	ms,
+}
+
+pub fn get(arg_units: &[ArgUnits], config_units: &Units) -> Result<Units> {
 	let mut units = assign_arg_units(arg_units)?;
 
-	if units.temperature == ArgUnits::None {
-		match config_units {
-			unit if unit.contains(ArgUnits::Fahrenheit.as_ref()) => units.temperature = ArgUnits::Fahrenheit,
-			unit if unit.contains(ArgUnits::Celsius.as_ref()) => units.temperature = ArgUnits::Celsius,
-			_ => units.temperature = Units::default().temperature,
-		}
+	if units.temperature == None && config_units.temperature.is_some() {
+		units.temperature = config_units.temperature
+	} else if units.temperature == None && config_units.temperature.is_none() {
+		units.temperature = Units::default().temperature
 	}
-	if units.speed == ArgUnits::None {
-		match config_units {
-			unit if unit.contains(ArgUnits::Kmh.as_ref()) => units.speed = ArgUnits::Kmh,
-			unit if unit.contains(ArgUnits::Mph.as_ref()) => units.speed = ArgUnits::Mph,
-			unit if unit.contains(ArgUnits::Knots.as_ref()) => units.speed = ArgUnits::Knots,
-			unit if unit.contains(ArgUnits::Ms.as_ref()) => units.speed = ArgUnits::Ms,
-			_ => units.speed = Units::default().speed,
-		}
+
+	if units.speed.is_none() && config_units.speed.is_some() {
+		units.speed = config_units.speed
+	} else if units.speed.is_none() && config_units.speed.is_none() {
+		units.speed = Units::default().speed
 	}
 
 	Ok(units)
@@ -42,15 +57,16 @@ pub fn get(arg_units: &[ArgUnits], config_units: &str) -> Result<Units> {
 
 pub fn assign_arg_units(arg_units: &[ArgUnits]) -> Result<Units> {
 	let mut units = Units {
-		temperature: ArgUnits::None,
-		speed: ArgUnits::None,
+		temperature: None,
+		speed: None,
 	};
 
 	for val in arg_units {
-		if let ArgUnits::Celsius | ArgUnits::Fahrenheit = val {
-			units.temperature = *val
-		} else {
-			units.speed = *val
+		if Temperature::VARIANTS.as_ref().contains(&val.as_ref()) {
+			units.temperature = Some(Temperature::from_str(val.as_ref()).unwrap())
+		}
+		if Speed::VARIANTS.as_ref().contains(&val.as_ref()) {
+			units.speed = Some(Speed::from_str(val.as_ref()).unwrap())
 		}
 	}
 
@@ -64,13 +80,16 @@ mod tests {
 	#[test]
 	fn units_from_args() -> Result<()> {
 		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph];
-		let cfg_units = "celsius,knots";
+		let cfg_units = Units {
+			temperature: Some(Temperature::celsius),
+			speed: Some(Speed::kmh),
+		};
 
 		assert_eq!(
-			get(&arg_units, cfg_units)?,
+			get(&arg_units, &cfg_units)?,
 			Units {
-				temperature: ArgUnits::Fahrenheit,
-				speed: ArgUnits::Mph,
+				temperature: Some(Temperature::fahrenheit),
+				speed: Some(Speed::mph),
 			}
 		);
 
@@ -79,14 +98,17 @@ mod tests {
 
 	#[test]
 	fn units_from_cfg() -> Result<()> {
-		let arg_units: Vec<ArgUnits> = vec![];
-		let cfg_units = "fahrenheit,kn";
+		let arg_units = [];
+		let cfg_units = Units {
+			temperature: Some(Temperature::fahrenheit),
+			speed: Some(Speed::knots),
+		};
 
 		assert_eq!(
-			get(&arg_units, cfg_units)?,
+			get(&arg_units, &cfg_units)?,
 			Units {
-				temperature: ArgUnits::Fahrenheit,
-				speed: ArgUnits::Knots,
+				temperature: Some(Temperature::fahrenheit),
+				speed: Some(Speed::knots),
 			}
 		);
 
@@ -96,13 +118,16 @@ mod tests {
 	#[test]
 	fn units_split_from_args_cfg() -> Result<()> {
 		let arg_units = [ArgUnits::Fahrenheit];
-		let cfg_units = "celsius,ms";
+		let cfg_units = Units {
+			temperature: Some(Temperature::celsius),
+			speed: Some(Speed::ms),
+		};
 
 		assert_eq!(
-			get(&arg_units, cfg_units)?,
+			get(&arg_units, &cfg_units)?,
 			Units {
-				temperature: ArgUnits::Fahrenheit,
-				speed: ArgUnits::Ms,
+				temperature: Some(Temperature::fahrenheit),
+				speed: Some(Speed::ms),
 			}
 		);
 
@@ -111,11 +136,11 @@ mod tests {
 
 	#[test]
 	fn units_fallback() -> Result<()> {
-		let arg_units = vec![];
-		let cfg_units = "non_variant";
+		let arg_units = [];
+		let cfg_units = Units::default();
 
 		assert_eq!(
-			get(&arg_units, cfg_units)?,
+			get(&arg_units, &cfg_units)?,
 			Units {
 				temperature: Units::default().temperature,
 				speed: Units::default().speed,

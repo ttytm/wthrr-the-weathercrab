@@ -12,7 +12,7 @@ pub struct Cli {
 	pub commands: Option<Commands>,
 
 	/// Units for temperature and/or speed
-	#[arg(long, short, next_line_help = false, use_value_delimiter = true, num_args(..=2))]
+	#[arg(long, short, next_line_help = false, use_value_delimiter = true, num_args(..2))]
 	pub units: Vec<ArgUnits>,
 
 	/// Output language
@@ -53,7 +53,6 @@ pub struct Forecast {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum ArgUnits {
-	None,
 	// -- Temperature
 	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
 	Celsius,

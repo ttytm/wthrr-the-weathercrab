@@ -6,7 +6,10 @@ use term_painter::{
 	ToStyle,
 };
 
-use crate::{args::ArgUnits, params::units::Units, weather::Weather};
+use crate::{
+	params::units::{Temperature, Units},
+	weather::Weather,
+};
 
 use super::{
 	border::{Border, Separator},
@@ -26,8 +29,8 @@ impl HourlyForecast {
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		let temperature_unit = match units.temperature {
-			ArgUnits::Celsius => "糖",
-			ArgUnits::Fahrenheit => "宅",
+			Some(Temperature::celsius) => "糖",
+			Some(Temperature::fahrenheit) => "宅",
 			_ => " ",
 		};
 		let precipitation_unit = "ₘₘ".to_string();
