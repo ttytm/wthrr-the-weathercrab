@@ -22,7 +22,7 @@ impl WeatherCode {
 				}
 			}
 			1 => {
-				interpretation = translate(lang, "Mainly Clear").await?;
+				interpretation = translate(lang, "Mostly Clear").await?;
 				match is_night {
 					true => icon = '',
 					false => icon = '',
