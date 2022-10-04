@@ -1,4 +1,5 @@
 use clap::{Parser, ValueEnum};
+use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
 
 #[derive(Parser)]
@@ -32,9 +33,10 @@ pub struct Cli {
 	pub reset: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, ValueEnum, AsRefStr)]
+#[derive(Debug, Clone, Copy, PartialEq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum ArgUnits {
+	None,
 	// Temperature
 	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
 	celsius,
