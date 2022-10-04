@@ -48,7 +48,7 @@ impl Params {
 		)
 		.await?;
 
-		let units = units::get(&args.units, config.units.as_deref().unwrap_or_default())?;
+		let units = units::get(&args.units, &config.units.unwrap_or_default())?;
 
 		let greeting = greeting::get(args.greeting, config.greeting)?;
 

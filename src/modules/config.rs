@@ -3,26 +3,26 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	args::{ArgUnits, Cli},
-	params::Params,
+	args::Cli,
+	params::{units::Units, Params},
 	translation::translate,
 };
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
 pub struct Config {
 	pub address: Option<String>,
-	pub units: Option<String>,
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
+	pub units: Option<Units>,
 }
 
 impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			units: Some(format!("{},{}", ArgUnits::Celsius.as_ref(), ArgUnits::Kmh.as_ref())),
 			greeting: Some(true),
 			language: Some("en".to_string()),
+			units: Some(Units::default()),
 		}
 	}
 }
@@ -39,13 +39,12 @@ impl Config {
 			} else {
 				Some(params.address)
 			},
-			units: Some(format!(
-				"{},{}",
-				params.units.temperature.as_ref(),
-				params.units.speed.as_ref()
-			)),
 			greeting: Some(params.greeting),
 			language: Some(params.language),
+			units: Some(Units {
+				temperature: params.units.temperature,
+				speed: params.units.speed,
+			}),
 		};
 
 		if self.address.is_none() {
