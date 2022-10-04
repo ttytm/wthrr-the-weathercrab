@@ -34,18 +34,19 @@ pub struct Cli {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ValueEnum, AsRefStr, Serialize, Deserialize)]
-#[allow(non_camel_case_types)]
+#[strum(serialize_all = "snake_case")]
 pub enum ArgUnits {
 	None,
-	// Temperature
+	// -- Temperature
 	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
-	celsius,
+	Celsius,
 	#[value(name = "(f)ahrenheit", aliases = ["f", "fahrenheit"])]
-	fahrenheit,
-	// Windspeed
-	kmh,
-	mph,
+	Fahrenheit,
+	// -- Windspeed
+	Kmh,
+	Mph,
 	#[value(name = "(kn)ots", aliases = ["kn", "knots"])]
-	kn,
-	ms,
+	#[strum(serialize = "kn")]
+	Knots,
+	Ms,
 }

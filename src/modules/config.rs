@@ -20,7 +20,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			units: Some(format!("{},{}", ArgUnits::celsius.as_ref(), ArgUnits::kmh.as_ref())),
+			units: Some(format!("{},{}", ArgUnits::Celsius.as_ref(), ArgUnits::Kmh.as_ref())),
 			greeting: Some(true),
 			language: Some("en".to_string()),
 		}
