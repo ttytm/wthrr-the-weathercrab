@@ -3,7 +3,12 @@ use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 
 use crate::translation::translate;
 
-use super::{border::Border, weathercode::WeatherCode, wind::WindDirection, Product};
+use super::{
+	border::{Border, Separator},
+	weathercode::WeatherCode,
+	wind::WindDirection,
+	Product,
+};
 
 pub struct Current {
 	title: String,
@@ -58,8 +63,7 @@ impl Current {
 			width - 2
 		);
 
-		// Separator
-		BrightBlack.with(|| println!("{}{}{}", Border::L, "—".repeat(width), Border::R));
+		BrightBlack.with(|| Separator::Line.fmt(width))?;
 
 		// Temperature
 		println!(
@@ -78,8 +82,7 @@ impl Current {
 			width - 1
 		);
 
-		// Blank line
-		BrightBlack.with(|| println!("{}{}{}", Border::L, " ".repeat(width), Border::R));
+		BrightBlack.with(|| Separator::Blank.fmt(width))?;
 
 		let humidity_dewpoint_row = format!("{: <2$}{}", humidity, dewpoint, dims.cell_width);
 		println!(

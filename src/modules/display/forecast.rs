@@ -4,7 +4,11 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use super::{border::Border, weathercode::WeatherCode, Product};
+use super::{
+	border::{Border, Separator},
+	weathercode::WeatherCode,
+	Product,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Forecast {
@@ -53,8 +57,7 @@ impl Forecast {
 				width - 1
 			);
 			if chunks.peek().is_some() {
-				// Separator
-				BrightBlack.with(|| println!("{}{}{}", Border::L, "—".repeat(width), Border::R));
+				BrightBlack.with(|| Separator::Line.fmt(width))?;
 			}
 
 			n += 1;
