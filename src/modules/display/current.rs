@@ -64,7 +64,7 @@ impl Current {
 			BrightBlack.paint(Border::R),
 		);
 
-		BrightBlack.with(|| Separator::Line.fmt(width))?;
+		BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
 
 		// Temperature
 		println!(
@@ -82,7 +82,7 @@ impl Current {
 			BrightBlack.paint(Border::R),
 		);
 
-		BrightBlack.with(|| Separator::Blank.fmt(width))?;
+		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		let humidity_dewpoint_row = format!("{: <2$}{}", humidity, dewpoint, dims.cell_width);
 		println!(

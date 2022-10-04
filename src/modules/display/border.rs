@@ -1,4 +1,3 @@
-use anyhow::Result;
 use strum_macros::Display;
 
 #[derive(Display)]
@@ -28,11 +27,11 @@ pub enum Separator {
 }
 
 impl Separator {
-	pub fn fmt(self, width: usize) -> Result<()> {
+	pub fn fmt(self, width: usize) -> String {
 		match self {
-			Self::Blank => Ok(println!("{}{: >width$}{}", Border::L, "", Border::R)),
-			Self::Line => Ok(println!("├{:─>width$}┤", "")),
-			Self::_Dotted => Ok(println!("├{:┈>width$}┤", "")),
+			Self::Blank => format!("{}{: >width$}{}", Border::L, "", Border::R),
+			Self::Line => format!("├{:─>width$}┤", ""),
+			Self::_Dotted => format!("├{:┈>width$}┤", ""),
 		}
 	}
 }

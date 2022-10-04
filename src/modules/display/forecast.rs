@@ -57,7 +57,7 @@ impl Forecast {
 				width - 2
 			);
 			if chunks.peek().is_some() {
-				BrightBlack.with(|| Separator::Line.fmt(width))?;
+				BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
 			}
 
 			n += 1;
