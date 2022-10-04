@@ -50,11 +50,11 @@ impl Forecast {
 				forecast.days[n].interpretation
 			);
 			println!(
-				"{} {: <3$}{}",
+				"{} {: <3$} {}",
 				BrightBlack.paint(Border::L),
 				merge,
 				BrightBlack.paint(Border::R),
-				width - 1
+				width - 2
 			);
 			if chunks.peek().is_some() {
 				BrightBlack.with(|| Separator::Line.fmt(width))?;

@@ -53,62 +53,59 @@ impl Current {
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
 
+		// for args surround with blank spaces
+		let enclosed_width = width - 2;
+
 		// Title
 		println!(
-			"{} {: ^3$} {}",
+			"{} {: ^enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
-			// Bold.paint(title),
-			title,
+			Bold.paint(title),
 			BrightBlack.paint(Border::R),
-			width - 2
 		);
 
 		BrightBlack.with(|| Separator::Line.fmt(width))?;
 
 		// Temperature
 		println!(
-			"{} {} {}{}{}",
+			"{} {} {}{} {}",
 			BrightBlack.paint(Border::L),
 			Bold.paint(&temperature),
-			wmo_code.interpretation,
-			" ".repeat(width - temperature.chars().count() - wmo_code.interpretation.chars().count() - 2),
+			Bold.paint(&wmo_code.interpretation),
+			" ".repeat(width - temperature.chars().count() - wmo_code.interpretation.chars().count() - 3),
 			BrightBlack.paint(Border::R),
 		);
 		println!(
-			"{} {: <3$}{}",
+			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
 			apparent_temperature,
 			BrightBlack.paint(Border::R),
-			width - 1
 		);
 
 		BrightBlack.with(|| Separator::Blank.fmt(width))?;
 
 		let humidity_dewpoint_row = format!("{: <2$}{}", humidity, dewpoint, dims.cell_width);
 		println!(
-			"{} {: <3$}{}",
+			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
 			humidity_dewpoint_row,
 			BrightBlack.paint(Border::R),
-			width - 1
 		);
 
 		let wind_pressure_row = format!("{: <2$}{}", wind, pressure, dims.cell_width);
 		println!(
-			"{} {: <3$}{}",
+			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
 			wind_pressure_row,
 			BrightBlack.paint(Border::R),
-			width - 1
 		);
 
 		// Sun times
 		println!(
-			"{} {: <3$}{}",
+			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
 			sun_time,
 			BrightBlack.paint(Border::R),
-			width - 1
 		);
 
 		// Border Bottom
