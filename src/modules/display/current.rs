@@ -7,7 +7,7 @@ use super::{
 	border::{Border, Separator},
 	weathercode::WeatherCode,
 	wind::WindDirection,
-	Product,
+	Product, MAX_WIDTH, MIN_WIDTH,
 };
 
 pub struct Current {
@@ -20,23 +20,16 @@ pub struct Current {
 	pressure: String,
 	sun_time: String,
 	wmo_code: WeatherCode,
-	width: usize,
+	dimensions: Dimensions,
 }
 
 struct Dimensions {
-	max_width: usize,
-	min_width: usize,
+	width: usize,
 	cell_width: usize,
 }
 
 impl Current {
-	pub async fn render(product: &Product, lang: &str) -> Result<()> {
-		let dims = Dimensions {
-			max_width: 60,
-			min_width: 34,
-			cell_width: 17,
-		};
-
+	pub async fn render(product: &Product, lang: &str) -> Result<usize> {
 		let Current {
 			title,
 			temperature,
@@ -47,8 +40,10 @@ impl Current {
 			pressure,
 			sun_time,
 			wmo_code,
-			width,
-		} = Self::prepare(product, &dims, lang).await?;
+			dimensions,
+		} = Self::prepare(product, lang).await?;
+
+		let Dimensions { width, cell_width } = dimensions;
 
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
@@ -84,7 +79,7 @@ impl Current {
 
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
-		let humidity_dewpoint_row = format!("{: <2$}{}", humidity, dewpoint, dims.cell_width);
+		let humidity_dewpoint_row = format!("{: <cell_width$}  {}", humidity, dewpoint);
 		println!(
 			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
@@ -92,7 +87,7 @@ impl Current {
 			BrightBlack.paint(Border::R),
 		);
 
-		let wind_pressure_row = format!("{: <2$}{}", wind, pressure, dims.cell_width);
+		let wind_pressure_row = format!("{: <cell_width$}  {}", wind, pressure);
 		println!(
 			"{} {: <enclosed_width$} {}",
 			BrightBlack.paint(Border::L),
@@ -111,18 +106,17 @@ impl Current {
 		// Border Bottom
 		BrightBlack.with(|| println!("{}{}{}", Border::BL, Border::B.to_string().repeat(width), Border::BR));
 
-		Ok(())
+		Ok(cell_width)
 	}
 
-	async fn prepare(product: &Product, dims: &Dimensions, lang: &str) -> Result<Self> {
+	async fn prepare(product: &Product, lang: &str) -> Result<Self> {
 		let weather = &product.weather;
-		let title = Product::check_address_len(product.address.clone(), dims.max_width)?;
-		let title_len = title.chars().count();
-		let width = (if title_len > dims.min_width {
-			title_len
-		} else {
-			dims.min_width
-		}) + 3 * 2;
+		let address = Product::check_address_len(product.address.clone(), MAX_WIDTH)?;
+		let full_width = address.chars().count();
+		let mut dimensions = Dimensions {
+			width: (if full_width > MIN_WIDTH { full_width } else { MIN_WIDTH }) + 3 * 2,
+			cell_width: MIN_WIDTH / 2 - 1,
+		};
 
 		let (sunrise_time, sunset_time) = (&weather.daily.sunrise[0][11..16], &weather.daily.sunset[0][11..16]);
 		let (current_hour, sunrise_hour, sunset_hour) = (
@@ -154,6 +148,11 @@ impl Current {
 			weather.hourly.relativehumidity_2m[current_hour],
 			weather.hourly_units.relativehumidity_2m,
 		);
+		let humidity_len = humidity.chars().count();
+		if humidity_len > MIN_WIDTH / 2 - 2 {
+			dimensions.cell_width = humidity_len
+		}
+
 		let dewpoint = format!(
 			"{}: {}{}",
 			translate(lang, "Dew Point").await?,
@@ -168,15 +167,16 @@ impl Current {
 			weather.hourly_units.windspeed_10m,
 			wind_direction
 		);
+
 		let pressure = format!(
 			" {}{}",
 			weather.hourly.surface_pressure[current_hour], weather.hourly_units.surface_pressure
 		);
 
-		let sun_time = format!(" {: <2$} {}", sunrise_time, sunset_time, dims.cell_width - 2);
+		let sun_time = format!(" {: <2$}   {}", sunrise_time, sunset_time, dimensions.cell_width - 2);
 
 		Ok(Current {
-			title,
+			title: address,
 			temperature,
 			apparent_temperature,
 			humidity,
@@ -185,7 +185,7 @@ impl Current {
 			pressure,
 			sun_time,
 			wmo_code,
-			width,
+			dimensions,
 		})
 	}
 }

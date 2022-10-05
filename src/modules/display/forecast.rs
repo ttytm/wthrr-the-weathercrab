@@ -7,7 +7,7 @@ use term_painter::{Color::*, ToStyle};
 use super::{
 	border::{Border, Separator},
 	weathercode::WeatherCode,
-	Product,
+	Product, MIN_WIDTH,
 };
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -25,9 +25,15 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render_forecast(product: &Product, lang: &str) -> Result<()> {
+	pub async fn render_forecast(product: &Product, lang: &str, mut cell_width: Option<usize>) -> Result<()> {
 		let forecast = Self::generate_days(product, lang).await?;
-		let width = forecast.width + 8;
+		let width = forecast.width + 10;
+
+		cell_width = if cell_width.is_none() || cell_width.unwrap() <= MIN_WIDTH / 2 - 2 {
+			Some(MIN_WIDTH / 2 - 2)
+		} else {
+			Some(cell_width.unwrap() - 1)
+		};
 
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
@@ -37,7 +43,7 @@ impl Forecast {
 		let mut n = 0;
 		while let Some(_) = chunks.next() {
 			let merge = format!(
-				"{}      {}{}{}",
+				"{: <cell_width$} {}{}{}",
 				forecast.days[n].date,
 				forecast.days[n].weather,
 				" ".repeat(
@@ -47,7 +53,8 @@ impl Forecast {
 						- forecast.days[n].interpretation.len()
 						- 4
 				),
-				forecast.days[n].interpretation
+				forecast.days[n].interpretation,
+				cell_width = cell_width.unwrap()
 			);
 			println!(
 				"{} {: <3$} {}",
