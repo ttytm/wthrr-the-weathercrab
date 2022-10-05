@@ -3,11 +3,8 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	args::Cli,
-	params::{
-		unit::{SpeedUnit, TempUnit},
-		Params,
-	},
+	args::{ArgUnits, Cli},
+	params::Params,
 	translation::translate,
 };
 
@@ -23,11 +20,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
-			units: Some(format!(
-				"{},{}",
-				TempUnit::default().as_ref(),
-				SpeedUnit::default().as_ref(),
-			)),
+			units: Some(format!("{},{}", ArgUnits::Celsius.as_ref(), ArgUnits::Kmh.as_ref())),
 			greeting: Some(true),
 			language: Some("en".to_string()),
 		}
