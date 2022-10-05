@@ -21,7 +21,7 @@ pub struct Product {
 	pub weather: Weather,
 }
 
-pub const MAX_WIDTH: usize = 60;
+const MAX_WIDTH: usize = 60;
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
@@ -43,20 +43,20 @@ impl Product {
 		Ok(())
 	}
 
-	pub fn check_address_len(mut address: String, max_width: usize) -> Result<String> {
+	pub fn check_address_len(mut address: String) -> Result<String> {
 		let address_len = address.chars().count();
-		address = if address_len > max_width {
+		address = if address_len > MAX_WIDTH {
 			Self::trunc_address(address)?
 		} else {
 			address
 		};
-		if address_len > max_width {
-			address = Self::check_address_len(address, max_width)?;
+		if address_len > MAX_WIDTH {
+			address = Self::check_address_len(address)?;
 		}
 		Ok(address)
 	}
 
-	pub fn trunc_address(address: String) -> Result<String> {
+	fn trunc_address(address: String) -> Result<String> {
 		// let address_commas = title.matches(',').count();
 		// For many places with overlong names the results seem better when partially removing text
 		// between first and second comma instead of removing it between penultimate and last comma

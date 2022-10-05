@@ -7,7 +7,7 @@ use super::{
 	border::{Border, Separator},
 	weathercode::WeatherCode,
 	wind::WindDirection,
-	Product, MAX_WIDTH, MIN_WIDTH,
+	Product, MIN_WIDTH,
 };
 
 pub struct Current {
@@ -111,7 +111,7 @@ impl Current {
 
 	async fn prepare(product: &Product, lang: &str) -> Result<Self> {
 		let weather = &product.weather;
-		let address = Product::check_address_len(product.address.clone(), MAX_WIDTH)?;
+		let address = Product::check_address_len(product.address.clone())?;
 		let full_width = address.chars().count();
 		let mut dimensions = Dimensions {
 			width: (if full_width > MIN_WIDTH { full_width } else { MIN_WIDTH }) + 3 * 2,
