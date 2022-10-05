@@ -12,6 +12,7 @@ use self::{current::Current, forecast::Forecast};
 mod border;
 mod current;
 mod forecast;
+mod greeting;
 mod weathercode;
 mod wind;
 
@@ -24,11 +25,13 @@ pub const MAX_WIDTH: usize = 60;
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
-	pub async fn render(&self, include_forecast: bool, lang: &str) -> Result<()> {
+	pub async fn render(&self, include_forecast: bool, include_greeting: bool, lang: &str) -> Result<()> {
+		greeting::render(include_greeting, lang).await?;
+
 		let cell_width = Current::render(self, lang).await?;
 
 		if include_forecast {
-			Forecast::render_forecast(self, lang, Some(cell_width)).await?;
+			Forecast::render(self, lang, Some(cell_width)).await?;
 		}
 
 		// Disclaimer

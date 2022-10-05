@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::translation::translate;
 
-pub async fn handle_greeting(greet: bool, lang: &str) -> Result<()> {
+pub async fn render(greet: bool, lang: &str) -> Result<()> {
 	if !greet {
 		return Ok(());
 	}

@@ -12,11 +12,8 @@ async fn main() -> Result<()> {
 	let config = confy::load("weathercrab", "wthrr")?;
 	let params = Params::get(&args, &config).await?;
 
-	greeting::handle_greeting(params.greeting, &params.language).await?;
-
 	let product = run(&params).await?;
-
-	product.render(args.forecast, &params.language).await?;
+	product.render(args.forecast, params.greeting, &params.language).await?;
 
 	config.handle_next(args, params).await?;
 

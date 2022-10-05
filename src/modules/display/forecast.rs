@@ -25,7 +25,7 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render_forecast(product: &Product, lang: &str, mut cell_width: Option<usize>) -> Result<()> {
+	pub async fn render(product: &Product, lang: &str, mut cell_width: Option<usize>) -> Result<()> {
 		let forecast = Self::generate_days(product, lang).await?;
 		let width = forecast.width + 10;
 
