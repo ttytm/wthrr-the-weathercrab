@@ -1,4 +1,4 @@
-use clap::{Parser, ValueEnum};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
 
@@ -8,9 +8,8 @@ pub struct Cli {
 	/// Address to check the weather for
 	pub address: Option<String>,
 
-	/// Include the forecast for one week
-	#[arg(short, long, action)]
-	pub forecast: bool,
+	#[command(subcommand)]
+	pub commands: Option<Commands>,
 
 	/// Units for temperature and/or speed
 	#[arg(long, short, next_line_help = false, use_value_delimiter = true, num_args(..=2))]
@@ -25,12 +24,30 @@ pub struct Cli {
 	pub greeting: bool,
 
 	/// Save the supplied values as default
-	#[arg(short, long, action, group = "config_file_action", global = true)]
+	#[arg(short, long, action, group = "config_file_action")]
 	pub save: bool,
 
 	/// Wipe wthrr's configuration data
-	#[arg(short, long, action, group = "config_file_action", global = true)]
+	#[arg(short, long, action, group = "config_file_action")]
 	pub reset: bool,
+}
+
+#[derive(Subcommand)]
+pub enum Commands {
+	/// Include the weather forecast
+	#[clap(short_flag = 'f')]
+	Forecast(Forecast),
+}
+
+#[derive(Debug, Args)]
+pub struct Forecast {
+	/// Show the seven day forecast
+	#[arg(short, value_parser, action)]
+	pub week: bool,
+	// TODO: allow to chose one or multiple from a set of forecast day options
+	/// Show the forecast for the day
+	#[arg(short, value_parser, action, hide = true)]
+	pub day: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ValueEnum, AsRefStr, Serialize, Deserialize)]

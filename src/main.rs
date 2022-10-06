@@ -13,7 +13,9 @@ async fn main() -> Result<()> {
 	let params = Params::get(&args, &config).await?;
 
 	let product = run(&params).await?;
-	product.render(args.forecast, params.greeting, &params.language).await?;
+	product
+		.render(&params.forecast, params.greeting, &params.language)
+		.await?;
 
 	config.handle_next(args, params).await?;
 

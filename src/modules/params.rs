@@ -1,6 +1,9 @@
 use anyhow::Result;
 
-use crate::{args::Cli, config::Config};
+use crate::{
+	args::{Cli, Commands, Forecast},
+	config::Config,
+};
 
 use self::unit::Units;
 
@@ -14,6 +17,7 @@ pub struct Params {
 	pub units: Units,
 	pub greeting: bool,
 	pub language: String,
+	pub forecast: Option<Forecast>,
 }
 
 impl Params {
@@ -22,6 +26,15 @@ impl Params {
 			args.language.as_deref().unwrap_or_default(),
 			config.language.as_deref().unwrap_or_default(),
 		)?;
+
+		let forecast = if let Some(Commands::Forecast(forecast)) = &args.commands {
+			Some(Forecast {
+				week: forecast.week,
+				day: forecast.day,
+			})
+		} else {
+			None
+		};
 
 		if args.reset {
 			Config::reset(&language).await?;
@@ -44,6 +57,7 @@ impl Params {
 			units,
 			language,
 			greeting,
+			forecast,
 		})
 	}
 }
