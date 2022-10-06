@@ -63,7 +63,7 @@ mod tests {
 
 	#[test]
 	fn units_from_args() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph].to_vec();
+		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph];
 		let cfg_units = "celsius,knots";
 
 		assert_eq!(
@@ -79,7 +79,7 @@ mod tests {
 
 	#[test]
 	fn units_from_cfg() -> Result<()> {
-		let arg_units: Vec<ArgUnits> = [].to_vec();
+		let arg_units: Vec<ArgUnits> = vec![];
 		let cfg_units = "fahrenheit,kn";
 
 		assert_eq!(
@@ -95,7 +95,7 @@ mod tests {
 
 	#[test]
 	fn units_split_from_args_cfg() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit].to_vec();
+		let arg_units = [ArgUnits::Fahrenheit];
 		let cfg_units = "celsius,ms";
 
 		assert_eq!(
@@ -111,7 +111,7 @@ mod tests {
 
 	#[test]
 	fn units_fallback() -> Result<()> {
-		let arg_units = [].to_vec();
+		let arg_units = vec![];
 		let cfg_units = "non_variant";
 
 		assert_eq!(
