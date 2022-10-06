@@ -1,4 +1,5 @@
 use anyhow::Result;
+use regex::Regex;
 use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 
 use crate::translation::translate;
@@ -48,15 +49,38 @@ impl Current {
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
 
-		// for args surround with blank spaces
-		let enclosed_width = width - 2;
+		// considers args surrounded with spaces
+		let inner_width = width - 2;
+
+		fn adjust_lang_width(string: &str, lang: &str) -> usize {
+			let correction = match lang {
+				"zh" => {
+					let re = Regex::new(r"\p{han}").unwrap();
+					re.find_iter(string).count()
+				}
+				"ko" => {
+					let re = Regex::new(r"[\u3131-\uD79D\w]").unwrap();
+					let nu = Regex::new(r"[0-9\.]").unwrap();
+					re.find_iter(string).count() - nu.find_iter(string).count()
+				}
+				"ja" => {
+					let re = Regex::new(r"[ぁ-んァ-ン\w]").unwrap();
+					let nu = Regex::new(r"[0-9\.]").unwrap();
+					re.find_iter(string).count() - nu.find_iter(string).count()
+				}
+				_ => 0,
+			};
+
+			return correction;
+		}
 
 		// Title
 		println!(
-			"{} {: ^enclosed_width$} {}",
+			"{} {: ^inner_width$} {}",
 			BrightBlack.paint(Border::L),
-			Bold.paint(title),
+			Bold.paint(&title),
 			BrightBlack.paint(Border::R),
+			inner_width = inner_width - adjust_lang_width(&title, lang)
 		);
 
 		BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
@@ -67,29 +91,37 @@ impl Current {
 			BrightBlack.paint(Border::L),
 			Bold.paint(&temperature),
 			Bold.paint(&wmo_code.interpretation),
-			" ".repeat(width - temperature.chars().count() - wmo_code.interpretation.chars().count() - 3),
+			" ".repeat({
+				inner_width
+					- adjust_lang_width(&wmo_code.interpretation, lang)
+					- temperature.chars().count()
+					- wmo_code.interpretation.chars().count()
+					- 1
+			}),
 			BrightBlack.paint(Border::R),
 		);
 		println!(
-			"{} {: <enclosed_width$} {}",
+			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
 			apparent_temperature,
 			BrightBlack.paint(Border::R),
+			inner_width = inner_width - adjust_lang_width(&apparent_temperature, lang)
 		);
 
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		let humidity_dewpoint_row = format!("{: <cell_width$}  {}", humidity, dewpoint);
 		println!(
-			"{} {: <enclosed_width$} {}",
+			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
 			humidity_dewpoint_row,
 			BrightBlack.paint(Border::R),
+			inner_width = inner_width - adjust_lang_width(&humidity_dewpoint_row, lang)
 		);
 
 		let wind_pressure_row = format!("{: <cell_width$}  {}", wind, pressure);
 		println!(
-			"{} {: <enclosed_width$} {}",
+			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
 			wind_pressure_row,
 			BrightBlack.paint(Border::R),
@@ -97,7 +129,7 @@ impl Current {
 
 		// Sun times
 		println!(
-			"{} {: <enclosed_width$} {}",
+			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
 			sun_time,
 			BrightBlack.paint(Border::R),
