@@ -12,7 +12,7 @@ use super::{
 };
 
 pub struct Current {
-	title: String,
+	address: String,
 	temperature: String,
 	apparent_temperature: String,
 	humidity: String,
@@ -32,7 +32,7 @@ struct Dimensions {
 impl Current {
 	pub async fn render(product: &Product, lang: &str) -> Result<usize> {
 		let Current {
-			title,
+			address,
 			temperature,
 			apparent_temperature,
 			humidity,
@@ -45,12 +45,6 @@ impl Current {
 		} = Self::prepare(product, lang).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
-
-		// Border Top
-		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
-
-		// considers args surrounded with spaces
-		let inner_width = width - 2;
 
 		fn adjust_lang_width(string: &str, lang: &str) -> usize {
 			let correction = match lang {
@@ -71,35 +65,36 @@ impl Current {
 				_ => 0,
 			};
 
-			return correction;
+			correction
 		}
+
+		// subtract spaces surrounding args
+		let inner_width = width - 2;
+
+		// Border Top
+		BrightBlack.with(|| println!("{}{}{}", Border::TL, Border::T.to_string().repeat(width), Border::TR));
 
 		// Title
 		println!(
 			"{} {: ^inner_width$} {}",
 			BrightBlack.paint(Border::L),
-			Bold.paint(&title),
+			Bold.paint(&address),
 			BrightBlack.paint(Border::R),
-			inner_width = inner_width - adjust_lang_width(&title, lang)
+			inner_width = inner_width - adjust_lang_width(&address, lang)
 		);
 
 		BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
 
 		// Temperature
 		println!(
-			"{} {} {}{} {}",
+			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
-			Bold.paint(&temperature),
-			Bold.paint(&wmo_code.interpretation),
-			" ".repeat({
-				inner_width
-					- adjust_lang_width(&wmo_code.interpretation, lang)
-					- temperature.chars().count()
-					- wmo_code.interpretation.chars().count()
-					- 1
-			}),
+			Bold.paint(temperature + " " + &wmo_code.interpretation),
 			BrightBlack.paint(Border::R),
+			inner_width = inner_width - adjust_lang_width(&wmo_code.interpretation, lang)
 		);
+
+		// Apparent Temperature
 		println!(
 			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
@@ -108,6 +103,7 @@ impl Current {
 			inner_width = inner_width - adjust_lang_width(&apparent_temperature, lang)
 		);
 
+		// Blank Line
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		// Humidity & Dewpoint
@@ -124,11 +120,11 @@ impl Current {
 			inner_width = inner_width - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
 		);
 
-		let wind_pressure_row = format!("{: <cell_width$}  {}", wind, pressure);
+		// Wind & Pressure
 		println!(
 			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
-			wind_pressure_row,
+			format!("{: <cell_width$}  {}", wind, pressure),
 			BrightBlack.paint(Border::R),
 		);
 
@@ -213,7 +209,7 @@ impl Current {
 		let sun_time = format!(" {: <2$}   {}", sunrise_time, sunset_time, dimensions.cell_width - 2);
 
 		Ok(Current {
-			title: address,
+			address,
 			temperature,
 			apparent_temperature,
 			humidity,
