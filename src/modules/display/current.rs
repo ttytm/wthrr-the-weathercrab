@@ -110,13 +110,18 @@ impl Current {
 
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
-		let humidity_dewpoint_row = format!("{: <cell_width$}  {}", humidity, dewpoint);
+		// Humidity & Dewpoint
 		println!(
 			"{} {: <inner_width$} {}",
 			BrightBlack.paint(Border::L),
-			humidity_dewpoint_row,
+			format!(
+				"{: <cell_width$}  {}",
+				humidity,
+				dewpoint,
+				cell_width = cell_width - adjust_lang_width(&humidity, lang)
+			),
 			BrightBlack.paint(Border::R),
-			inner_width = inner_width - adjust_lang_width(&humidity_dewpoint_row, lang)
+			inner_width = inner_width - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
 		);
 
 		let wind_pressure_row = format!("{: <cell_width$}  {}", wind, pressure);
