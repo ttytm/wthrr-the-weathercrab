@@ -156,8 +156,8 @@ impl Current {
 			weather.current_weather.time[11..13]
 				.parse::<usize>()
 				.unwrap_or_default(),
-			sunrise_time[1..3].parse().unwrap_or_default(),
-			sunset_time[1..3].parse().unwrap_or_default(),
+			sunrise_time[..2].parse().unwrap_or_default(),
+			sunset_time[..2].parse().unwrap_or_default(),
 		);
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night), lang).await?;
