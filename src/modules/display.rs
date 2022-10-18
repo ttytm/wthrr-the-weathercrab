@@ -21,7 +21,6 @@ pub struct Product {
 	pub weather: Weather,
 }
 
-const MAX_WIDTH: usize = 60;
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
@@ -29,12 +28,7 @@ impl Product {
 		greeting::render(include_greeting, lang).await?;
 
 		if forecast.is_some() {
-			if forecast.as_ref().unwrap().week {
-				Forecast::render(self, lang, None).await?;
-			} else {
-				let cell_width = Current::render(self, lang).await?;
-				Forecast::render(self, lang, Some(cell_width)).await?;
-			}
+			Forecast::render(self, lang, forecast.as_ref().unwrap().week).await?;
 		} else {
 			Current::render(self, lang).await?;
 		}
@@ -48,28 +42,25 @@ impl Product {
 		Ok(())
 	}
 
-	pub fn check_address_len(mut address: String) -> Result<String> {
+	pub fn trunc_address(mut address: String, max_width: usize) -> Result<String> {
 		let address_len = address.chars().count();
-		address = if address_len > MAX_WIDTH {
-			Self::trunc_address(address)?
+
+		address = if address_len > max_width {
+			// For many places with overlong names the results seem better when partially removing text
+			// between first and second comma instead of removing it between penultimate and last comma
+			// let last_comma = title.matches(',').count();
+			let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
+			let re = Regex::new(&prep_re).unwrap();
+
+			re.replace(&address, "$1$2").to_string()
 		} else {
 			address
 		};
-		if address_len > MAX_WIDTH {
-			address = Self::check_address_len(address)?;
+
+		if address_len > max_width {
+			address = Self::trunc_address(address, max_width)?;
 		}
+
 		Ok(address)
-	}
-
-	fn trunc_address(address: String) -> Result<String> {
-		// let address_commas = title.matches(',').count();
-		// For many places with overlong names the results seem better when partially removing text
-		// between first and second comma instead of removing it between penultimate and last comma
-
-		let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
-		let re = Regex::new(&prep_re).unwrap();
-		let truncated_address = re.replace(&address, "$1$2").to_string();
-
-		Ok(truncated_address)
 	}
 }

@@ -6,6 +6,7 @@ use term_painter::{Color::*, ToStyle};
 
 use super::{
 	border::{Border, Separator},
+	current::Current,
 	weathercode::WeatherCode,
 	Product, MIN_WIDTH,
 };
@@ -25,15 +26,18 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render(product: &Product, lang: &str, mut cell_width: Option<usize>) -> Result<()> {
-		let forecast = Self::generate_days(product, lang).await?;
+	pub async fn render(product: &Product, lang: &str, exclusive: bool) -> Result<()> {
+		let forecast = Self::prepare(product, lang).await?;
 		let width = forecast.width + 10;
+		let mut cell_width = MIN_WIDTH / 2;
 
-		cell_width = if cell_width.is_none() || cell_width.unwrap() <= MIN_WIDTH / 2 - 2 {
-			Some(MIN_WIDTH / 2 - 2)
-		} else {
-			Some(cell_width.unwrap() - 1)
-		};
+		if !exclusive {
+			let cell_width_current = Current::render(product, lang).await?;
+
+			if cell_width_current > cell_width {
+				cell_width = cell_width_current
+			}
+		}
 
 		// Border Top
 		BrightBlack.with(|| println!("{}{}{} ", Border::TL, Border::T.to_string().repeat(width), Border::TR));
@@ -43,25 +47,18 @@ impl Forecast {
 		let mut n = 0;
 		while let Some(_) = chunks.next() {
 			let merge = format!(
-				"{: <cell_width$} {}{}{}",
+				"{: <cell_width$}{}{: >width$}",
 				forecast.days[n].date,
 				forecast.days[n].weather,
-				" ".repeat(
-					width
-						- forecast.days[n].date.len()
-						- forecast.days[n].weather.len()
-						- forecast.days[n].interpretation.len()
-						- 4
-				),
 				forecast.days[n].interpretation,
-				cell_width = cell_width.unwrap()
+				width = width - forecast.days[n].date.len() - forecast.days[n].weather.len() - 4
 			);
 			println!(
-				"{} {: <3$} {}",
+				"{} {: <width$} {}",
 				BrightBlack.paint(Border::L),
 				merge,
 				BrightBlack.paint(Border::R),
-				width - 2
+				width = width - 2,
 			);
 			if chunks.peek().is_some() {
 				BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
@@ -75,7 +72,7 @@ impl Forecast {
 		Ok(())
 	}
 
-	async fn generate_days(product: &Product, lang: &str) -> Result<Self> {
+	async fn prepare(product: &Product, lang: &str) -> Result<Self> {
 		let mut days = Vec::new();
 		let mut width: usize = 0;
 
