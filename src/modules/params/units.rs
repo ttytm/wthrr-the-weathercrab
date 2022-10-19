@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::args::ArgUnits;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Units {
 	pub temperature: ArgUnits,
 	pub speed: ArgUnits,

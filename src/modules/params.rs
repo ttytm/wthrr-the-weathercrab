@@ -5,12 +5,12 @@ use crate::{
 	config::Config,
 };
 
-use self::unit::Units;
+use self::units::Units;
 
 mod address;
 mod greeting;
 mod language;
-pub mod unit;
+pub mod units;
 
 pub struct Params {
 	pub address: String,
@@ -48,7 +48,7 @@ impl Params {
 		)
 		.await?;
 
-		let units = unit::get(&args.units, config.units.as_deref().unwrap_or_default())?;
+		let units = units::get(&args.units, config.units.as_deref().unwrap_or_default())?;
 
 		let greeting = greeting::get(args.greeting, config.greeting)?;
 

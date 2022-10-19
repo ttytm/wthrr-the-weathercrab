@@ -44,13 +44,13 @@ pub struct Forecast {
 	/// Show the seven day forecast
 	#[arg(short, value_parser, action)]
 	pub week: bool,
-	// TODO: allow to chose one or multiple from a set of forecast day options
+	// TODO: allow to chose from a set of forecast day options
 	/// Show the forecast for the day
 	#[arg(short, value_parser, action, hide = true)]
 	pub day: bool,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ValueEnum, AsRefStr, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum ArgUnits {
 	None,
