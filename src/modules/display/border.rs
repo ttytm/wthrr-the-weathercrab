@@ -23,7 +23,7 @@ pub enum Border {
 pub enum Separator {
 	Blank,
 	Line,
-	_Dotted,
+	Dotted,
 }
 
 impl Separator {
@@ -31,7 +31,7 @@ impl Separator {
 		match self {
 			Self::Blank => format!("{}{: >width$}{}", Border::L, "", Border::R),
 			Self::Line => format!("├{:─>width$}┤", ""),
-			Self::_Dotted => format!("├{:┈>width$}┤", ""),
+			Self::Dotted => format!("├{:┄>width$}┤", ""),
 		}
 	}
 }

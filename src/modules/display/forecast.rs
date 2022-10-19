@@ -4,6 +4,8 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
+use crate::{args::Forecast as ForecastArgs, params::units::Units};
+
 use super::{
 	border::{Border, Separator},
 	current::Current,
@@ -22,20 +24,28 @@ pub struct ForecastDay {
 	pub date: String,
 	pub weather: String,
 	pub interpretation: String,
-	// pub icon: String,
 }
 
 impl Forecast {
-	pub async fn render(product: &Product, lang: &str, exclusive: bool) -> Result<()> {
+	pub async fn render(product: &Product, forecast_args: &ForecastArgs, units: &Units, lang: &str) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
-		let width = forecast.width + 10;
+		let mut width = forecast.width + 10;
 		let mut cell_width = MIN_WIDTH / 2;
 
-		if !exclusive {
-			let cell_width_current = Current::render(product, lang).await?;
+		if forecast_args.day && !forecast_args.week {
+			Current::render(product, true, units, lang).await?;
+			return Ok(());
+		}
 
-			if cell_width_current > cell_width {
-				cell_width = cell_width_current
+		// If week flag is not added -> ADD forecast to current days weather instead of displaying it exclusively
+		if !forecast_args.week {
+			let dimensions_current = Current::render(product, true, units, lang).await?;
+
+			if dimensions_current.cell_width > cell_width {
+				cell_width = dimensions_current.cell_width
+			}
+			if dimensions_current.width > width {
+				width = dimensions_current.width
 			}
 		}
 
@@ -51,7 +61,11 @@ impl Forecast {
 				forecast.days[n].date,
 				forecast.days[n].weather,
 				forecast.days[n].interpretation,
-				width = width - forecast.days[n].date.len() - forecast.days[n].weather.len() - 4
+				width = width
+					- forecast.days[n].date.len()
+					- forecast.days[n].weather.len()
+					// TODO: add better calculation to determine width
+					- if cell_width == 22 { 9 } else { 4 }
 			);
 			println!(
 				"{} {: <width$} {}",

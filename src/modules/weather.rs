@@ -5,7 +5,7 @@ use crate::params::units::Units;
 
 // Open meteo json
 // E.g., London:
-// https://api.open-meteo.com/v1/forecast?latitude=51.5002&longitude=-0.1262&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,windspeed_10m&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto
+// https://api.open-meteo.com/v1/forecast?latitude=51.5002&longitude=-0.1262&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,windspeed_10m,precipitation,weathercode&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Weather {
 	pub latitude: f64,
@@ -31,13 +31,13 @@ pub struct CurrentWeather {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HourlyUnits {
-	time: String,
 	pub temperature_2m: String,
 	pub relativehumidity_2m: String,
 	pub apparent_temperature: String,
 	pub surface_pressure: String,
 	pub dewpoint_2m: String,
 	pub windspeed_10m: String,
+	pub precipitation: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -49,6 +49,8 @@ pub struct Hourly {
 	pub surface_pressure: Vec<f64>,
 	pub dewpoint_2m: Vec<f64>,
 	pub windspeed_10m: Vec<f64>,
+	pub precipitation: Vec<f64>,
+	pub weathercode: Vec<f64>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -79,7 +81,7 @@ impl Weather {
 			"https://api.open-meteo.com/v1/forecast?
 latitude={}
 &longitude={}
-&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m
+&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m,precipitation,weathercode
 &daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min
 &current_weather=true
 &temperature_unit={}
