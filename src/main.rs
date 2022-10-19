@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
 
 	let product = run(&params).await?;
 	product
-		.render(&params.forecast, params.greeting, &params.language)
+		.render(&params.forecast, &params.units, params.greeting, &params.language)
 		.await?;
 
 	config.handle_next(args, params).await?;

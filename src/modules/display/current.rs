@@ -2,10 +2,11 @@ use anyhow::Result;
 use regex::Regex;
 use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 
-use crate::translation::translate;
+use crate::{params::units::Units, translation::translate};
 
 use super::{
 	border::{Border, Separator},
+	hourly::HourlyForecast,
 	weathercode::WeatherCode,
 	wind::WindDirection,
 	Product, MIN_WIDTH,
@@ -22,16 +23,17 @@ pub struct Current {
 	sun_rise: String,
 	sun_set: String,
 	wmo_code: WeatherCode,
+	hourly_forecast: Option<HourlyForecast>,
 	dimensions: Dimensions,
 }
 
-struct Dimensions {
-	width: usize,
-	cell_width: usize,
+pub struct Dimensions {
+	pub width: usize,
+	pub cell_width: usize,
 }
 
 impl Current {
-	pub async fn render(product: &Product, lang: &str) -> Result<usize> {
+	pub async fn render(product: &Product, add_hourly: bool, units: &Units, lang: &str) -> Result<Dimensions> {
 		let Current {
 			address,
 			temperature,
@@ -43,8 +45,9 @@ impl Current {
 			sun_rise,
 			sun_set,
 			wmo_code,
+			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, lang).await?;
+		} = Self::prepare(product, add_hourly, lang).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
 
@@ -118,13 +121,18 @@ impl Current {
 			width = width - 2 - cell_width
 		);
 
+		// Hourly Forecast
+		if hourly_forecast.is_some() {
+			hourly_forecast.unwrap().render(width, units)
+		}
+
 		// Border Bottom
 		BrightBlack.with(|| println!("{}{}{}", Border::BL, Border::B.to_string().repeat(width), Border::BR));
 
-		Ok(cell_width)
+		Ok(dimensions)
 	}
 
-	async fn prepare(product: &Product, lang: &str) -> Result<Self> {
+	async fn prepare(product: &Product, add_hourly: bool, lang: &str) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;
 
@@ -177,17 +185,32 @@ impl Current {
 		let sun_set = format!(" {}", sunset_time);
 
 		// Dimensions
-		let full_width = address.chars().count();
-		let mut dimensions = Dimensions {
-			// add 2 spaces on each side of the address
-			width: (if full_width > MIN_WIDTH { full_width } else { MIN_WIDTH }) + (2 * 2),
-			cell_width: MIN_WIDTH / 2,
+		let title_width = address.chars().count();
+		let title_padding = 2 * 2; // 2 spaces on each side
+		let longest_cell_width = humidity.chars().count();
+
+		let dimensions = Dimensions {
+			width: if add_hourly {
+				72
+			} else if title_width > MIN_WIDTH {
+				title_width + title_padding
+			} else {
+				MIN_WIDTH + title_padding
+			},
+			cell_width: if add_hourly {
+				22
+			} else if longest_cell_width > MIN_WIDTH / 2 {
+				// increase cell_width for languages with longer texts
+				longest_cell_width + 2
+			} else {
+				MIN_WIDTH / 2
+			},
 		};
-		// adjust cell_width for languages with longer texts
-		let humidity_len = humidity.chars().count();
-		if humidity_len > dimensions.cell_width - 2 {
-			dimensions.cell_width = humidity_len + 2
-		}
+
+		let hourly_forecast = match add_hourly {
+			true => Some(HourlyForecast::prepare(weather, night, lang).await?),
+			_ => None,
+		};
 
 		Ok(Current {
 			address,
@@ -200,6 +223,7 @@ impl Current {
 			sun_rise,
 			sun_set,
 			wmo_code,
+			hourly_forecast,
 			dimensions,
 		})
 	}

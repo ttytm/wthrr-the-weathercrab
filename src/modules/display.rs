@@ -5,7 +5,7 @@ use term_painter::{
 	ToStyle,
 };
 
-use crate::{args::Forecast as ForecastArgs, weather::Weather};
+use crate::{args::Forecast as ForecastArgs, params::units::Units, weather::Weather};
 
 use self::{current::Current, forecast::Forecast};
 
@@ -13,6 +13,7 @@ mod border;
 mod current;
 mod forecast;
 mod greeting;
+mod hourly;
 mod weathercode;
 mod wind;
 
@@ -24,13 +25,19 @@ pub struct Product {
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
-	pub async fn render(&self, forecast: &Option<ForecastArgs>, include_greeting: bool, lang: &str) -> Result<()> {
+	pub async fn render(
+		&self,
+		forecast: &Option<ForecastArgs>,
+		units: &Units,
+		include_greeting: bool,
+		lang: &str,
+	) -> Result<()> {
 		greeting::render(include_greeting, lang).await?;
 
 		if forecast.is_some() {
-			Forecast::render(self, lang, forecast.as_ref().unwrap().week).await?;
+			Forecast::render(self, forecast.as_ref().unwrap(), units, lang).await?;
 		} else {
-			Current::render(self, lang).await?;
+			Current::render(self, false, units, lang).await?;
 		}
 
 		// Disclaimer
