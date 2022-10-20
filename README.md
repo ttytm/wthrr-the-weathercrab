@@ -7,9 +7,12 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 ## Contents
 
 -  [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
+-  [Showcase](https://github.com/tobealive/wthrr-the-weathercrab#showcase)
+-  [Config](https://github.com/tobealive/wthrr-the-weathercrab#config)
 -  [Requirements](https://github.com/tobealive/wthrr-the-weathercrab#requirements)
 -  [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
 -  [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
+-  [Credits](https://github.com/tobealive/wthrr-the-weathercrab#credits)
 
 ## How to use?
 
@@ -102,12 +105,12 @@ For the sake of completeness, the contents of the configuration file are listed 
 The location (e.g., on GNU/Linux ) usually is: `~/.config/weathercrab/wthrr.toml`
 
 ```toml
-address = 'berlin' # The address to check the weather for
+address = 'berlin' # Address to check the weather for
 greeting = true # Greeting message display [true | false]
 language = 'en' # Country code of the output language ['de' | 'pl' | ...]
 
 [units]
-temperature = 'celsius' # Temperature units [celsius | fahrenheit] 
+temperature = 'celsius' # Temperature units [celsius | fahrenheit]
 speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
 ```
 
