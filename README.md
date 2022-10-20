@@ -2,7 +2,7 @@
 
 `wthrr` lives in your terminal and her passion is meteorology.
 
-If you spent some time in the CLI it comes in handy to have a little companion nearby who knows about the weather.
+If you spend time in the TUI, you'll have a little companion nearby who knows about the weather.
 
 ## Contents
 
@@ -43,14 +43,17 @@ wthrr auto
 ```
 > wthrr -h
 
-Usage: wthrr [OPTIONS] [ADDRESS]
+Usage: wthrr [OPTIONS] [ADDRESS] [COMMAND]
+
+Commands:
+  forecast, -f  Include the weather forecast
+  help          Print this message or the help of the given subcommand(s)
 
 Arguments:
   [ADDRESS]  Address to check the weather for
 
 Options:
-  -f, --forecast             Include the forecast for one week
-  -u, --units [<UNITS>...]   Units for temperature and/or speed [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms]
+  -u, --units [<UNITS>]      Units for temperature and/or speed [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms]
   -l, --language <LANGUAGE>  Output language
   -g, --greeting             Toggle greeting message
   -s, --save                 Save the supplied values as default
@@ -59,30 +62,53 @@ Options:
   -V, --version              Print version information
 ```
 
----
+## Showcase
 
-### Showcase
+<table>
+  <tr>
+    <th align="center">First Run</th>
+    <th align="center">Hourly Forecast</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img alt="" width="400" src="preview/first-run.png" />
+    </td>
+    <td align="center">
+      <img alt="" width="400" src="preview/hourly.png" />
+    </td>
+  </tr>
+  <tr>
+    <th align="center">Week Forecast</th>
+    <th align="center">*Rendering Based on Terminal, Theme and Font</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img alt="" width="400" src="preview/week.png" />
+    </td>
+    <td align="center">
+      <img alt="" width="400" src="preview/yakuake.png" />
+    </td>
+  </tr>
+</table>
 
-_First run example asking to include the forecast of the week:_
-<img src="preview/first-run-example.png" />
+<sup>\*Rendering and colors will depend on the used terminal and its theme and font.
+For example, the first screenshots show wthrr running in nvim(toggleterm) inside kitty using a dracula theme and JetBrainsMono Nerd Font. The last screenshot shows wthrr in yakuake / konsole, also using a dracula color scheme.</sup>
 
-### Config
+## Config
 
-Adding the `-s` flag will save the values from a run as default.
-E.g., on GNU/Linux the location of the config file usually is: `~/.config/weathercrab/wthrr.toml`
+Most users will probably not need to bother changing the configuration file manually, since adding the `-s` flag saves the values of a run as default.
 
-You probably don't have to bother with the config file itself, as you can save your defaults directly via the terminal.
-For the sake of completeness, the config contents are as follows.
+For the sake of completeness, the contents of the configuration file are listed below.
+The location (e.g., on GNU/Linux ) usually is: `~/.config/weathercrab/wthrr.toml`
 
 ```toml
-# Address to check the weather for
-address = 'berlin,de'
-# Measurement units. Temperature: [celsius, fahrenheit] Speed: [kmh, mph, knots, ms]
-units = 'celsius,kmh'
-# Greeting message display [true, false]
-greeting = true
-# Language of the output: [de, pl, ...]
-language = 'en'
+address = 'berlin' # The address to check the weather for
+greeting = true # Greeting message display [true | false]
+language = 'en' # Country code of the output language ['de' | 'pl' | ...]
+
+[units]
+temperature = 'celsius' # Temperature units [celsius | fahrenheit] 
+speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
 ```
 
 ## Requirements
@@ -137,13 +163,8 @@ When the build has finished, you'll find the `wthrr` binary inside the `./target
 
 ## Outlook
 
--  [x] Multilang support
--  [ ] Allow to show more / customized meteorological data
-   -  [ ] Custom forecast days
-   -  [x] Modify speed units
--  [ ] Theme variants
+The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section lists some of the features that is being worked on.
 
-<br>
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
 
 ## Credits
