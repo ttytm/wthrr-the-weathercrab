@@ -14,6 +14,7 @@ mod current;
 mod forecast;
 mod greeting;
 mod hourly;
+mod utils;
 mod weathercode;
 mod wind;
 
