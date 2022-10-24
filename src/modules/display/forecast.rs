@@ -9,6 +9,7 @@ use crate::{args::Forecast as ForecastArgs, params::units::Units};
 use super::{
 	border::{Border, Separator},
 	current::Current,
+	utils::adjust_lang_width,
 	weathercode::WeatherCode,
 	Product, MIN_WIDTH,
 };
@@ -56,7 +57,7 @@ impl Forecast {
 
 		let mut n = 0;
 		while let Some(_) = chunks.next() {
-			let merge = format!(
+			let forecast_day = format!(
 				"{: <cell_width$}{}{: >width$}",
 				forecast.days[n].date,
 				forecast.days[n].weather,
@@ -64,15 +65,19 @@ impl Forecast {
 				width = width
 					- forecast.days[n].date.len()
 					- forecast.days[n].weather.len()
-					// TODO: add better calculation to determine width
-					- if cell_width == 22 { 9 } else { 4 }
+					- adjust_lang_width(&forecast.days[n].interpretation, lang)
+					- if cell_width == MIN_WIDTH / 2 {
+						4
+					} else {
+						4 + cell_width - MIN_WIDTH / 2
+					}
 			);
 			println!(
 				"{} {: <width$} {}",
 				BrightBlack.paint(Border::L),
-				merge,
+				forecast_day,
 				BrightBlack.paint(Border::R),
-				width = width - 2,
+				width = width - adjust_lang_width(&forecast.days[n].interpretation, lang) - 2,
 			);
 			if chunks.peek().is_some() {
 				BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
@@ -111,9 +116,9 @@ impl Forecast {
 				product.weather.daily.temperature_2m_min[i],
 				product.weather.daily_units.temperature_2m_min,
 			);
-			let merge = format!("{}{}{}", date, weather, weather_code.interpretation);
-			if merge.len() > width {
-				width = merge.len();
+			let day_width = format!("{}{}{}", date, weather, weather_code.interpretation).len();
+			if day_width > width {
+				width = day_width;
 			}
 
 			let day: ForecastDay = {
@@ -121,7 +126,6 @@ impl Forecast {
 					date: date.to_string(),
 					weather,
 					interpretation: weather_code.interpretation,
-					// icon: weather_code.icon.unwrap_or_default(),
 				}
 			};
 
