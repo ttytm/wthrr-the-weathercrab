@@ -16,19 +16,19 @@ pub struct Cli {
 	pub units: Vec<ArgUnits>,
 
 	/// Output language
-	#[arg(short, long)]
+	#[arg(short, long, global = true)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[arg(short, long, action)]
+	#[arg(short, long, action, global = true)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default
-	#[arg(short, long, action, group = "config_file_action")]
+	#[arg(short, long, action, group = "config_file_action", global = true)]
 	pub save: bool,
 
 	/// Wipe wthrr's configuration data
-	#[arg(short, long, action, group = "config_file_action")]
+	#[arg(short, long, action, group = "config_file_action", global = true)]
 	pub reset: bool,
 }
 
