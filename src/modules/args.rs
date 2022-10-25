@@ -44,9 +44,8 @@ pub struct Forecast {
 	/// Show the seven day forecast
 	#[arg(short, value_parser, action)]
 	pub week: bool,
-	// TODO: allow to chose from a set of forecast day options
 	/// Show the forecast for the day
-	#[arg(short, value_parser, action, hide = true)]
+	#[arg(short, value_parser, action)]
 	pub day: bool,
 }
 
