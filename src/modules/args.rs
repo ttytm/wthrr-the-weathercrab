@@ -12,7 +12,7 @@ pub struct Cli {
 	pub commands: Option<Commands>,
 
 	/// Units for temperature and/or speed
-	#[arg(long, short, next_line_help = false, use_value_delimiter = true, num_args(..2))]
+	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
 	pub units: Vec<ArgUnits>,
 
 	/// Output language
