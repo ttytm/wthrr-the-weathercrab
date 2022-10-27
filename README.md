@@ -116,13 +116,25 @@ speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
 
 ## Requirements
 
-This app uses font icons and emojis. Therefore, a nerd variant of your font is required to correctly display the output.
-https://github.com/ryanoasis/nerd-fonts
+This app uses font icons and emojis. Therefore, having a font with Unicode support installed and using a nerd variant of your terminal font is required to display the output correctly.
 
-Some terminal emulators might require to additionally add/prioritize emojis in their font config.
+-  [nerd fonts](https://github.com/ryanoasis/nerd-fonts)
+-  [unicode font](https://github.com/googlefonts/noto-emoji/blob/main/fonts/NotoColorEmoji.ttf)<br>
+   <sup>(If it's not installed by default, noto font packages are usually available via your distribution's package manager)</sup>
 
-<sub>If you are using brew, this gist contains easily digestible 🍝 copy-pasta for nerd-font installation.<br>
-https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>
+#### For ubuntu based distros:
+
+-  ```
+   sudo apt install fonts-noto-core libssl-dev
+   ```
+
+-  When using the binaries, you may need to add libssl manually
+   ```
+   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+   ```
+
+<!--<sub>If you are using brew, this gist contains easily digestible 🍝 copy-pasta for nerd-font installation.<br>
+https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>-->
 
 ## Installation
 
