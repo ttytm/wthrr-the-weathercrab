@@ -9,7 +9,6 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 -  [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
 -  [Showcase](https://github.com/tobealive/wthrr-the-weathercrab#showcase)
 -  [Config](https://github.com/tobealive/wthrr-the-weathercrab#config)
--  [Requirements](https://github.com/tobealive/wthrr-the-weathercrab#requirements)
 -  [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
 -  [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
 -  [Credits](https://github.com/tobealive/wthrr-the-weathercrab#credits)
@@ -22,23 +21,29 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 wthrr
 ```
 
-When no arguments are specified wthrr will use the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) that's saved as default.<br>
-If you don't have anything configured yet, wthrr can try to search for a weather station close to you and save the last searched location as default.
+With no further arguments added, wthrr will use the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) that's saved as default.<br>
+If you haven't configured anything yet, wthrr can try to search for a weather station near you and save the searched location as default.
 
-**Its always possible specify a address with your call.** E.g.,
+**Its always possible to specify an address.** E.g.,
 
 ```
 wthrr melbourne
 ```
 
-Depending on the searched location, you might want to be be more specific.
-For example, the call above will give you Melbourne in Australia. If you are aiming for Melbourne in the US, ask for `melbourne,florida`.
-For cities containing spaces, write it separated with a dash or wrap it in quotation marks (e.g., `new-york` or `'new york'`).
+Depending on the place you are looking for, you might need to be be more specific.
+For example, the above call will get Melbourne in Australia. If you are aiming for Melbourne in the US, ask for `melbourne,florida`.
+If the address contains spaces, separate them with a hyphen or enclose them in quotation marks (e.g., "new-york" or "new york").
 
-If there is a default address configured, but you want wthrr to explicitly search for a nearby weather station, you can do so by calling:
+If a default address is configured, but you want to explicitly search for a weather station nearby, call
 
 ```
 wthrr auto
+```
+
+Example that uses Fahrenheit and mph as units and adds the hourly forecast for the day
+
+```
+wthrr -u f,mph -f -d
 ```
 
 ### Find further usage parameters in the help information
@@ -82,7 +87,7 @@ Options:
   </tr>
   <tr>
     <th align="center">Week Forecast</th>
-    <th align="center">*Rendering Based on Terminal, Theme and Font</th>
+    <th align="center">*Terminal Colors</th>
   </tr>
   <tr>
     <td align="center">
@@ -94,15 +99,14 @@ Options:
   </tr>
 </table>
 
-<sup>\*Rendering and colors will depend on the used terminal and its theme and font.
-For example, the first screenshots show wthrr running in nvim(toggleterm) inside kitty using a dracula theme and JetBrainsMono Nerd Font. The last screenshot shows wthrr in yakuake / konsole, also using a dracula color scheme.</sup>
+<sup>\*Rendering and colors are influenced by the terminal used and its theme and font.<br>
+For example, the first screenshots show wthrr in nvim(toggleterm) inside kitty with a Dracula theme and JetBrainsMono Nerd Font. The last screenshot shows wthrr in Yakuake / Konsole, also with a Dracula color scheme.</sup>
 
 ## Config
 
-Most users will probably not need to bother changing the configuration file manually, since adding the `-s` flag saves the values of a run as default.
+Values such as address and units can be stored as defaults in wthrr's config file by adding the `-s` flag to a run.
 
-For the sake of completeness, the contents of the configuration file are listed below.
-The location (e.g., on GNU/Linux ) usually is: `~/.config/weathercrab/wthrr.toml`
+E.g., on GNU/LinuxThe the location usually is `~/.config/weathercrab/wthrr.toml`
 
 ```toml
 address = 'berlin' # Address to check the weather for
@@ -114,71 +118,19 @@ temperature = 'celsius' # Temperature units [celsius | fahrenheit]
 speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
 ```
 
-## Requirements
-
-This app uses font icons and emojis. Therefore, having a font with Unicode support installed and using a nerd variant of your terminal font is required to display the output correctly.
-
--  [nerd fonts](https://github.com/ryanoasis/nerd-fonts)
--  [unicode font](https://github.com/googlefonts/noto-emoji/blob/main/fonts/NotoColorEmoji.ttf)<br>
-   <sup>(If it's not installed by default, noto font packages are usually available via your distribution's package manager)</sup>
-
-#### For ubuntu based distros:
-
--  ```
-   sudo apt install fonts-noto-core libssl-dev
-   ```
-
--  When using the binaries, you may need to add libssl manually
-   ```
-   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
-   ```
-
-<!--<sub>If you are using brew, this gist contains easily digestible 🍝 copy-pasta for nerd-font installation.<br>
-https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>-->
-
 ## Installation
 
-Without the rust toolchain installed, grabbing a binary from the [release](https://github.com/tobealive/wthrr-the-weathercrab/releases) page might be your way to go.
-
-Otherwise, rusts package manager is a simple way to install the binary crate:
+Wthrr is published as a crate on [crates.io](https://crates.io/crates/wthrr) and can be installed via rusts package manager.
 
 ```
 cargo install wthrr
 ```
 
-If you are on NetBSD, a package is available from the official repositories.
-To install it, simply run:
-
-```
-pkgin install wthrr
-```
-
-A Nix flake is also avaiable:
-
-```
-nix profile install "github:tobealive/wthrr-the-weathercrab"
-```
-
-```
-nix run "github:tobealive/wthrr-the-weathercrab"
-```
-
-### Build from source
-
-Another way is to compile the app yourself.
-Assuming the rust toolchain is installed on your system, just clone the repo and build the release version.
-
-```
-git clone https://github.com/tobealive/wthrr-the-weathercrab.git
-cd wthrr-the-weathercrab
-cargo build --release
-```
-
-When the build has finished, you'll find the `wthrr` binary inside the `./target/release` directory
+Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).
 
 ## Outlook
 
-The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section lists some of the features that is being worked on.
+The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section lists some of the features that are being worked on.
 
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
 
