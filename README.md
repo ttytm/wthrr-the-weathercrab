@@ -126,6 +126,12 @@ Wthrr is published as a crate on [crates.io](https://crates.io/crates/wthrr) and
 cargo install wthrr
 ```
 
+For NetBSD users there's a package available from the [official repositories](https://pkgsrc.se/misc/wthrr).
+
+```
+pkgin install wthrr
+```
+
 Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).
 
 ## Outlook
