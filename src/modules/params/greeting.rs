@@ -1,17 +1,18 @@
 use anyhow::Result;
 
 pub fn get(args_toggle_greeting: bool, config_greet: Option<bool>) -> Result<bool> {
-	if !args_toggle_greeting && config_greet.is_none() {
-		return Ok(true);
+	if let Some(config_greet_value) = config_greet {
+		let greet = match args_toggle_greeting {
+			true => !config_greet_value,
+			_ => config_greet_value,
+		};
+		Ok(greet)
+	} else {
+		Ok(!args_toggle_greeting)
 	}
-
-	let greet = match args_toggle_greeting {
-		true => !config_greet.unwrap(),
-		_ => config_greet.unwrap(),
-	};
-
-	Ok(greet)
 }
+
+
 
 #[cfg(test)]
 mod tests {
