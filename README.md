@@ -6,12 +6,12 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 
 ## Contents
 
--  [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
--  [Showcase](https://github.com/tobealive/wthrr-the-weathercrab#showcase)
--  [Config](https://github.com/tobealive/wthrr-the-weathercrab#config)
--  [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
--  [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
--  [Credits](https://github.com/tobealive/wthrr-the-weathercrab#credits)
+- [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
+- [Showcase](https://github.com/tobealive/wthrr-the-weathercrab#showcase)
+- [Config](https://github.com/tobealive/wthrr-the-weathercrab#config)
+- [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
+- [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
+- [Credits](https://github.com/tobealive/wthrr-the-weathercrab#credits)
 
 ## How to use?
 
@@ -40,7 +40,7 @@ If a default address is configured, but you want to explicitly search for a weat
 wthrr auto
 ```
 
-Example that uses Fahrenheit and mph as units and adds the hourly forecast for the day
+As a final example, we instruct wthrr to use Fahrenheit and mph as units and add the hourly forecast for the day
 
 ```
 wthrr -u f,mph -f -d
@@ -100,13 +100,13 @@ Options:
 </table>
 
 <sup>\*Rendering and colors are influenced by the terminal used and its theme and font.<br>
-For example, the first screenshots show wthrr in nvim(toggleterm) inside kitty with a Dracula theme and JetBrainsMono Nerd Font. The last screenshot shows wthrr in Yakuake / Konsole, also with a Dracula color scheme.</sup>
+E.g., the first of the above screenshots shows wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake / Console, also with a Dracula color scheme.</sup>
 
 ## Config
 
 Values such as address and units can be stored as defaults in wthrr's config file by adding the `-s` flag to a run.
 
-E.g., on GNU/LinuxThe the location usually is `~/.config/weathercrab/wthrr.toml`
+If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.toml`
 
 ```toml
 address = 'berlin' # Address to check the weather for
@@ -120,7 +120,7 @@ speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
 
 ## Installation
 
-Wthrr is published as a crate on [crates.io](https://crates.io/crates/wthrr) and can be installed via rusts package manager.
+Wthrr is published on [crates.io](https://crates.io/crates/wthrr) and can be installed via rusts package manager.
 
 ```
 cargo install wthrr
@@ -136,4 +136,4 @@ Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome 
 
 ## Credits
 
--  The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
+- The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
