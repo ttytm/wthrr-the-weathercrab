@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.58"
-chrono = "0.4.19"
+chrono = { version = "0.4.22", default-features = false, features = ["clock"] }
 clap = { version = "4.0", features = ["derive"] }
 dialoguer = "0.10.1"
 regex = "1.6.0"
