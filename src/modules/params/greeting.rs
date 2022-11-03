@@ -1,18 +1,15 @@
+use super::Config;
 use anyhow::Result;
 
 pub fn get(args_toggle_greeting: bool, config_greet: Option<bool>) -> Result<bool> {
-	if let Some(config_greet_value) = config_greet {
-		let greet = match args_toggle_greeting {
-			true => !config_greet_value,
-			_ => config_greet_value,
-		};
-		Ok(greet)
-	} else {
-		Ok(!args_toggle_greeting)
-	}
+	// the default is true, so unwrapping it cannot panic
+	let should_toggle = config_greet.unwrap_or_else(|| Config::default().greeting.unwrap());
+	let greet = match args_toggle_greeting {
+		true => !should_toggle,
+		_ => should_toggle,
+	};
+	Ok(greet)
 }
-
-
 
 #[cfg(test)]
 mod tests {
