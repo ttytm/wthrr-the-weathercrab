@@ -33,21 +33,29 @@ impl Forecast {
 		let mut width = forecast.width + 10;
 		let mut cell_width = MIN_WIDTH / 2;
 
-		if forecast_args.day && !forecast_args.week {
-			Current::render(product, true, units, lang).await?;
-			return Ok(());
-		}
-
-		// If week flag is not added -> ADD forecast to current days weather instead of displaying it exclusively
-		if !forecast_args.week {
-			let dimensions_current = Current::render(product, true, units, lang).await?;
-
-			if dimensions_current.cell_width > cell_width {
-				cell_width = dimensions_current.cell_width
+		match forecast_args {
+			// Only display daily forecast
+			ForecastArgs { day: true, week: false } => {
+				Current::render(product, true, units, lang).await?;
+				return Ok(());
 			}
-			if dimensions_current.width > width {
-				width = dimensions_current.width
+			// Display both forecasts if no or both forecast subcommand flags are added
+			ForecastArgs {
+				day: false,
+				week: false,
 			}
+			| ForecastArgs { day: true, week: true } => {
+				// Align dimensions of daily and weekly forecast
+				let dimensions_current = Current::render(product, true, units, lang).await?;
+
+				if dimensions_current.cell_width > cell_width {
+					cell_width = dimensions_current.cell_width
+				}
+				if dimensions_current.width > width {
+					width = dimensions_current.width
+				}
+			}
+			_ => {}
 		}
 
 		// Border Top
