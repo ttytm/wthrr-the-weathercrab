@@ -5,7 +5,10 @@ use term_painter::{
 	ToStyle,
 };
 
-use crate::{args::Forecast as ForecastArgs, params::units::Units, weather::Weather};
+use crate::{
+	params::{forecast::Forecast as ForecastParams, units::Units},
+	weather::Weather,
+};
 
 use self::{current::Current, forecast::Forecast};
 
@@ -28,15 +31,15 @@ pub const MIN_WIDTH: usize = 34;
 impl Product {
 	pub async fn render(
 		&self,
-		forecast: &Option<ForecastArgs>,
+		forecast: &ForecastParams,
 		units: &Units,
 		include_greeting: bool,
 		lang: &str,
 	) -> Result<()> {
 		greeting::render(include_greeting, lang).await?;
 
-		if forecast.is_some() {
-			Forecast::render(self, forecast.as_ref().unwrap(), units, lang).await?;
+		if forecast.week.unwrap_or_default() || forecast.day.unwrap_or_default() {
+			Forecast::render(self, forecast, units, lang).await?;
 		} else {
 			Current::render(self, false, units, lang).await?;
 		}

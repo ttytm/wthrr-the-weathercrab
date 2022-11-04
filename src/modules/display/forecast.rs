@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use crate::{args::Forecast as ForecastArgs, params::units::Units};
+use crate::params::{forecast::Forecast as ForecastParams, units::Units};
 
 use super::{
 	border::{Border, Separator},
@@ -28,23 +28,29 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render(product: &Product, forecast_args: &ForecastArgs, units: &Units, lang: &str) -> Result<()> {
+	pub async fn render(product: &Product, forecast_args: &ForecastParams, units: &Units, lang: &str) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
 		let mut width = forecast.width + 10;
 		let mut cell_width = MIN_WIDTH / 2;
 
 		match forecast_args {
 			// Only display daily forecast
-			ForecastArgs { day: true, week: false } => {
+			ForecastParams {
+				day: Some(true),
+				week: Some(false),
+			} => {
 				Current::render(product, true, units, lang).await?;
 				return Ok(());
 			}
 			// Display both forecasts if no or both forecast subcommand flags are added
-			ForecastArgs {
-				day: false,
-				week: false,
+			ForecastParams {
+				day: Some(false),
+				week: Some(false),
 			}
-			| ForecastArgs { day: true, week: true } => {
+			| ForecastParams {
+				day: Some(true),
+				week: Some(true),
+			} => {
 				// Align dimensions of daily and weekly forecast
 				let dimensions_current = Current::render(product, true, units, lang).await?;
 
