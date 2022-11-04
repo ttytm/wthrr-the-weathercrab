@@ -4,11 +4,7 @@ use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 use crate::{params::units::Time, params::units::Units, translation::translate};
 
 use super::{
-	border::{Border, Separator},
-	hourly::HourlyForecast,
-	utils::adjust_lang_width,
-	weathercode::WeatherCode,
-	wind::WindDirection,
+	border::*, hourly::HourlyForecast, utils::adjust_lang_width, weathercode::WeatherCode, wind::WindDirection,
 	Product, MIN_WIDTH,
 };
 
@@ -51,40 +47,52 @@ impl Current {
 
 		let Dimensions { width, cell_width } = dimensions;
 
+		let border_variant = BorderVariant::Square;
+
 		// Border Top
-		BrightBlack.with(|| println!("{}{}{}", Border::TL, Border::T.to_string().repeat(width), Border::TR));
+		BrightBlack.with(|| println!("{}", Border::Top.fmt(width, &border_variant)));
 
 		// Address / Title
 		println!(
 			"{} {: ^width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			Bold.paint(&address),
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - adjust_lang_width(&address, lang)
 		);
 
-		BrightBlack.with(|| println!("{}", Separator::Line.fmt(width)));
+		// Separator
+		BrightBlack.with(|| {
+			println!(
+				"{}",
+				match border_variant {
+					BorderVariant::Double => Separator::Double.fmt(width, &border_variant),
+					BorderVariant::SquareHeavy => Separator::SquareHeavy.fmt(width, &border_variant),
+					_ => Separator::Square.fmt(width, &border_variant),
+				}
+			)
+		});
 
 		// Temperature
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			Bold.paint(temperature + " " + &wmo_code.interpretation),
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - adjust_lang_width(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			apparent_temperature,
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - adjust_lang_width(&apparent_temperature, lang)
 		);
 
 		// Blank Line
-		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
+		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, &border_variant)));
 
 		// Humidity & Dewpoint
 		let humidity_dewpoint_split = format!(
@@ -95,29 +103,29 @@ impl Current {
 		);
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			humidity_dewpoint_split,
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
 		);
 
 		// Wind & Pressure
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			wind,
 			pressure,
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - cell_width
 		);
 
 		// Sunrise & Sunset
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			BrightBlack.paint(Border::L),
+			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
 			sun_rise,
 			sun_set,
-			BrightBlack.paint(Border::R),
+			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
 			width = width - 2 - cell_width
 		);
 
@@ -127,7 +135,7 @@ impl Current {
 		}
 
 		// Border Bottom
-		BrightBlack.with(|| println!("{}{}{}", Border::BL, Border::B.to_string().repeat(width), Border::BR));
+		BrightBlack.with(|| println!("{}", Border::Bottom.fmt(width, &border_variant)));
 
 		Ok(dimensions)
 	}
