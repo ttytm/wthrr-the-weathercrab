@@ -20,6 +20,13 @@ impl Default for Forecast {
 
 pub fn get(args_commands: Option<Forecast>, config_forecast: Option<Forecast>) -> Result<Forecast> {
 	let forecast = match args_commands {
+		Some(Forecast {
+			day: Some(false),
+			week: Some(false),
+		}) => Forecast {
+			day: Some(true),
+			week: Some(true),
+		},
 		Some(_) => args_commands.unwrap(),
 		_ => match config_forecast {
 			Some(Forecast {
