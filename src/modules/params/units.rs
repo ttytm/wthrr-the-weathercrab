@@ -10,55 +10,90 @@ use crate::args::ArgUnits;
 pub struct Units {
 	pub temperature: Option<Temperature>,
 	pub speed: Option<Speed>,
+	pub time: Option<Time>,
+	pub precipitation: Option<Precipitation>,
 }
 
 impl Default for Units {
 	fn default() -> Self {
 		Self {
-			temperature: Some(Temperature::celsius),
-			speed: Some(Speed::kmh),
+			temperature: Some(Temperature::default()),
+			speed: Some(Speed::default()),
+			time: Some(Time::default()),
+			precipitation: Some(Precipitation::default()),
 		}
 	}
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString)]
+#[derive(
+	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
+)]
 #[allow(non_camel_case_types)]
 pub enum Temperature {
+	#[default]
 	celsius,
 	fahrenheit,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString)]
+#[derive(
+	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
+)]
 #[allow(non_camel_case_types)]
 pub enum Speed {
+	#[default]
 	kmh,
 	mph,
 	knots,
 	ms,
 }
 
-pub fn get(arg_units: &[ArgUnits], config_units: &Units) -> Result<Units> {
+#[derive(
+	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
+)]
+#[allow(non_camel_case_types)]
+pub enum Time {
+	am_pm,
+	#[default]
+	military,
+}
+
+#[derive(
+	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
+)]
+#[allow(non_camel_case_types)]
+pub enum Precipitation {
+	#[default]
+	mm,
+	inch,
+}
+
+pub fn get(arg_units: &[ArgUnits], cfg_units: &Units) -> Result<Units> {
 	let mut units = assign_arg_units(arg_units)?;
 
-	if units.temperature == None && config_units.temperature.is_some() {
-		units.temperature = config_units.temperature
-	} else if units.temperature == None && config_units.temperature.is_none() {
-		units.temperature = Units::default().temperature
-	}
-
-	if units.speed.is_none() && config_units.speed.is_some() {
-		units.speed = config_units.speed
-	} else if units.speed.is_none() && config_units.speed.is_none() {
-		units.speed = Units::default().speed
-	}
+	units.temperature = evaluate_unit(units.temperature, cfg_units.temperature, Temperature::default());
+	units.speed = evaluate_unit(units.speed, cfg_units.speed, Speed::default());
+	units.time = evaluate_unit(units.time, cfg_units.time, Time::default());
+	units.precipitation = evaluate_unit(units.precipitation, cfg_units.precipitation, Precipitation::default());
 
 	Ok(units)
+}
+
+fn evaluate_unit<T>(arg_unit: Option<T>, cfg_unit: Option<T>, fallback_unit: T) -> Option<T> {
+	match arg_unit {
+		Some(unit) => Some(unit), // Some(u) => Some(u + 1),
+		None => match cfg_unit {
+			Some(unit) => Some(unit), // Some(u) => Some(u + 1),
+			_ => Some(fallback_unit),
+		},
+	}
 }
 
 pub fn assign_arg_units(arg_units: &[ArgUnits]) -> Result<Units> {
 	let mut units = Units {
 		temperature: None,
 		speed: None,
+		time: None,
+		precipitation: None,
 	};
 
 	for val in arg_units {
@@ -67,6 +102,12 @@ pub fn assign_arg_units(arg_units: &[ArgUnits]) -> Result<Units> {
 		}
 		if Speed::VARIANTS.as_ref().contains(&val.as_ref()) {
 			units.speed = Some(Speed::from_str(val.as_ref()).unwrap())
+		}
+		if Time::VARIANTS.as_ref().contains(&val.as_ref()) {
+			units.time = Some(Time::from_str(val.as_ref()).unwrap())
+		}
+		if Precipitation::VARIANTS.as_ref().contains(&val.as_ref()) {
+			units.precipitation = Some(Precipitation::from_str(val.as_ref()).unwrap())
 		}
 	}
 
@@ -79,10 +120,12 @@ mod tests {
 
 	#[test]
 	fn units_from_args() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph];
+		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph, ArgUnits::AmPm, ArgUnits::Inch];
 		let cfg_units = Units {
 			temperature: Some(Temperature::celsius),
 			speed: Some(Speed::kmh),
+			time: Some(Time::military),
+			precipitation: Some(Precipitation::mm),
 		};
 
 		assert_eq!(
@@ -90,6 +133,8 @@ mod tests {
 			Units {
 				temperature: Some(Temperature::fahrenheit),
 				speed: Some(Speed::mph),
+				time: Some(Time::am_pm),
+				precipitation: Some(Precipitation::inch),
 			}
 		);
 
@@ -102,32 +147,32 @@ mod tests {
 		let cfg_units = Units {
 			temperature: Some(Temperature::fahrenheit),
 			speed: Some(Speed::knots),
+			time: Some(Time::am_pm),
+			precipitation: Some(Precipitation::inch),
 		};
 
-		assert_eq!(
-			get(&arg_units, &cfg_units)?,
-			Units {
-				temperature: Some(Temperature::fahrenheit),
-				speed: Some(Speed::knots),
-			}
-		);
+		assert_eq!(get(&arg_units, &cfg_units)?, cfg_units);
 
 		Ok(())
 	}
 
 	#[test]
 	fn units_split_from_args_cfg() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit];
+		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::AmPm];
 		let cfg_units = Units {
 			temperature: Some(Temperature::celsius),
 			speed: Some(Speed::ms),
+			time: None,
+			precipitation: Some(Precipitation::inch),
 		};
 
 		assert_eq!(
 			get(&arg_units, &cfg_units)?,
 			Units {
 				temperature: Some(Temperature::fahrenheit),
-				speed: Some(Speed::ms),
+				speed: cfg_units.speed,
+				time: Some(Time::am_pm),
+				precipitation: cfg_units.precipitation,
 			}
 		);
 
@@ -139,13 +184,7 @@ mod tests {
 		let arg_units = [];
 		let cfg_units = Units::default();
 
-		assert_eq!(
-			get(&arg_units, &cfg_units)?,
-			Units {
-				temperature: Units::default().temperature,
-				speed: Units::default().speed,
-			}
-		);
+		assert_eq!(get(&arg_units, &cfg_units)?, Units::default());
 
 		Ok(())
 	}

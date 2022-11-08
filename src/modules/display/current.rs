@@ -1,7 +1,7 @@
 use anyhow::Result;
 use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 
-use crate::{params::units::Units, translation::translate};
+use crate::{params::units::Time, params::units::Units, translation::translate};
 
 use super::{
 	border::{Border, Separator},
@@ -47,7 +47,7 @@ impl Current {
 			wmo_code,
 			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, add_hourly, lang).await?;
+		} = Self::prepare(product, add_hourly, lang, units).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
 
@@ -132,19 +132,27 @@ impl Current {
 		Ok(dimensions)
 	}
 
-	async fn prepare(product: &Product, add_hourly: bool, lang: &str) -> Result<Self> {
+	async fn prepare(product: &Product, add_hourly: bool, lang: &str, units: &Units) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;
 
-		let (sunrise_time, sunset_time) = (&weather.daily.sunrise[0][11..16], &weather.daily.sunset[0][11..16]);
 		let (current_hour, sunrise_hour, sunset_hour) = (
 			weather.current_weather.time[11..13]
 				.parse::<usize>()
 				.unwrap_or_default(),
-			sunrise_time[..2].parse().unwrap_or_default(),
-			sunset_time[..2].parse().unwrap_or_default(),
+			weather.daily.sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunset[0][11..13].parse::<usize>().unwrap_or_default(),
 		);
+		let sunrise_time = match units.time {
+			Some(Time::am_pm) => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
+			_ => weather.daily.sunrise[0][11..16].to_string(),
+		};
+		let sunset_time = match units.time {
+			Some(Time::am_pm) => format!("{}:{}pm", sunset_hour / 2, &weather.daily.sunset[0][14..16]),
+			_ => weather.daily.sunset[0][11..16].to_string(),
+		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
+
 		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night), lang).await?;
 
 		let temperature = format!(
