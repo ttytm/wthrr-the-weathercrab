@@ -7,7 +7,7 @@ use term_painter::{
 };
 
 use crate::{
-	params::units::{Temperature, Time, Units},
+	params::units::{Precipitation, Temperature, Time, Units},
 	weather::Weather,
 };
 
@@ -32,8 +32,10 @@ impl HourlyForecast {
 			Some(Temperature::celsius) => "糖",
 			Some(Temperature::fahrenheit) => "宅",
 			_ => " ",
+		let precipitation_unit = match units.precipitation {
+			Some(Precipitation::inch) => "ⁱⁿ",
+			_ => "ₘₘ",
 		};
-		let precipitation_unit = "ₘₘ".to_string();
 
 		println!(
 			"{} {: <width$} {}",
