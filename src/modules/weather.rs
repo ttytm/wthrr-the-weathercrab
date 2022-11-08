@@ -86,11 +86,13 @@ latitude={}
 &current_weather=true
 &temperature_unit={}
 &windspeed_unit={}
+&precipitation_unit={}
 &timezone=auto",
 			lat,
 			lon,
 			unit.temperature.unwrap().as_ref(),
 			unit.speed.unwrap().as_ref(),
+			unit.precipitation.unwrap().as_ref(),
 		);
 
 		let res = reqwest::get(url)

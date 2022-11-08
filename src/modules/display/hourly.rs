@@ -7,7 +7,7 @@ use term_painter::{
 };
 
 use crate::{
-	params::units::{Temperature, Units},
+	params::units::{Precipitation, Temperature, Time, Units},
 	weather::Weather,
 };
 
@@ -29,11 +29,13 @@ impl HourlyForecast {
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		let temperature_unit = match units.temperature {
-			Some(Temperature::celsius) => "糖",
 			Some(Temperature::fahrenheit) => "宅",
-			_ => " ",
+			_ => "糖",
 		};
-		let precipitation_unit = "ₘₘ".to_string();
+		let precipitation_unit = match units.precipitation {
+			Some(Precipitation::inch) => "ⁱⁿ",
+			_ => "ₘₘ",
+		};
 
 		println!(
 			"{} {: <width$} {}",
@@ -75,8 +77,19 @@ impl HourlyForecast {
 			BrightBlack.with(|| println!("{}", Separator::Dotted.fmt(width)));
 		});
 
-		// let hours = [ "¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ", ];
-		let hours = ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"];
+		let hours = match units.time {
+			Some(Time::am_pm) => [
+				"¹²·⁰⁰ₐₘ",
+				"³·⁰⁰ₐₘ",
+				"⁶˙⁰⁰ₐₘ",
+				"⁹˙⁰⁰ₐₘ",
+				"¹²˙⁰⁰ₚₘ",
+				"³˙⁰⁰ₚₘ",
+				"⁶˙⁰⁰ₚₘ",
+				"⁹˙⁰⁰ₚₘ",
+			],
+			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
+		};
 		print!("{}", BrightBlack.paint(Border::L),);
 		for hour in hours {
 			print!("{: <9}", hour)
