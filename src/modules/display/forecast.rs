@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use term_painter::{Color::*, ToStyle};
 
-use crate::params::{forecast::Forecast as ForecastParams, units::Units};
+use crate::{args::Forecast as ForecastParams, params::units::Units};
 
 use super::{
 	border::{Border, Separator},
@@ -28,40 +28,34 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render(product: &Product, forecast_args: &ForecastParams, units: &Units, lang: &str) -> Result<()> {
+	pub async fn render(product: &Product, forecast_args: &[ForecastParams], units: &Units, lang: &str) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
 		let mut width = forecast.width + 10;
 		let mut cell_width = MIN_WIDTH / 2;
 
-		match forecast_args {
-			// Only display daily forecast
-			ForecastParams {
-				day: Some(true),
-				week: Some(false),
-			} => {
-				Current::render(product, true, units, lang).await?;
-				return Ok(());
+		let (mut include_day, mut include_week) = (false, false);
+		for val in forecast_args {
+			if ForecastParams::day == *val {
+				include_day = true;
 			}
-			// Display both forecasts if no or both forecast subcommand flags are added
-			ForecastParams {
-				day: Some(false),
-				week: Some(false),
+			if ForecastParams::week == *val {
+				include_week = true;
 			}
-			| ForecastParams {
-				day: Some(true),
-				week: Some(true),
-			} => {
-				// Align dimensions of daily and weekly forecast
-				let dimensions_current = Current::render(product, true, units, lang).await?;
+		}
 
-				if dimensions_current.cell_width > cell_width {
-					cell_width = dimensions_current.cell_width
-				}
-				if dimensions_current.width > width {
-					width = dimensions_current.width
-				}
+		if include_day {
+			let dimensions_current = Current::render(product, true, units, lang).await?;
+
+			if dimensions_current.cell_width > cell_width {
+				cell_width = dimensions_current.cell_width
 			}
-			_ => {}
+			if dimensions_current.width > width {
+				width = dimensions_current.width
+			}
+		}
+
+		if !include_week {
+			return Ok(());
 		}
 
 		// Border Top
