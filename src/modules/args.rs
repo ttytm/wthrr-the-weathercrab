@@ -13,7 +13,7 @@ pub struct Cli {
 	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
 	pub forecast: Vec<Forecast>,
 
-	/// Units for temperature and/or speed
+	/// Units of measurement
 	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
 	pub units: Vec<ArgUnits>,
 
@@ -37,11 +37,48 @@ pub struct Cli {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum Forecast {
+	#[value(hide = true)]
+	none,
+	#[value(name = "(w)eek", aliases = ["w", "week"])]
+	week,
+	#[value(name = "(d)ay", aliases = ["d", "day", "today"])]
+	day,
+	#[value(alias = "monday")]
+	mo,
+	#[value(alias = "tuesday")]
+	tu,
+	#[value(alias = "wednesday")]
+	we,
+	#[value(alias = "thursday")]
+	th,
+	#[value(alias = "friday")]
+	fr,
+	#[value(alias = "saturday")]
+	sa,
+	#[value(alias = "sunday")]
+	su,
+}
+/* pub enum Forecast {
+	none,
 	#[value(name = "(w)eek", aliases = ["w", "week"])]
 	week,
 	#[value(name = "to(d)ay", aliases = ["d", "day", "today"])]
 	day,
-}
+	#[value(name = "(mo)nday", aliases = ["mo", "monday"])]
+	monday,
+	#[value(name = "(tu)esday", aliases = ["tu", "tuesday"])]
+	tuesday,
+	#[value(name = "(we)dnesday", aliases = ["we", "wednesday"])]
+	wednesday,
+	#[value(name = "(th)rsday", aliases = ["tu", "thursday"])]
+	thursday,
+	#[value(name = "(fr)iday", aliases = ["fr", "friday"])]
+	friday,
+	#[value(name = "(sa)turday", aliases = ["sa", "saturday"])]
+	saturday,
+	#[value(name = "(su)nday", aliases = ["su", "sunday"])]
+	sunday,
+} */
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]

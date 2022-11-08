@@ -35,6 +35,10 @@ impl Forecast {
 
 		let (mut include_day, mut include_week) = (false, false);
 		for val in forecast_args {
+			if ForecastParams::none == *val {
+				Current::render(product, false, units, lang).await?;
+				return Ok(());
+			}
 			if ForecastParams::day == *val {
 				include_day = true;
 			}
