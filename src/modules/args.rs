@@ -11,16 +11,16 @@ pub struct Cli {
 	#[command(subcommand)]
 	pub commands: Option<Commands>,
 
-	/// Units for temperature and/or speed
+	/// Units of measurement
 	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
 	pub units: Vec<ArgUnits>,
 
-	/// Output language
+	/// Output language [e.g., en_US]
 	#[arg(short, long, global = true)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[arg(short, long, action, global = true)]
+	#[arg(short, long, action, global = true, hide = true)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default
@@ -61,7 +61,12 @@ pub enum ArgUnits {
 	Kmh,
 	Mph,
 	#[value(name = "(kn)ots", aliases = ["kn", "knots"])]
+	// serialize as kn for open-meteo api call
 	#[strum(serialize = "kn")]
 	Knots,
 	Ms,
+	#[value(name = "12h", alias = "am_pm")]
+	AmPm,
+	#[value(name = "24h", alias = "military")]
+	Military,
 }
