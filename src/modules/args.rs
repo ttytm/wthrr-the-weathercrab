@@ -11,16 +11,16 @@ pub struct Cli {
 	#[command(subcommand)]
 	pub commands: Option<Commands>,
 
-	/// Units of measurement
+	/// Units for temperature and/or speed
 	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
 	pub units: Vec<ArgUnits>,
 
-	/// Output language [e.g., en_US]
+	/// Output language
 	#[arg(short, long, global = true)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[arg(short, long, action, global = true, hide = true)]
+	#[arg(short, long, action, global = true)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default

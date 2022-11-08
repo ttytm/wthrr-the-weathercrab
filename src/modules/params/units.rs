@@ -75,22 +75,16 @@ pub fn get(arg_units: &[ArgUnits], cfg_units: &Units) -> Result<Units> {
 	units.time = evaluate_unit(units.time, cfg_units.time, Time::default());
 	units.precipitation = evaluate_unit(units.precipitation, cfg_units.precipitation, Precipitation::default());
 
-	println!("{:?}", units.precipitation);
-	println!("{:?}", units.temperature);
-
 	Ok(units)
 }
 
-fn evaluate_unit<T>(arg_unit: Option<T>, config_unit: Option<T>, fallback_unit: T) -> Option<T> {
+fn evaluate_unit<T>(arg_unit: Option<T>, cfg_unit: Option<T>, fallback_unit: T) -> Option<T> {
 	match arg_unit {
 		Some(unit) => Some(unit), // Some(u) => Some(u + 1),
-		None => {
-			if config_unit.is_some() {
-				config_unit
-			} else {
-				Some(fallback_unit)
-			}
-		}
+		None => match cfg_unit {
+			Some(unit) => Some(unit), // Some(u) => Some(u + 1),
+			_ => Some(fallback_unit),
+		},
 	}
 }
 

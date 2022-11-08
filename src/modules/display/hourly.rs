@@ -29,9 +29,9 @@ impl HourlyForecast {
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width)));
 
 		let temperature_unit = match units.temperature {
-			Some(Temperature::celsius) => "糖",
 			Some(Temperature::fahrenheit) => "宅",
-			_ => " ",
+			_ => "糖",
+		};
 		let precipitation_unit = match units.precipitation {
 			Some(Precipitation::inch) => "ⁱⁿ",
 			_ => "ₘₘ",
