@@ -61,7 +61,14 @@ pub enum ArgUnits {
 	Kmh,
 	Mph,
 	#[value(name = "(kn)ots", aliases = ["kn", "knots"])]
+	// serialize as kn for open-meteo api call
 	#[strum(serialize = "kn")]
 	Knots,
 	Ms,
+	#[value(name = "12h", alias = "am_pm")]
+	AmPm,
+	#[value(name = "24h", alias = "military")]
+	Military,
+	Mm,
+	Inch,
 }
