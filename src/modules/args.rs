@@ -69,4 +69,6 @@ pub enum ArgUnits {
 	AmPm,
 	#[value(name = "24h", alias = "military")]
 	Military,
+	Mm,
+	Inch,
 }
