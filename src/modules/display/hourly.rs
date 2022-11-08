@@ -7,7 +7,7 @@ use term_painter::{
 };
 
 use crate::{
-	params::units::{Temperature, Units},
+	params::units::{Temperature, Time, Units},
 	weather::Weather,
 };
 
@@ -75,8 +75,19 @@ impl HourlyForecast {
 			BrightBlack.with(|| println!("{}", Separator::Dotted.fmt(width)));
 		});
 
-		// let hours = [ "¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ", ];
-		let hours = ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"];
+		let hours = match units.time {
+			Some(Time::am_pm) => [
+				"¹²·⁰⁰ₐₘ",
+				"³·⁰⁰ₐₘ",
+				"⁶˙⁰⁰ₐₘ",
+				"⁹˙⁰⁰ₐₘ",
+				"¹²˙⁰⁰ₚₘ",
+				"³˙⁰⁰ₚₘ",
+				"⁶˙⁰⁰ₚₘ",
+				"⁹˙⁰⁰ₚₘ",
+			],
+			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
+		};
 		print!("{}", BrightBlack.paint(Border::L),);
 		for hour in hours {
 			print!("{: <9}", hour)
