@@ -9,14 +9,12 @@ use self::units::Units;
 
 mod address;
 pub mod forecast;
-mod greeting;
 mod language;
 pub mod units;
 
 pub struct Params {
 	pub address: String,
 	pub units: Units,
-	pub greeting: bool,
 	pub language: String,
 	pub forecast: Vec<Forecast>,
 	pub gui: Gui,
@@ -47,13 +45,10 @@ impl Params {
 
 		let gui = config.gui.unwrap_or_default();
 
-		let greeting = greeting::get(args.greeting, config.greeting)?;
-
 		Ok(Params {
 			address,
 			units,
 			language,
-			greeting,
 			forecast,
 			gui,
 		})

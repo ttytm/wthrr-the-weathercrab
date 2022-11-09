@@ -26,15 +26,8 @@ pub struct Product {
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
-	pub async fn render(
-		&self,
-		forecast: &[ForecastParams],
-		units: &Units,
-		gui: &Gui,
-		include_greeting: bool,
-		lang: &str,
-	) -> Result<()> {
-		greeting::render(include_greeting, lang).await?;
+	pub async fn render(&self, forecast: &[ForecastParams], units: &Units, gui: &Gui, lang: &str) -> Result<()> {
+		greeting::render(gui.greeting.unwrap_or_else(|| Gui::default().greeting.unwrap()), lang).await?;
 
 		if !forecast.is_empty() {
 			Forecast::render(self, forecast, units, &gui.border.unwrap_or_default(), lang).await?;
