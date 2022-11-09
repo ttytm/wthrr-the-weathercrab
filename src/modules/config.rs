@@ -34,13 +34,13 @@ impl Default for Config {
 
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Gui {
-	pub border: BorderVariant,
+	pub border: Option<BorderVariant>,
 }
 
 impl Default for Gui {
 	fn default() -> Self {
 		Self {
-			border: BorderVariant::default(),
+			border: Some(BorderVariant::default()),
 		}
 	}
 }

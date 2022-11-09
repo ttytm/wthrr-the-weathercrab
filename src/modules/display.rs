@@ -37,9 +37,9 @@ impl Product {
 		greeting::render(include_greeting, lang).await?;
 
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, &gui.border, lang).await?;
+			Forecast::render(self, forecast, units, &gui.border.unwrap_or_default(), lang).await?;
 		} else {
-			Current::render(self, false, units, &gui.border, lang).await?;
+			Current::render(self, false, units, &gui.border.unwrap_or_default(), lang).await?;
 		}
 
 		// Disclaimer

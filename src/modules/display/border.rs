@@ -21,7 +21,7 @@ pub enum BorderGlyph {
 	L,
 }
 
-#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
 pub enum BorderVariant {
 	#[default]
