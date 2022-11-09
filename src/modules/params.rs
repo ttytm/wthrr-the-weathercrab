@@ -1,10 +1,11 @@
 use anyhow::Result;
 
-use crate::{args::Cli, config::Config};
+use crate::{
+	args::{Cli, Forecast},
+	config::Config,
+};
 
-use self::{forecast::Forecast, units::Units};
-
-use super::args::Commands;
+use self::units::Units;
 
 mod address;
 pub mod forecast;
@@ -17,26 +18,17 @@ pub struct Params {
 	pub units: Units,
 	pub greeting: bool,
 	pub language: String,
-	pub forecast: Forecast,
+	pub forecast: Vec<Forecast>,
 }
 
 impl Params {
-	pub async fn get(args: &Cli, config: &Config) -> Result<Self> {
+	pub async fn get(args: &Cli, config: Config) -> Result<Self> {
 		let language = language::get(
 			args.language.as_deref().unwrap_or_default(),
 			config.language.as_deref().unwrap_or_default(),
 		)?;
 
-		let forecast = forecast::get(
-			match &args.commands {
-				Some(Commands::Forecast(args_forecast)) => Some(Forecast {
-					day: Some(args_forecast.day),
-					week: Some(args_forecast.week),
-				}),
-				_ => None,
-			},
-			config.forecast,
-		)?;
+		let forecast = forecast::get(&args.forecast, config.forecast)?;
 
 		if args.reset {
 			Config::reset(&language).await?;
