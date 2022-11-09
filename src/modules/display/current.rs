@@ -29,7 +29,13 @@ pub struct Dimensions {
 }
 
 impl Current {
-	pub async fn render(product: &Product, add_hourly: bool, units: &Units, lang: &str) -> Result<Dimensions> {
+	pub async fn render(
+		product: &Product,
+		add_hourly: bool,
+		units: &Units,
+		border_variant: &BorderVariant,
+		lang: &str,
+	) -> Result<Dimensions> {
 		let Current {
 			address,
 			temperature,
@@ -47,7 +53,7 @@ impl Current {
 
 		let Dimensions { width, cell_width } = dimensions;
 
-		let border_variant = BorderVariant::Square;
+		// let border_variant = BorderVariant::square;
 
 		// Border Top
 		BrightBlack.with(|| println!("{}", Border::Top.fmt(width, &border_variant)));
@@ -66,8 +72,8 @@ impl Current {
 			println!(
 				"{}",
 				match border_variant {
-					BorderVariant::Double => Separator::Double.fmt(width, &border_variant),
-					BorderVariant::SquareHeavy => Separator::SquareHeavy.fmt(width, &border_variant),
+					BorderVariant::double => Separator::Double.fmt(width, &border_variant),
+					BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
 					_ => Separator::Square.fmt(width, &border_variant),
 				}
 			)
@@ -131,7 +137,7 @@ impl Current {
 
 		// Hourly Forecast
 		if hourly_forecast.is_some() {
-			hourly_forecast.unwrap().render(width, units)
+			hourly_forecast.unwrap().render(width, units, border_variant)
 		}
 
 		// Border Bottom

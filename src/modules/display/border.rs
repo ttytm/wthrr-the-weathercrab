@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 
 #[derive(Display)]
@@ -20,13 +21,14 @@ pub enum BorderGlyph {
 	L,
 }
 
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[allow(non_camel_case_types)]
 pub enum BorderVariant {
-	Square,
-	SquareHeavy,
-	Double,
 	#[default]
-	Rounded,
+	rounded,
+	square,
+	square_heavy,
+	double,
 }
 
 pub enum Border {
@@ -46,37 +48,37 @@ impl BorderGlyph {
 	pub fn fmt(&self, variant: &BorderVariant) -> char {
 		match self {
 			BorderGlyph::TL => match variant {
-				BorderVariant::Square => '┌',
-				BorderVariant::SquareHeavy => '┏',
-				BorderVariant::Double => '╔',
+				BorderVariant::square => '┌',
+				BorderVariant::square_heavy => '┏',
+				BorderVariant::double => '╔',
 				_ => '╭',
 			},
 			BorderGlyph::T | BorderGlyph::B => match variant {
-				BorderVariant::Double => '═',
-				BorderVariant::SquareHeavy => '━',
+				BorderVariant::double => '═',
+				BorderVariant::square_heavy => '━',
 				_ => '─',
 			},
 			BorderGlyph::TR => match variant {
-				BorderVariant::Square => '┐',
-				BorderVariant::SquareHeavy => '┓',
-				BorderVariant::Double => '╗',
+				BorderVariant::square => '┐',
+				BorderVariant::square_heavy => '┓',
+				BorderVariant::double => '╗',
 				_ => '╮',
 			},
 			BorderGlyph::R | BorderGlyph::L => match variant {
-				BorderVariant::Double => '║',
-				BorderVariant::SquareHeavy => '┃',
+				BorderVariant::double => '║',
+				BorderVariant::square_heavy => '┃',
 				_ => '│',
 			},
 			BorderGlyph::BR => match variant {
-				BorderVariant::Square => '┘',
-				BorderVariant::SquareHeavy => '┛',
-				BorderVariant::Double => '╝',
+				BorderVariant::square => '┘',
+				BorderVariant::square_heavy => '┛',
+				BorderVariant::double => '╝',
 				_ => '╯',
 			},
 			BorderGlyph::BL => match variant {
-				BorderVariant::Square => '└',
-				BorderVariant::SquareHeavy => '┗',
-				BorderVariant::Double => '╚',
+				BorderVariant::square => '└',
+				BorderVariant::square_heavy => '┗',
+				BorderVariant::double => '╚',
 				_ => '╰',
 			},
 		}

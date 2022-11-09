@@ -22,17 +22,21 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render(product: &Product, forecast_args: &[ForecastParams], units: &Units, lang: &str) -> Result<()> {
+	pub async fn render(
+		product: &Product,
+		forecast_args: &[ForecastParams],
+		units: &Units,
+		border_variant: &BorderVariant,
+		lang: &str,
+	) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
 		let mut width = forecast.width + 10;
 		let mut cell_width = MIN_WIDTH / 2;
-		// TODO: dynamic assignment
-		let border_variant = BorderVariant::SquareHeavy;
 
 		let (mut include_day, mut include_week) = (false, false);
 		for val in forecast_args {
 			if ForecastParams::disable == *val {
-				Current::render(product, false, units, lang).await?;
+				Current::render(product, false, units, &border_variant, lang).await?;
 				return Ok(());
 			}
 			if ForecastParams::day == *val {
@@ -44,7 +48,7 @@ impl Forecast {
 		}
 
 		if include_day {
-			let dimensions_current = Current::render(product, true, units, lang).await?;
+			let dimensions_current = Current::render(product, true, units, &border_variant, lang).await?;
 
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
@@ -92,8 +96,8 @@ impl Forecast {
 					println!(
 						"{}",
 						match border_variant {
-							BorderVariant::Double => Separator::Double.fmt(width, &border_variant),
-							BorderVariant::SquareHeavy => Separator::SquareHeavy.fmt(width, &border_variant),
+							BorderVariant::double => Separator::Double.fmt(width, &border_variant),
+							BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
 							_ => Separator::Square.fmt(width, &border_variant),
 						}
 					)

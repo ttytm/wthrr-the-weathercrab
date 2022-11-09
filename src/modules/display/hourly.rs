@@ -22,8 +22,7 @@ pub struct HourlyForecast {
 const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
 
 impl HourlyForecast {
-	pub fn render(self, width: usize, units: &Units) {
-		let border_variant = BorderVariant::Square;
+	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant) {
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, &border_variant)));
 
 		let temperature_unit = match units.temperature {
@@ -47,8 +46,8 @@ impl HourlyForecast {
 			println!(
 				"{}",
 				match border_variant {
-					BorderVariant::Double => Separator::Double.fmt(width, &border_variant),
-					BorderVariant::SquareHeavy => Separator::SquareHeavy.fmt(width, &border_variant),
+					BorderVariant::double => Separator::Double.fmt(width, &border_variant),
+					BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
 					_ => Separator::Dashed.fmt(width, &border_variant),
 				}
 			)
@@ -86,8 +85,8 @@ impl HourlyForecast {
 				println!(
 					"{}",
 					match border_variant {
-						BorderVariant::Double => Separator::Double.fmt(width, &border_variant),
-						BorderVariant::SquareHeavy => Separator::SquareHeavy.fmt(width, &border_variant),
+						BorderVariant::double => Separator::Double.fmt(width, &border_variant),
+						BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
 						_ => Separator::Dashed.fmt(width, &border_variant),
 					}
 				)
