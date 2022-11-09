@@ -10,15 +10,14 @@ mod modules;
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
-	let config: Config = confy::load("weathercrab", "wthrr")?;
-	let params = Params::get(&args, config.clone()).await?;
+	let params = Params::get(&args).await?;
 
 	let product = run(&params).await?;
 	product
 		.render(&params.forecast, &params.units, &params.gui, &params.language)
 		.await?;
 
-	config.handle_next(args, params).await?;
+	Config::handle_next(args, params).await?;
 
 	Ok(())
 }

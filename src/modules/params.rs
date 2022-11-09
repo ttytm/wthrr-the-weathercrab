@@ -21,7 +21,9 @@ pub struct Params {
 }
 
 impl Params {
-	pub async fn get(args: &Cli, config: Config) -> Result<Self> {
+	pub async fn get(args: &Cli) -> Result<Self> {
+		let config: Config = confy::load("weathercrab", "wthrr")?;
+
 		let language = language::get(
 			args.language.as_deref().unwrap_or_default(),
 			config.language.as_deref().unwrap_or_default(),

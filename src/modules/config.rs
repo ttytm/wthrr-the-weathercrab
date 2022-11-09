@@ -46,13 +46,15 @@ impl Default for Gui {
 }
 
 impl Config {
-	pub async fn handle_next(&self, args: Cli, params: Params) -> Result<()> {
-		if !args.save && self.address.is_some() {
+	pub async fn handle_next(args: Cli, params: Params) -> Result<()> {
+		let config: Config = confy::load("weathercrab", "wthrr")?;
+
+		if !args.save && config.address.is_some() {
 			return Ok(());
 		}
 
 		let new_config = Config {
-			address: if self.address.is_some() && args.address.as_deref().unwrap_or_default() == "auto" {
+			address: if config.address.is_some() && args.address.as_deref().unwrap_or_default() == "auto" {
 				Some("auto".to_string())
 			} else {
 				Some(params.address)
@@ -67,8 +69,10 @@ impl Config {
 			gui: Some(params.gui),
 		};
 
-		if self.address.is_none() {
-			Self::save_prompt(new_config, args.address.as_deref().unwrap_or_default().to_string()).await?;
+		if config.address.is_none() {
+			new_config
+				.save_prompt(args.address.as_deref().unwrap_or_default().to_string())
+				.await?;
 		} else {
 			confy::store("weathercrab", "wthrr", &new_config)?;
 		}
@@ -76,27 +80,21 @@ impl Config {
 		Ok(())
 	}
 
-	async fn save_prompt(mut new_config: Config, args_address: String) -> Result<()> {
+	async fn save_prompt(mut self, args_address: String) -> Result<()> {
 		let mut items = vec![
-			translate(new_config.language.as_ref().unwrap(), "Yes please").await?,
-			translate(new_config.language.as_ref().unwrap(), "No, ask me next time").await?,
-			translate(new_config.language.as_ref().unwrap(), "No, dont ask me again").await?,
+			translate(self.language.as_ref().unwrap(), "Yes please").await?,
+			translate(self.language.as_ref().unwrap(), "No, ask me next time").await?,
+			translate(self.language.as_ref().unwrap(), "No, dont ask me again").await?,
 		];
 
 		if args_address.is_empty() || args_address == "auto" {
-			items.push(
-				translate(
-					new_config.language.as_ref().unwrap(),
-					"Always check for a weather station",
-				)
-				.await?,
-			)
+			items.push(translate(self.language.as_ref().unwrap(), "Always check for a weather station").await?)
 		}
 
 		let selection = Select::new()
 			.with_prompt(
 				translate(
-					new_config.language.as_ref().unwrap(),
+					self.language.as_ref().unwrap(),
 					"Would you like to use this as your default?",
 				)
 				.await?,
@@ -108,12 +106,12 @@ impl Config {
 		match selection {
 			0 => {}
 			1 => return Ok(()),
-			2 => new_config.address = None,
-			3 => new_config.address = Some("auto".to_string()),
+			2 => self.address = None,
+			3 => self.address = Some("auto".to_string()),
 			_ => println!("User did not select anything or exited using Esc or q"),
 		}
 
-		confy::store("weathercrab", "wthrr", &new_config)?;
+		confy::store("weathercrab", "wthrr", &self)?;
 
 		Ok(())
 	}
