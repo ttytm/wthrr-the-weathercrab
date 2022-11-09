@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 
+use modules::config::Config;
 use modules::*;
 use modules::{args::Cli, display::Product, location::Geolocation, params::Params, weather::Weather};
 
@@ -9,8 +10,8 @@ mod modules;
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
-	let config = confy::load("weathercrab", "wthrr")?;
-	let params = Params::get(&args, &config).await?;
+	let config: Config = confy::load("weathercrab", "wthrr")?;
+	let params = Params::get(&args, config.clone()).await?;
 
 	let product = run(&params).await?;
 	product

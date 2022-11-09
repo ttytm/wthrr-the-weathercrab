@@ -3,27 +3,27 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	args::Cli,
-	params::{forecast::Forecast, units::Units, Params},
+	args::{Cli, Forecast},
+	params::{units::Units, Params},
 	translation::translate,
 };
 
-#[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Config {
 	pub address: Option<String>,
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
+	pub forecast: Option<Vec<Forecast>>,
 	pub units: Option<Units>,
-	pub forecast: Option<Forecast>,
 }
 
 impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: None,
+			forecast: None,
 			greeting: Some(true),
 			language: Some("en".to_string()),
-			forecast: Some(Forecast::default()),
 			units: Some(Units::default()),
 		}
 	}
@@ -43,7 +43,11 @@ impl Config {
 			},
 			greeting: Some(params.greeting),
 			language: Some(params.language),
-			forecast: Some(params.forecast),
+			forecast: if !params.forecast.is_empty() {
+				Some(params.forecast)
+			} else {
+				None
+			},
 			units: Some(params.units),
 		};
 
