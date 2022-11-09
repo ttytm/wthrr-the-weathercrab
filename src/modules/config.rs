@@ -12,7 +12,6 @@ use crate::{
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Config {
 	pub address: Option<String>,
-	pub greeting: Option<bool>,
 	pub language: Option<String>,
 	pub forecast: Option<Vec<Forecast>>,
 	pub units: Option<Units>,
@@ -24,7 +23,6 @@ impl Default for Config {
 		Self {
 			address: None,
 			forecast: None,
-			greeting: Some(true),
 			language: Some("en".to_string()),
 			units: Some(Units::default()),
 			gui: Some(Gui::default()),
@@ -35,12 +33,14 @@ impl Default for Config {
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Gui {
 	pub border: Option<BorderVariant>,
+	pub greeting: Option<bool>,
 }
 
 impl Default for Gui {
 	fn default() -> Self {
 		Self {
 			border: Some(BorderVariant::default()),
+			greeting: Some(true),
 		}
 	}
 }
@@ -57,7 +57,6 @@ impl Config {
 			} else {
 				Some(params.address)
 			},
-			greeting: Some(params.greeting),
 			language: Some(params.language),
 			forecast: if !params.forecast.is_empty() {
 				Some(params.forecast)

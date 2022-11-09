@@ -1,4 +1,3 @@
-// use clap::{Args, Parser, Subcommand, ValueEnum};
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
@@ -20,10 +19,6 @@ pub struct Cli {
 	/// Output language [e.g.: en_US]
 	#[arg(short, long, global = true)]
 	pub language: Option<String>,
-
-	/// Toggle greeting message
-	#[arg(short, long, action, hide = true)]
-	pub greeting: bool,
 
 	/// Save the supplied values as default
 	#[arg(short, long, action, group = "config_file_action")]
