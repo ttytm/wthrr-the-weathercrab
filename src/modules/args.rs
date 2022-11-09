@@ -1,52 +1,61 @@
-use clap::{Args, Parser, Subcommand, ValueEnum};
+// use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, next_line_help = true)]
 pub struct Cli {
 	/// Address to check the weather for
 	pub address: Option<String>,
 
-	#[command(subcommand)]
-	pub commands: Option<Commands>,
+	/// [e.g.: -f w,d]
+	#[arg(long, short, use_value_delimiter = true, value_name = "FORECAST,...")]
+	pub forecast: Vec<Forecast>,
 
-	/// Units for temperature and/or speed
-	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
+	/// [e.g.: -u f,12h]
+	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
 	pub units: Vec<ArgUnits>,
 
-	/// Output language
+	/// Output language [e.g.: en_US]
 	#[arg(short, long, global = true)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[arg(short, long, action, global = true)]
+	#[arg(short, long, action, hide = true)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default
-	#[arg(short, long, action, group = "config_file_action", global = true)]
+	#[arg(short, long, action, group = "config_file_action")]
 	pub save: bool,
 
 	/// Wipe wthrr's configuration data
-	#[arg(short, long, action, group = "config_file_action", global = true)]
+	#[arg(short, long, action, group = "config_file_action")]
 	pub reset: bool,
 }
 
-#[derive(Subcommand)]
-pub enum Commands {
-	/// Include the weather forecast
-	#[clap(short_flag = 'f')]
-	Forecast(Forecast),
-}
-
-#[derive(Debug, Args)]
-pub struct Forecast {
-	/// Show the seven day forecast
-	#[arg(short, value_parser, action)]
-	pub week: bool,
-	/// Show the forecast for the day
-	#[arg(short, value_parser, action)]
-	pub day: bool,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
+#[allow(non_camel_case_types)]
+pub enum Forecast {
+	disable,
+	#[value(name = "(w)eek", aliases = ["w", "week"])]
+	week,
+	#[value(name = "(d)ay", aliases = ["d", "day", "today"])]
+	day,
+	// #[value(alias = "monday")]
+	// mo,
+	// #[value(alias = "tuesday")]
+	// tu,
+	// #[value(alias = "wednesday")]
+	// we,
+	// #[value(alias = "thursday")]
+	// th,
+	// #[value(alias = "friday")]
+	// fr,
+	// #[value(alias = "saturday")]
+	// sa,
+	// #[value(alias = "sunday")]
+	// su,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
@@ -70,5 +79,6 @@ pub enum ArgUnits {
 	#[value(name = "24h", alias = "military")]
 	Military,
 	Mm,
+	#[value(name = "(in)ch", alias = "in")]
 	Inch,
 }
