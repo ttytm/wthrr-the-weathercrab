@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::{
 	args::{Cli, Forecast},
-	config::Config,
+	config::{Config, Gui},
 };
 
 use self::units::Units;
@@ -19,6 +19,7 @@ pub struct Params {
 	pub greeting: bool,
 	pub language: String,
 	pub forecast: Vec<Forecast>,
+	pub gui: Gui,
 }
 
 impl Params {
@@ -44,6 +45,8 @@ impl Params {
 
 		let units = units::get(&args.units, &config.units.unwrap_or_default())?;
 
+		let gui = config.gui.unwrap_or_default();
+
 		let greeting = greeting::get(args.greeting, config.greeting)?;
 
 		Ok(Params {
@@ -52,6 +55,7 @@ impl Params {
 			language,
 			greeting,
 			forecast,
+			gui,
 		})
 	}
 }
