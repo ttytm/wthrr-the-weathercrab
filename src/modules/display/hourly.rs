@@ -23,7 +23,7 @@ const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
 
 impl HourlyForecast {
 	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant) {
-		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, &border_variant)));
+		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
 
 		let temperature_unit = match units.temperature {
 			Some(Temperature::fahrenheit) => "宅",
@@ -36,9 +36,9 @@ impl HourlyForecast {
 
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
+			BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
 			Bold.paint("Hourly Forecast"),
-			BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
+			BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
 			width = width - 2
 		);
 
@@ -46,9 +46,9 @@ impl HourlyForecast {
 			println!(
 				"{}",
 				match border_variant {
-					BorderVariant::double => Separator::Double.fmt(width, &border_variant),
-					BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
-					_ => Separator::Dashed.fmt(width, &border_variant),
+					BorderVariant::double => Separator::Double.fmt(width, border_variant),
+					BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, border_variant),
+					_ => Separator::Dashed.fmt(width, border_variant),
 				}
 			)
 		});
@@ -56,27 +56,27 @@ impl HourlyForecast {
 		Yellow.with(|| {
 			println!(
 				"{} {: <width$}{}{}",
-				BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
+				BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
 				Bold.paint(self.temperatures),
 				temperature_unit,
-				BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
+				BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
 				width = width - 3
 			);
-			BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, &border_variant)));
+			BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
 			println!(
 				"{}{}{}",
-				BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
+				BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
 				Bold.paint(self.graph),
-				BrightBlack.paint(BorderGlyph::R.fmt(&border_variant))
+				BrightBlack.paint(BorderGlyph::R.fmt(border_variant))
 			);
 
 			Blue.with(|| {
 				println!(
 					"{} {: <width$}{}{}",
-					BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),
+					BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
 					Bold.paint(self.precipitation),
 					precipitation_unit,
-					BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)),
+					BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
 					width = width - 4
 				)
 			});
@@ -85,9 +85,9 @@ impl HourlyForecast {
 				println!(
 					"{}",
 					match border_variant {
-						BorderVariant::double => Separator::Double.fmt(width, &border_variant),
-						BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, &border_variant),
-						_ => Separator::Dashed.fmt(width, &border_variant),
+						BorderVariant::double => Separator::Double.fmt(width, border_variant),
+						BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, border_variant),
+						_ => Separator::Dashed.fmt(width, border_variant),
 					}
 				)
 			});
@@ -106,11 +106,11 @@ impl HourlyForecast {
 			],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!("{}", BrightBlack.paint(BorderGlyph::L.fmt(&border_variant)),);
+		print!("{}", BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),);
 		for hour in hours {
 			print!("{: <9}", hour)
 		}
-		println!("{}", BrightBlack.paint(BorderGlyph::R.fmt(&border_variant)));
+		println!("{}", BrightBlack.paint(BorderGlyph::R.fmt(border_variant)));
 	}
 
 	pub async fn prepare(weather: &Weather, night: bool, lang: &str) -> Result<Self> {
