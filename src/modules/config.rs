@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
 	args::{Cli, Forecast},
+	display::border::BorderVariant,
 	params::{units::Units, Params},
 	translation::translate,
 };
@@ -15,6 +16,7 @@ pub struct Config {
 	pub language: Option<String>,
 	pub forecast: Option<Vec<Forecast>>,
 	pub units: Option<Units>,
+	pub gui: Option<Gui>,
 }
 
 impl Default for Config {
@@ -25,6 +27,20 @@ impl Default for Config {
 			greeting: Some(true),
 			language: Some("en".to_string()),
 			units: Some(Units::default()),
+			gui: Some(Gui::default()),
+		}
+	}
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+pub struct Gui {
+	pub border: BorderVariant,
+}
+
+impl Default for Gui {
+	fn default() -> Self {
+		Self {
+			border: BorderVariant::default(),
 		}
 	}
 }
@@ -49,6 +65,7 @@ impl Config {
 				None
 			},
 			units: Some(params.units),
+			gui: Some(params.gui),
 		};
 
 		if self.address.is_none() {

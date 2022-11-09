@@ -5,11 +5,11 @@ use term_painter::{
 	ToStyle,
 };
 
-use crate::{args::Forecast as ForecastParams, params::units::Units, weather::Weather};
+use crate::{args::Forecast as ForecastParams, config::Gui, params::units::Units, weather::Weather};
 
 use self::{current::Current, forecast::Forecast};
 
-mod border;
+pub mod border;
 mod current;
 mod forecast;
 mod greeting;
@@ -30,15 +30,16 @@ impl Product {
 		&self,
 		forecast: &[ForecastParams],
 		units: &Units,
+		gui: &Gui,
 		include_greeting: bool,
 		lang: &str,
 	) -> Result<()> {
 		greeting::render(include_greeting, lang).await?;
 
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, lang).await?;
+			Forecast::render(self, forecast, units, &gui.border, lang).await?;
 		} else {
-			Current::render(self, false, units, lang).await?;
+			Current::render(self, false, units, &gui.border, lang).await?;
 		}
 
 		// Disclaimer
