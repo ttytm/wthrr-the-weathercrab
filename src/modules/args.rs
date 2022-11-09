@@ -4,25 +4,25 @@ use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, next_line_help = true)]
 pub struct Cli {
 	/// Address to check the weather for
 	pub address: Option<String>,
 
-	/// Include the weather forecast
-	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
+	/// [e.g.: -f w,d]
+	#[arg(long, short, use_value_delimiter = true, value_name = "FORECAST,...")]
 	pub forecast: Vec<Forecast>,
 
-	/// Units of measurement
-	#[arg(long, short, next_line_help = false, use_value_delimiter = true)]
+	/// [e.g.: -u f,12h]
+	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
 	pub units: Vec<ArgUnits>,
 
-	/// Output language
+	/// Output language [e.g.: en_US]
 	#[arg(short, long, global = true)]
 	pub language: Option<String>,
 
 	/// Toggle greeting message
-	#[arg(short, long, action)]
+	#[arg(short, long, action, hide = true)]
 	pub greeting: bool,
 
 	/// Save the supplied values as default
@@ -37,48 +37,26 @@ pub struct Cli {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum Forecast {
-	#[value(hide = true)]
-	none,
+	disable,
 	#[value(name = "(w)eek", aliases = ["w", "week"])]
 	week,
 	#[value(name = "(d)ay", aliases = ["d", "day", "today"])]
 	day,
-	#[value(alias = "monday")]
-	mo,
-	#[value(alias = "tuesday")]
-	tu,
-	#[value(alias = "wednesday")]
-	we,
-	#[value(alias = "thursday")]
-	th,
-	#[value(alias = "friday")]
-	fr,
-	#[value(alias = "saturday")]
-	sa,
-	#[value(alias = "sunday")]
-	su,
+	// #[value(alias = "monday")]
+	// mo,
+	// #[value(alias = "tuesday")]
+	// tu,
+	// #[value(alias = "wednesday")]
+	// we,
+	// #[value(alias = "thursday")]
+	// th,
+	// #[value(alias = "friday")]
+	// fr,
+	// #[value(alias = "saturday")]
+	// sa,
+	// #[value(alias = "sunday")]
+	// su,
 }
-/* pub enum Forecast {
-	none,
-	#[value(name = "(w)eek", aliases = ["w", "week"])]
-	week,
-	#[value(name = "to(d)ay", aliases = ["d", "day", "today"])]
-	day,
-	#[value(name = "(mo)nday", aliases = ["mo", "monday"])]
-	monday,
-	#[value(name = "(tu)esday", aliases = ["tu", "tuesday"])]
-	tuesday,
-	#[value(name = "(we)dnesday", aliases = ["we", "wednesday"])]
-	wednesday,
-	#[value(name = "(th)rsday", aliases = ["tu", "thursday"])]
-	thursday,
-	#[value(name = "(fr)iday", aliases = ["fr", "friday"])]
-	friday,
-	#[value(name = "(sa)turday", aliases = ["sa", "saturday"])]
-	saturday,
-	#[value(name = "(su)nday", aliases = ["su", "sunday"])]
-	sunday,
-} */
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
@@ -101,5 +79,6 @@ pub enum ArgUnits {
 	#[value(name = "24h", alias = "military")]
 	Military,
 	Mm,
+	#[value(name = "(in)ch", alias = "in")]
 	Inch,
 }
