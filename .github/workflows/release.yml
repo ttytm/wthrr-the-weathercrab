@@ -23,7 +23,7 @@ jobs:
             OS: ubuntu-latest
           # - TARGET: aarch64-unknown-linux-gnu
           #   OS: ubuntu-latest
-          # - TARGET: armv7-unknown-linux-gnueabihf            
+          # - TARGET: armv7-unknown-linux-gnueabihf
           #   OS: ubuntu-latest
           - TARGET: x86_64-apple-darwin # not properly signed, so there are security warnings
             OS: macos-latest
@@ -46,7 +46,7 @@ jobs:
       - name: List
         run: find ./
       - name: Install and configure dependencies
-        # dependencies are only needed on ubuntu 
+        # dependencies are only needed on ubuntu
         # as that's the only place where we build the AppImage and would make cross-compilation
         if: ${{ matrix.OS == 'ubuntu-latest' }}
         run: |
@@ -101,6 +101,7 @@ jobs:
           name: result
           path: |
             ./artifacts
+
   # deploy to github release tag
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
@@ -115,6 +116,6 @@ jobs:
       - name: List
         run: find ./artifacts
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: koplo199/action-gh-release@1.0
         with:
           files: ./artifacts/*.tar.gz, ./artifacts/*.AppImage
