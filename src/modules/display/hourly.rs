@@ -1,4 +1,5 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, fmt::Write as _};
 use term_painter::{
 	Attr::Bold,
@@ -17,6 +18,17 @@ pub struct HourlyForecast {
 	temperatures: String,
 	graph: String,
 	precipitation: String,
+}
+
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(non_camel_case_types)]
+pub enum GraphVariant {
+	#[default]
+	lines,
+	lines_shallow,
+	dots,
+	dots_double,
+	// dots_fill,
 }
 
 const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
@@ -113,10 +125,10 @@ impl HourlyForecast {
 		println!("{}", BrightBlack.paint(BorderGlyph::R.fmt(border_variant)));
 	}
 
-	pub async fn prepare(weather: &Weather, night: bool, lang: &str) -> Result<Self> {
+	pub async fn prepare(weather: &Weather, night: bool, graph_variant: &GraphVariant, lang: &str) -> Result<Self> {
 		let temperatures = Self::prepare_temperature(weather, night, lang).await?;
 		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
-		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24])?;
+		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
 
 		Ok(HourlyForecast {
 			temperatures,
@@ -152,12 +164,19 @@ impl HourlyForecast {
 		Ok(result)
 	}
 
-	fn prepare_graph(temperatures: &[f64]) -> Result<String> {
+	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<String> {
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
-		const GRAPH_LEVELS: [char; 7] = ['🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'];
-		let level_margin = (max_temp - min_temp) / 6.0;
+		let graph_levels = match graph_variant {
+			GraphVariant::lines => ['🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
+			GraphVariant::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
+			GraphVariant::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
+			GraphVariant::dots_double => ['⣀', '⠤', '⠒', '⠉'].to_vec(),
+			// somthing like this is better suited for a graph that spans more the one line
+			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
+		};
+		let level_margin = (max_temp - min_temp) / (graph_levels.len() - 1) as f64;
 		let mut last_level = None;
 		let mut graph = String::new();
 
@@ -166,22 +185,22 @@ impl HourlyForecast {
 
 			if let Some(last_level) = last_level {
 				match current_level.cmp(&last_level) {
-					Ordering::Greater => graph.push(GRAPH_LEVELS[current_level + 1]),
-					Ordering::Less => graph.push(GRAPH_LEVELS[current_level - 1]),
-					Ordering::Equal => graph.push(GRAPH_LEVELS[current_level]),
+					Ordering::Greater => graph.push(graph_levels[current_level + 1]),
+					Ordering::Less => graph.push(graph_levels[current_level - 1]),
+					Ordering::Equal => graph.push(graph_levels[current_level]),
 				}
 			} else {
-				graph.push(GRAPH_LEVELS[current_level])
+				graph.push(graph_levels[current_level])
 			}
 
-			graph.push(GRAPH_LEVELS[current_level]);
+			graph.push(graph_levels[current_level]);
 
 			let next_level = ((temperatures[i + 1] - min_temp) / level_margin) as usize;
 
 			match current_level.cmp(&next_level) {
-				Ordering::Greater => graph.push(GRAPH_LEVELS[current_level - 1]),
-				Ordering::Less => graph.push(GRAPH_LEVELS[current_level + 1]),
-				Ordering::Equal => graph.push(GRAPH_LEVELS[current_level]),
+				Ordering::Greater => graph.push(graph_levels[current_level - 1]),
+				Ordering::Less => graph.push(graph_levels[current_level + 1]),
+				Ordering::Equal => graph.push(graph_levels[current_level]),
 			}
 
 			if i == 23 {

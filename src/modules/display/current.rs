@@ -4,7 +4,11 @@ use term_painter::{Attr::Bold, Color::BrightBlack, ToStyle};
 use crate::{params::units::Time, params::units::Units, translation::translate};
 
 use super::{
-	border::*, hourly::HourlyForecast, utils::adjust_lang_width, weathercode::WeatherCode, wind::WindDirection,
+	border::*,
+	hourly::{GraphVariant, HourlyForecast},
+	utils::adjust_lang_width,
+	weathercode::WeatherCode,
+	wind::WindDirection,
 	Product, MIN_WIDTH,
 };
 
@@ -34,6 +38,7 @@ impl Current {
 		add_hourly: bool,
 		units: &Units,
 		border_variant: &BorderVariant,
+		graph_variant: &GraphVariant,
 		lang: &str,
 	) -> Result<Dimensions> {
 		let Current {
@@ -49,7 +54,7 @@ impl Current {
 			wmo_code,
 			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, add_hourly, lang, units).await?;
+		} = Self::prepare(product, add_hourly, lang, units, graph_variant).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
 
@@ -146,7 +151,13 @@ impl Current {
 		Ok(dimensions)
 	}
 
-	async fn prepare(product: &Product, add_hourly: bool, lang: &str, units: &Units) -> Result<Self> {
+	async fn prepare(
+		product: &Product,
+		add_hourly: bool,
+		lang: &str,
+		units: &Units,
+		graph_variant: &GraphVariant,
+	) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;
 
@@ -230,7 +241,7 @@ impl Current {
 		};
 
 		let hourly_forecast = match add_hourly {
-			true => Some(HourlyForecast::prepare(weather, night, lang).await?),
+			true => Some(HourlyForecast::prepare(weather, night, graph_variant, lang).await?),
 			_ => None,
 		};
 
