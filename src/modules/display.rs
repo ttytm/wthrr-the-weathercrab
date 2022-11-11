@@ -13,7 +13,7 @@ pub mod border;
 mod current;
 mod forecast;
 mod greeting;
-mod hourly;
+pub mod hourly;
 mod utils;
 mod weathercode;
 mod wind;
@@ -30,9 +30,25 @@ impl Product {
 		greeting::render(gui.greeting.unwrap_or_else(|| Gui::default().greeting.unwrap()), lang).await?;
 
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, &gui.border.unwrap_or_default(), lang).await?;
+			Forecast::render(
+				self,
+				forecast,
+				units,
+				&gui.border.unwrap_or_default(),
+				&gui.graph.unwrap_or_default(),
+				lang,
+			)
+			.await?;
 		} else {
-			Current::render(self, false, units, &gui.border.unwrap_or_default(), lang).await?;
+			Current::render(
+				self,
+				false,
+				units,
+				&gui.border.unwrap_or_default(),
+				&gui.graph.unwrap_or_default(),
+				lang,
+			)
+			.await?;
 		}
 
 		// Disclaimer
