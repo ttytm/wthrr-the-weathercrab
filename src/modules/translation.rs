@@ -3,12 +3,12 @@ use reqwest::Url;
 use serde_json::Value;
 
 pub async fn translate(target_lang: &str, input: &str) -> Result<String> {
-	if target_lang == "en" {
+	if target_lang == "en_US" {
 		return Ok(input.to_string());
 	}
 
 	let url = Url::parse_with_params(
-		"https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=t&sl=en",
+		"https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=t&sl=en_US",
 		&[("tl", target_lang), ("q", input)],
 	)?;
 
@@ -38,7 +38,7 @@ mod tests {
 
 	#[tokio::test]
 	async fn translate_string() -> Result<()> {
-		let (target_lang, input) = ("de", "tounge-twister");
+		let (target_lang, input) = ("de_DE", "tounge-twister");
 
 		let res = translate(target_lang, input).await?;
 

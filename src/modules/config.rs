@@ -23,7 +23,7 @@ impl Default for Config {
 		Self {
 			address: None,
 			forecast: None,
-			language: Some("en".to_string()),
+			language: Some("en_US".to_string()),
 			units: Some(Units::default()),
 			gui: Some(Gui::default()),
 		}

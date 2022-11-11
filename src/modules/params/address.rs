@@ -45,7 +45,12 @@ mod tests {
 			..Default::default()
 		};
 
-		let res = get(arg_address, config.address.as_deref().unwrap_or_default(), "en").await?;
+		let res = get(
+			arg_address,
+			config.address.as_deref().unwrap_or_default(),
+			&config.language.unwrap(),
+		)
+		.await?;
 
 		assert!(res.contains("new york"));
 
@@ -60,7 +65,12 @@ mod tests {
 			..Default::default()
 		};
 
-		let res = get(arg_address, config.address.as_deref().unwrap_or_default(), "en").await?;
+		let res = get(
+			arg_address,
+			config.address.as_deref().unwrap_or_default(),
+			&config.language.unwrap(),
+		)
+		.await?;
 
 		assert!(res.contains("Berlin"));
 
