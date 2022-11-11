@@ -106,16 +106,7 @@ impl HourlyForecast {
 		});
 
 		let hours = match units.time {
-			Some(Time::am_pm) => [
-				"¹²·⁰⁰ₐₘ",
-				"³·⁰⁰ₐₘ",
-				"⁶˙⁰⁰ₐₘ",
-				"⁹˙⁰⁰ₐₘ",
-				"¹²˙⁰⁰ₚₘ",
-				"³˙⁰⁰ₚₘ",
-				"⁶˙⁰⁰ₚₘ",
-				"⁹˙⁰⁰ₚₘ",
-			],
+			Some(Time::am_pm) => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
 		print!("{}", BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),);
@@ -130,11 +121,7 @@ impl HourlyForecast {
 		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
 		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
 
-		Ok(HourlyForecast {
-			temperatures,
-			graph,
-			precipitation,
-		})
+		Ok(HourlyForecast { temperatures, graph, precipitation })
 	}
 
 	async fn prepare_temperature(weather: &Weather, night: bool, lang: &str) -> Result<String> {

@@ -27,7 +27,7 @@ pub struct ForecastDay {
 impl Forecast {
 	pub async fn render(
 		product: &Product,
-		forecast_args: &[ForecastParams],
+		forecast_params: &[ForecastParams],
 		units: &Units,
 		border_variant: &BorderVariant,
 		graph_variant: &GraphVariant,
@@ -38,7 +38,7 @@ impl Forecast {
 		let mut cell_width = MIN_WIDTH / 2;
 
 		let (mut include_day, mut include_week) = (false, false);
-		for val in forecast_args {
+		for val in forecast_params {
 			if ForecastParams::disable == *val {
 				Current::render(product, false, units, border_variant, graph_variant, lang).await?;
 				return Ok(());

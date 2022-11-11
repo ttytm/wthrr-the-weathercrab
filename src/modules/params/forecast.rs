@@ -2,11 +2,11 @@ use anyhow::Result;
 
 use crate::args::Forecast;
 
-pub fn get(args_forecast: &[Forecast], cfg_forecast: Option<Vec<Forecast>>) -> Result<Vec<Forecast>> {
-	let forecast = if !args_forecast.is_empty() {
-		args_forecast.to_vec()
+pub fn get(forecast_args: &[Forecast], forecast_cfg: Option<Vec<Forecast>>) -> Result<Vec<Forecast>> {
+	let forecast = if !forecast_args.is_empty() {
+		forecast_args.to_vec()
 	} else {
-		cfg_forecast.unwrap_or_default()
+		forecast_cfg.unwrap_or_default()
 	};
 
 	Ok(forecast)

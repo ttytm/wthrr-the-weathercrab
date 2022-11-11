@@ -4,7 +4,7 @@ use std::str::FromStr;
 use strum::VariantNames;
 use strum_macros::{AsRefStr, EnumString, EnumVariantNames};
 
-use crate::args::ArgUnits;
+use crate::args::UnitArg;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub struct Units {
@@ -67,28 +67,28 @@ pub enum Precipitation {
 	inch,
 }
 
-pub fn get(arg_units: &[ArgUnits], cfg_units: &Units) -> Result<Units> {
-	let mut units = assign_arg_units(arg_units)?;
+pub fn get(unit_args: &[UnitArg], unit_cfg: &Units) -> Result<Units> {
+	let mut units = assign_unit_args(unit_args)?;
 
-	units.temperature = evaluate_unit(units.temperature, cfg_units.temperature, Temperature::default());
-	units.speed = evaluate_unit(units.speed, cfg_units.speed, Speed::default());
-	units.time = evaluate_unit(units.time, cfg_units.time, Time::default());
-	units.precipitation = evaluate_unit(units.precipitation, cfg_units.precipitation, Precipitation::default());
+	units.temperature = evaluate_unit(units.temperature, unit_cfg.temperature, Temperature::default());
+	units.speed = evaluate_unit(units.speed, unit_cfg.speed, Speed::default());
+	units.time = evaluate_unit(units.time, unit_cfg.time, Time::default());
+	units.precipitation = evaluate_unit(units.precipitation, unit_cfg.precipitation, Precipitation::default());
 
 	Ok(units)
 }
 
-fn evaluate_unit<T>(arg_unit: Option<T>, cfg_unit: Option<T>, fallback_unit: T) -> Option<T> {
-	match arg_unit {
+fn evaluate_unit<T>(unit_arg: Option<T>, unit_cfg: Option<T>, fallback_unit: T) -> Option<T> {
+	match unit_arg {
 		Some(unit) => Some(unit), // Some(u) => Some(u + 1),
-		None => match cfg_unit {
+		None => match unit_cfg {
 			Some(unit) => Some(unit), // Some(u) => Some(u + 1),
 			_ => Some(fallback_unit),
 		},
 	}
 }
 
-pub fn assign_arg_units(arg_units: &[ArgUnits]) -> Result<Units> {
+pub fn assign_unit_args(unit_args: &[UnitArg]) -> Result<Units> {
 	let mut units = Units {
 		temperature: None,
 		speed: None,
@@ -96,7 +96,7 @@ pub fn assign_arg_units(arg_units: &[ArgUnits]) -> Result<Units> {
 		precipitation: None,
 	};
 
-	for val in arg_units {
+	for val in unit_args {
 		if Temperature::VARIANTS.as_ref().contains(&val.as_ref()) {
 			units.temperature = Some(Temperature::from_str(val.as_ref()).unwrap())
 		}
@@ -120,8 +120,8 @@ mod tests {
 
 	#[test]
 	fn units_from_args() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::Mph, ArgUnits::AmPm, ArgUnits::Inch];
-		let cfg_units = Units {
+		let unit_args = [UnitArg::Fahrenheit, UnitArg::Mph, UnitArg::AmPm, UnitArg::Inch];
+		let unit_cfg = Units {
 			temperature: Some(Temperature::celsius),
 			speed: Some(Speed::kmh),
 			time: Some(Time::military),
@@ -129,7 +129,7 @@ mod tests {
 		};
 
 		assert_eq!(
-			get(&arg_units, &cfg_units)?,
+			get(&unit_args, &unit_cfg)?,
 			Units {
 				temperature: Some(Temperature::fahrenheit),
 				speed: Some(Speed::mph),
@@ -143,23 +143,23 @@ mod tests {
 
 	#[test]
 	fn units_from_cfg() -> Result<()> {
-		let arg_units = [];
-		let cfg_units = Units {
+		let unit_args = [];
+		let unit_cfg = Units {
 			temperature: Some(Temperature::fahrenheit),
 			speed: Some(Speed::knots),
 			time: Some(Time::am_pm),
 			precipitation: Some(Precipitation::inch),
 		};
 
-		assert_eq!(get(&arg_units, &cfg_units)?, cfg_units);
+		assert_eq!(get(&unit_args, &unit_cfg)?, unit_cfg);
 
 		Ok(())
 	}
 
 	#[test]
-	fn units_split_from_args_cfg() -> Result<()> {
-		let arg_units = [ArgUnits::Fahrenheit, ArgUnits::AmPm];
-		let cfg_units = Units {
+	fn units_split_from_args_and_cfg() -> Result<()> {
+		let unit_args = [UnitArg::Fahrenheit, UnitArg::AmPm];
+		let unit_cfg = Units {
 			temperature: Some(Temperature::celsius),
 			speed: Some(Speed::ms),
 			time: None,
@@ -167,12 +167,12 @@ mod tests {
 		};
 
 		assert_eq!(
-			get(&arg_units, &cfg_units)?,
+			get(&unit_args, &unit_cfg)?,
 			Units {
 				temperature: Some(Temperature::fahrenheit),
-				speed: cfg_units.speed,
+				speed: unit_cfg.speed,
 				time: Some(Time::am_pm),
-				precipitation: cfg_units.precipitation,
+				precipitation: unit_cfg.precipitation,
 			}
 		);
 
@@ -181,10 +181,10 @@ mod tests {
 
 	#[test]
 	fn units_fallback() -> Result<()> {
-		let arg_units = [];
-		let cfg_units = Units::default();
+		let unit_args = [];
+		let unit_cfg = Units::default();
 
-		assert_eq!(get(&arg_units, &cfg_units)?, Units::default());
+		assert_eq!(get(&unit_args, &unit_cfg)?, Units::default());
 
 		Ok(())
 	}
