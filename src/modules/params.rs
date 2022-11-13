@@ -1,13 +1,13 @@
 use anyhow::Result;
 
-use crate::{
-	args::{Cli, Commands, Forecast},
-	config::Config,
-};
+use crate::{args::Cli, config::Config};
 
-use self::units::Units;
+use self::{forecast::Forecast, units::Units};
+
+use super::args::Commands;
 
 mod address;
+pub mod forecast;
 mod greeting;
 mod language;
 pub mod units;
@@ -17,7 +17,7 @@ pub struct Params {
 	pub units: Units,
 	pub greeting: bool,
 	pub language: String,
-	pub forecast: Option<Forecast>,
+	pub forecast: Forecast,
 }
 
 impl Params {
@@ -27,14 +27,16 @@ impl Params {
 			config.language.as_deref().unwrap_or_default(),
 		)?;
 
-		let forecast = if let Some(Commands::Forecast(forecast)) = &args.commands {
-			Some(Forecast {
-				week: forecast.week,
-				day: forecast.day,
-			})
-		} else {
-			None
-		};
+		let forecast = forecast::get(
+			match &args.commands {
+				Some(Commands::Forecast(args_forecast)) => Some(Forecast {
+					day: Some(args_forecast.day),
+					week: Some(args_forecast.week),
+				}),
+				_ => None,
+			},
+			config.forecast,
+		)?;
 
 		if args.reset {
 			Config::reset(&language).await?;
