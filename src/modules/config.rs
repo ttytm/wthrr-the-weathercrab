@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
 	args::Cli,
-	params::{units::Units, Params},
+	params::{forecast::Forecast, units::Units, Params},
 	translation::translate,
 };
 
@@ -14,6 +14,7 @@ pub struct Config {
 	pub greeting: Option<bool>,
 	pub language: Option<String>,
 	pub units: Option<Units>,
+	pub forecast: Option<Forecast>,
 }
 
 impl Default for Config {
@@ -22,6 +23,7 @@ impl Default for Config {
 			address: None,
 			greeting: Some(true),
 			language: Some("en".to_string()),
+			forecast: Some(Forecast::default()),
 			units: Some(Units::default()),
 		}
 	}
@@ -41,10 +43,8 @@ impl Config {
 			},
 			greeting: Some(params.greeting),
 			language: Some(params.language),
-			units: Some(Units {
-				temperature: params.units.temperature,
-				speed: params.units.speed,
-			}),
+			forecast: Some(params.forecast),
+			units: Some(params.units),
 		};
 
 		if self.address.is_none() {
