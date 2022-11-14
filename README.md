@@ -21,8 +21,8 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 wthrr
 ```
 
-With no further arguments added, wthrr will use the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) that's saved as default.<br>
-If you haven't configured anything yet, wthrr can try to search for a weather station near you and save the searched location as default.
+Without having added an address or options, wthrr uses the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) saved as default.<br>
+If you haven't configured anything as default yet, wthrr can try to search for a weather station near you and save the searched location as default.
 
 **Its always possible to specify an address.** E.g.,
 
@@ -51,23 +51,27 @@ wthrr -u f,mph -f -d
 ```
 > wthrr -h
 
-Usage: wthrr [OPTIONS] [ADDRESS] [COMMAND]
-
-Commands:
-  forecast, -f  Include the weather forecast
-  help          Print this message or the help of the given subcommand(s)
+Usage: wthrr [OPTIONS] [ADDRESS]
 
 Arguments:
-  [ADDRESS]  Address to check the weather for
+  [ADDRESS]
+          Address to check the weather for
 
 Options:
-  -u, --units [<UNITS>]      Units for temperature and/or speed [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms]
-  -l, --language <LANGUAGE>  Output language
-  -g, --greeting             Toggle greeting message
-  -s, --save                 Save the supplied values as default
-  -r, --reset                Wipe wthrr's configuration data
-  -h, --help                 Print help information
-  -V, --version              Print version information
+  -f, --forecast <FORECAST,...>
+          [e.g.: -f w,d] [possible values: disable, (w)eek, (d)ay]
+  -u, --units <UNIT,...>
+          [e.g.: -u f,12h] [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms, 12h, 24h, mm, (in)ch]
+  -l, --language <LANGUAGE>
+          Output language [e.g.: en_US]
+  -s, --save
+          Save the supplied values as default
+  -r, --reset
+          Wipe wthrr's configuration data
+  -h, --help
+          Print help information
+  -V, --version
+          Print version information
 ```
 
 ## Showcase
@@ -100,7 +104,7 @@ Options:
 </table>
 
 <sup>\*Rendering and colors are influenced by the terminal used and its theme and font.<br>
-E.g., the first of the above screenshots shows wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake / Console, also with a Dracula color scheme.</sup>
+E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake / Console, also with a Dracula color scheme.</sup>
 
 ## Config
 
