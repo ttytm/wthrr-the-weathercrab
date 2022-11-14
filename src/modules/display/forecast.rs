@@ -123,12 +123,16 @@ impl Forecast {
 		for (i, _) in product.weather.daily.time.iter().enumerate() {
 			let time = &product.weather.daily.time[i];
 			let date = Utc
-				.ymd(
-					time[0..4].parse().unwrap_or_default(),
-					time[5..7].parse().unwrap_or_default(),
-					time[8..10].parse().unwrap_or_default(),
+				.with_ymd_and_hms(
+					time[0..4].parse::<i32>().unwrap_or_default(),
+					time[5..7].parse::<u32>().unwrap_or_default(),
+					time[8..10].parse::<u32>().unwrap_or_default(),
+					0,
+					0,
+					0,
 				)
-				.and_hms(0, 0, 0);
+				.unwrap();
+
 			// let date = date.format("%a, %b %e").to_string();
 			let date = &date.to_rfc2822()[..11];
 
