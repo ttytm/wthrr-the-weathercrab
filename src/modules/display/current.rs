@@ -173,7 +173,7 @@ impl Current {
 			_ => weather.daily.sunrise[0][11..16].to_string(),
 		};
 		let sunset_time = match units.time {
-			Some(Time::am_pm) => format!("{}:{}pm", sunset_hour / 2, &weather.daily.sunset[0][14..16]),
+			Some(Time::am_pm) => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
 			_ => weather.daily.sunset[0][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
