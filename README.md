@@ -113,13 +113,20 @@ Values such as address and units can be stored as defaults in wthrr's config fil
 If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.toml`
 
 ```toml
-address = 'berlin' # Address to check the weather for
-greeting = true # Greeting message display [true | false]
-language = 'en' # Country code of the output language ['de' | 'pl' | ...]
+# address = 'berlin,de' # Address to check the weather for
+language = 'en_US' # Country code of the output language, e.g.,: 'de_DE'
+# forecast = ['day'] # Forecasts displayed without adding the `-f` option: ['day'] | ['week'] | ['day', 'week']
 
 [units]
-temperature = 'celsius' # Temperature units [celsius | fahrenheit]
-speed = 'kmh' # (Wind)speed units [kmh | mph | knots | ms]
+temperature = 'celsius' # Temperature units: 'celsius' | 'fahrenheit'
+speed = 'kmh' # (Wind)speed units: 'kmh' | 'mph' | 'knots' | 'ms'
+time = 'military' # Time Format: 'military' | 'ap_pm'
+precipitation = 'mm' # Precipitation units 'mm' | 'inch'
+
+[gui]
+border = 'rounded' # Border style: 'rounded' | 'single' | 'solid' | 'double'
+graph = 'lines' # Precipitation units: 'lines' | 'lines_shallow' | 'dots' | 'dots_double'
+greeting = true # Display greeting message: true | false
 ```
 
 ## Installation
