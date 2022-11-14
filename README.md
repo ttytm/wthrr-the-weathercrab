@@ -43,7 +43,7 @@ wthrr auto
 As a final example, we instruct wthrr to use Fahrenheit and mph as units and add the hourly forecast for the day
 
 ```
-wthrr -u f,mph -f -d
+wthrr -u f,mph -f d
 ```
 
 ### Find further usage parameters in the help information
