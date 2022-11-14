@@ -7,7 +7,7 @@ use term_painter::{Color::*, ToStyle};
 use crate::{args::Forecast as ForecastParams, params::units::Units};
 
 use super::{
-	border::*, current::Current, hourly::GraphVariant, utils::adjust_lang_width, weathercode::WeatherCode, Product,
+	border::*, current::Current, graph::GraphVariant, utils::adjust_lang_width, weathercode::WeatherCode, Product,
 	MIN_WIDTH,
 };
 
@@ -27,7 +27,7 @@ pub struct ForecastDay {
 impl Forecast {
 	pub async fn render(
 		product: &Product,
-		forecast_args: &[ForecastParams],
+		forecast_params: &[ForecastParams],
 		units: &Units,
 		border_variant: &BorderVariant,
 		graph_variant: &GraphVariant,
@@ -38,7 +38,7 @@ impl Forecast {
 		let mut cell_width = MIN_WIDTH / 2;
 
 		let (mut include_day, mut include_week) = (false, false);
-		for val in forecast_args {
+		for val in forecast_params {
 			if ForecastParams::disable == *val {
 				Current::render(product, false, units, border_variant, graph_variant, lang).await?;
 				return Ok(());
@@ -67,7 +67,7 @@ impl Forecast {
 		}
 
 		// Border Top
-		BrightBlack.with(|| println!("{}", Border::Top.fmt(width, border_variant)));
+		BrightBlack.with(|| println!("{}", Edge::Top.fmt(width, border_variant)));
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -90,9 +90,9 @@ impl Forecast {
 			);
 			println!(
 				"{} {: <width$} {}",
-				BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
+				BrightBlack.paint(Border::L.fmt(border_variant)),
 				forecast_day,
-				BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
+				BrightBlack.paint(Border::R.fmt(border_variant)),
 				width = width - adjust_lang_width(&forecast.days[n].interpretation, lang) - 2,
 			);
 			if chunks.peek().is_some() {
@@ -101,8 +101,8 @@ impl Forecast {
 						"{}",
 						match border_variant {
 							BorderVariant::double => Separator::Double.fmt(width, border_variant),
-							BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, border_variant),
-							_ => Separator::Square.fmt(width, border_variant),
+							BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
+							_ => Separator::Single.fmt(width, border_variant),
 						}
 					)
 				});
@@ -112,7 +112,7 @@ impl Forecast {
 		}
 
 		// Border Bottom
-		BrightBlack.with(|| println!("{}", Border::Bottom.fmt(width, border_variant)));
+		BrightBlack.with(|| println!("{}", Edge::Bottom.fmt(width, border_variant)));
 		Ok(())
 	}
 

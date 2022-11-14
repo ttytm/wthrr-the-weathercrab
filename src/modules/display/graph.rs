@@ -12,9 +12,9 @@ use crate::{
 	weather::Weather,
 };
 
-use super::{border::*, weathercode::WeatherCode};
+use super::{border::*, utils::style_number, weathercode::WeatherCode};
 
-pub struct HourlyForecast {
+pub struct Graph {
 	temperatures: String,
 	graph: String,
 	precipitation: String,
@@ -33,7 +33,7 @@ pub enum GraphVariant {
 
 const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
 
-impl HourlyForecast {
+impl Graph {
 	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant) {
 		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
 
@@ -48,9 +48,9 @@ impl HourlyForecast {
 
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
+			BrightBlack.paint(Border::L.fmt(border_variant)),
 			Bold.paint("Hourly Forecast"),
-			BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
+			BrightBlack.paint(Border::R.fmt(border_variant)),
 			width = width - 2
 		);
 
@@ -59,7 +59,7 @@ impl HourlyForecast {
 				"{}",
 				match border_variant {
 					BorderVariant::double => Separator::Double.fmt(width, border_variant),
-					BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, border_variant),
+					BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
 					_ => Separator::Dashed.fmt(width, border_variant),
 				}
 			)
@@ -68,27 +68,27 @@ impl HourlyForecast {
 		Yellow.with(|| {
 			println!(
 				"{} {: <width$}{}{}",
-				BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
+				BrightBlack.paint(Border::L.fmt(border_variant)),
 				Bold.paint(self.temperatures),
 				temperature_unit,
-				BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
+				BrightBlack.paint(Border::R.fmt(border_variant)),
 				width = width - 3
 			);
 			BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
 			println!(
 				"{}{}{}",
-				BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
+				BrightBlack.paint(Border::L.fmt(border_variant)),
 				Bold.paint(self.graph),
-				BrightBlack.paint(BorderGlyph::R.fmt(border_variant))
+				BrightBlack.paint(Border::R.fmt(border_variant))
 			);
 
 			Blue.with(|| {
 				println!(
 					"{} {: <width$}{}{}",
-					BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),
+					BrightBlack.paint(Border::L.fmt(border_variant)),
 					Bold.paint(self.precipitation),
 					precipitation_unit,
-					BrightBlack.paint(BorderGlyph::R.fmt(border_variant)),
+					BrightBlack.paint(Border::R.fmt(border_variant)),
 					width = width - 4
 				)
 			});
@@ -98,7 +98,7 @@ impl HourlyForecast {
 					"{}",
 					match border_variant {
 						BorderVariant::double => Separator::Double.fmt(width, border_variant),
-						BorderVariant::square_heavy => Separator::SquareHeavy.fmt(width, border_variant),
+						BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
 						_ => Separator::Dashed.fmt(width, border_variant),
 					}
 				)
@@ -106,23 +106,14 @@ impl HourlyForecast {
 		});
 
 		let hours = match units.time {
-			Some(Time::am_pm) => [
-				"¹²·⁰⁰ₐₘ",
-				"³·⁰⁰ₐₘ",
-				"⁶˙⁰⁰ₐₘ",
-				"⁹˙⁰⁰ₐₘ",
-				"¹²˙⁰⁰ₚₘ",
-				"³˙⁰⁰ₚₘ",
-				"⁶˙⁰⁰ₚₘ",
-				"⁹˙⁰⁰ₚₘ",
-			],
+			Some(Time::am_pm) => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!("{}", BrightBlack.paint(BorderGlyph::L.fmt(border_variant)),);
+		print!("{}", BrightBlack.paint(Border::L.fmt(border_variant)),);
 		for hour in hours {
 			print!("{: <9}", hour)
 		}
-		println!("{}", BrightBlack.paint(BorderGlyph::R.fmt(border_variant)));
+		println!("{}", BrightBlack.paint(Border::R.fmt(border_variant)));
 	}
 
 	pub async fn prepare(weather: &Weather, night: bool, graph_variant: &GraphVariant, lang: &str) -> Result<Self> {
@@ -130,11 +121,7 @@ impl HourlyForecast {
 		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
 		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
 
-		Ok(HourlyForecast {
-			temperatures,
-			graph,
-			precipitation,
-		})
+		Ok(Graph { temperatures, graph, precipitation })
 	}
 
 	async fn prepare_temperature(weather: &Weather, night: bool, lang: &str) -> Result<String> {
@@ -212,41 +199,4 @@ impl HourlyForecast {
 
 		Ok(graph)
 	}
-}
-
-fn style_number(mut num: i32, sub: bool) -> Result<String> {
-	const SUPERSCRIPT_DIGITS: [char; 10] = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-	const SUBSCRIPT_DIGITS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
-
-	let mut result = String::new();
-
-	if num == 0 {
-		result.push(match sub {
-			true => SUBSCRIPT_DIGITS[0],
-			_ => SUPERSCRIPT_DIGITS[0],
-		});
-		return Ok(result);
-	}
-
-	if num < 0 {
-		num = -num;
-		result.push(if sub { '₋' } else { '⁻' });
-	}
-
-	let mut started = false;
-	let mut power_of_ten = 1_000_000_000;
-	for _ in 0..10 {
-		let digit = num / power_of_ten;
-		num -= digit * power_of_ten;
-		power_of_ten /= 10;
-		if digit != 0 || started {
-			started = true;
-			result.push(match sub {
-				true => SUBSCRIPT_DIGITS[digit as usize],
-				_ => SUPERSCRIPT_DIGITS[digit as usize],
-			})
-		}
-	}
-
-	Ok(result)
 }

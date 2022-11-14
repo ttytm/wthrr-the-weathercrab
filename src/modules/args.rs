@@ -14,7 +14,7 @@ pub struct Cli {
 
 	/// [e.g.: -u f,12h]
 	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
-	pub units: Vec<ArgUnits>,
+	pub units: Vec<UnitArg>,
 
 	/// Output language [e.g.: en_US]
 	#[arg(short, long, global = true)]
@@ -55,7 +55,7 @@ pub enum Forecast {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
-pub enum ArgUnits {
+pub enum UnitArg {
 	// -- Temperature
 	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
 	Celsius,

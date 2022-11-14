@@ -2,11 +2,11 @@ use anyhow::Result;
 
 use crate::config::Config;
 
-pub fn get(args_lang: &str, config_lang: &str) -> Result<String> {
-	let lang = if !args_lang.is_empty() {
-		args_lang.to_string()
-	} else if args_lang.is_empty() && !config_lang.is_empty() {
-		config_lang.to_string()
+pub fn get(lang_arg: &str, lang_cfg: &str) -> Result<String> {
+	let lang = if !lang_arg.is_empty() {
+		lang_arg.to_string()
+	} else if lang_arg.is_empty() && !lang_cfg.is_empty() {
+		lang_cfg.to_string()
 	} else {
 		Config::default().language.unwrap()
 	};
@@ -22,26 +22,26 @@ mod tests {
 
 	#[test]
 	fn lang_from_arg() -> Result<()> {
-		let arg_lang = "pl";
+		let lang_arg = "pl";
 		let config = Config {
 			language: Some("de".to_string()),
 			..Default::default()
 		};
 
-		assert!(get(arg_lang, config.language.as_deref().unwrap_or_default())?.contains("pl"));
+		assert!(get(lang_arg, config.language.as_deref().unwrap_or_default())?.contains("pl"));
 
 		Ok(())
 	}
 
 	#[test]
 	fn lang_from_cfg() -> Result<()> {
-		let arg_lang = "";
+		let lang_arg = "";
 		let config = Config {
 			language: Some("de".to_string()),
 			..Default::default()
 		};
 
-		assert!(get(arg_lang, config.language.as_deref().unwrap_or_default())?.contains("de"));
+		assert!(get(lang_arg, config.language.as_deref().unwrap_or_default())?.contains("de"));
 
 		Ok(())
 	}

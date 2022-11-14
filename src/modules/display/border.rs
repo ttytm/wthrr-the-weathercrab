@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 
 #[derive(Display)]
-pub enum BorderGlyph {
+pub enum Border {
 	#[strum(serialize = "╭")]
 	TL,
 	#[strum(serialize = "─")]
@@ -21,63 +21,40 @@ pub enum BorderGlyph {
 	L,
 }
 
-#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
-#[allow(non_camel_case_types)]
-pub enum BorderVariant {
-	#[default]
-	rounded,
-	square,
-	square_heavy,
-	double,
-}
-
-pub enum Border {
-	Top,
-	Bottom,
-}
-
-pub enum Separator {
-	Blank,
-	Square,
-	SquareHeavy,
-	Double,
-	Dashed,
-}
-
-impl BorderGlyph {
+impl Border {
 	pub fn fmt(&self, variant: &BorderVariant) -> char {
 		match self {
-			BorderGlyph::TL => match variant {
-				BorderVariant::square => '┌',
-				BorderVariant::square_heavy => '┏',
+			Border::TL => match variant {
+				BorderVariant::single => '┌',
+				BorderVariant::solid => '┏',
 				BorderVariant::double => '╔',
 				_ => '╭',
 			},
-			BorderGlyph::T | BorderGlyph::B => match variant {
+			Border::T | Border::B => match variant {
 				BorderVariant::double => '═',
-				BorderVariant::square_heavy => '━',
+				BorderVariant::solid => '━',
 				_ => '─',
 			},
-			BorderGlyph::TR => match variant {
-				BorderVariant::square => '┐',
-				BorderVariant::square_heavy => '┓',
+			Border::TR => match variant {
+				BorderVariant::single => '┐',
+				BorderVariant::solid => '┓',
 				BorderVariant::double => '╗',
 				_ => '╮',
 			},
-			BorderGlyph::R | BorderGlyph::L => match variant {
+			Border::R | Border::L => match variant {
 				BorderVariant::double => '║',
-				BorderVariant::square_heavy => '┃',
+				BorderVariant::solid => '┃',
 				_ => '│',
 			},
-			BorderGlyph::BR => match variant {
-				BorderVariant::square => '┘',
-				BorderVariant::square_heavy => '┛',
+			Border::BR => match variant {
+				BorderVariant::single => '┘',
+				BorderVariant::solid => '┛',
 				BorderVariant::double => '╝',
 				_ => '╯',
 			},
-			BorderGlyph::BL => match variant {
-				BorderVariant::square => '└',
-				BorderVariant::square_heavy => '┗',
+			Border::BL => match variant {
+				BorderVariant::single => '└',
+				BorderVariant::solid => '┗',
 				BorderVariant::double => '╚',
 				_ => '╰',
 			},
@@ -85,23 +62,46 @@ impl BorderGlyph {
 	}
 }
 
-impl Border {
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(non_camel_case_types)]
+pub enum BorderVariant {
+	#[default]
+	rounded,
+	single,
+	solid,
+	double,
+}
+
+pub enum Edge {
+	Top,
+	Bottom,
+}
+
+impl Edge {
 	pub fn fmt(self, width: usize, variant: &BorderVariant) -> String {
 		match self {
 			Self::Top => format!(
 				"{}{: >width$}{}",
-				BorderGlyph::TL.fmt(variant),
-				BorderGlyph::T.fmt(variant).to_string().repeat(width),
-				BorderGlyph::TR.fmt(variant),
+				Border::TL.fmt(variant),
+				Border::T.fmt(variant).to_string().repeat(width),
+				Border::TR.fmt(variant),
 			),
 			Self::Bottom => format!(
 				"{}{: >width$}{}",
-				BorderGlyph::BL.fmt(variant),
-				BorderGlyph::B.fmt(variant).to_string().repeat(width),
-				BorderGlyph::BR.fmt(variant),
+				Border::BL.fmt(variant),
+				Border::B.fmt(variant).to_string().repeat(width),
+				Border::BR.fmt(variant),
 			),
 		}
 	}
+}
+
+pub enum Separator {
+	Blank,
+	Single,
+	Solid,
+	Double,
+	Dashed,
 }
 
 impl Separator {
@@ -109,13 +109,13 @@ impl Separator {
 		match self {
 			Self::Blank => format!(
 				"{}{: >width$}{}",
-				BorderGlyph::L.fmt(border_variant),
+				Border::L.fmt(border_variant),
 				"",
-				BorderGlyph::R.fmt(border_variant)
+				Border::R.fmt(border_variant)
 			),
 			Self::Dashed => format!("├{:┈>width$}┤", ""),
-			Self::Square => format!("{}{:─>width$}{}", '├', "", '┤'),
-			Self::SquareHeavy => format!("┠{:─>width$}┨", ""),
+			Self::Single => format!("{}{:─>width$}{}", '├', "", '┤'),
+			Self::Solid => format!("┠{:─>width$}┨", ""),
 			Self::Double => format!("╟{:─>width$}╢", ""),
 			// Self::Double => format!("╠{:═>width$}╣", ""),
 		}

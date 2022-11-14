@@ -3,12 +3,12 @@ use dialoguer::{theme::ColorfulTheme, Confirm};
 
 use crate::{location::Geolocation, translation::translate};
 
-pub async fn get(args_address: &str, config_address: &str, lang: &str) -> Result<String> {
-	let address = if (args_address.is_empty() && config_address.is_empty())
-		|| args_address == "auto"
-		|| (args_address.is_empty() && config_address == "auto")
+pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<String> {
+	let address = if (address_arg.is_empty() && address_cfg.is_empty())
+		|| address_arg == "auto"
+		|| (address_arg.is_empty() && address_cfg == "auto")
 	{
-		if (args_address.is_empty() && config_address.is_empty())
+		if (address_arg.is_empty() && address_cfg.is_empty())
 			&& !Confirm::with_theme(&ColorfulTheme::default())
 				.with_prompt(
 					translate(
@@ -23,10 +23,10 @@ pub async fn get(args_address: &str, config_address: &str, lang: &str) -> Result
 		}
 		let auto_loc = Geolocation::get().await?;
 		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
-	} else if args_address.is_empty() && !config_address.is_empty() {
-		config_address.to_string()
+	} else if address_arg.is_empty() && !address_cfg.is_empty() {
+		address_cfg.to_string()
 	} else {
-		args_address.to_string()
+		address_arg.to_string()
 	};
 
 	Ok(address)
@@ -39,14 +39,14 @@ mod tests {
 
 	#[tokio::test]
 	async fn address_from_arg() -> Result<()> {
-		let arg_address = "new york";
+		let address_arg = "new york";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
 			..Default::default()
 		};
 
 		let res = get(
-			arg_address,
+			address_arg,
 			config.address.as_deref().unwrap_or_default(),
 			&config.language.unwrap(),
 		)
@@ -59,14 +59,14 @@ mod tests {
 
 	#[tokio::test]
 	async fn address_from_cfg() -> Result<()> {
-		let arg_address = "";
+		let address_arg = "";
 		let config = Config {
 			address: Some("Berlin, DE".to_string()),
 			..Default::default()
 		};
 
 		let res = get(
-			arg_address,
+			address_arg,
 			config.address.as_deref().unwrap_or_default(),
 			&config.language.unwrap(),
 		)

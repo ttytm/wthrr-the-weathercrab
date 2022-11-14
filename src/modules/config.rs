@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
 	args::{Cli, Forecast},
-	display::{border::BorderVariant, hourly::GraphVariant},
+	display::{border::BorderVariant, graph::GraphVariant},
 	params::{units::Units, Params},
 	translation::translate,
 };
@@ -82,14 +82,14 @@ impl Config {
 		Ok(())
 	}
 
-	async fn save_prompt(mut self, args_address: String) -> Result<()> {
+	async fn save_prompt(mut self, address_arg: String) -> Result<()> {
 		let mut items = vec![
 			translate(self.language.as_ref().unwrap(), "Yes please").await?,
 			translate(self.language.as_ref().unwrap(), "No, ask me next time").await?,
 			translate(self.language.as_ref().unwrap(), "No, dont ask me again").await?,
 		];
 
-		if args_address.is_empty() || args_address == "auto" {
+		if address_arg.is_empty() || address_arg == "auto" {
 			items.push(translate(self.language.as_ref().unwrap(), "Always check for a weather station").await?)
 		}
 
