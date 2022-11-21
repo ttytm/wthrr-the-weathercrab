@@ -108,7 +108,7 @@ impl Config {
 		match selection {
 			0 => {}
 			1 => return Ok(()),
-			2 => self.address = None,
+			2 => self.address = Some("arg_input".to_string()),
 			3 => self.address = Some("auto".to_string()),
 			_ => println!("User did not select anything or exited using Esc or q"),
 		}
