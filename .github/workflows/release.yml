@@ -116,6 +116,6 @@ jobs:
       - name: List
         run: find ./artifacts
       - name: Release
-        uses: koplo199/action-gh-release@1.0
+        uses: softprops/action-gh-release@1.0
         with:
           files: ./artifacts/*.tar.gz, ./artifacts/*.AppImage
