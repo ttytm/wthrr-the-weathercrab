@@ -24,17 +24,17 @@ wthrr
 Without having added an address or options, wthrr uses the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) saved as default.<br>
 If you haven't configured anything as default yet, wthrr can try to search for a weather station near you and save the searched location as default.
 
-**Its always possible to specify an address.** E.g.,
+**It's always possible to specify an address.** E.g.,
 
 ```
 wthrr melbourne
 ```
 
-Depending on the place you are looking for, you might need to be be more specific.
+Depending on the place you are looking for, you might need to be more specific.
 For example, the above call will get Melbourne in Australia. If you are aiming for Melbourne in the US, ask for `melbourne,florida`.
 If the address contains spaces, separate them with a hyphen or enclose them in quotation marks (e.g., "new-york" or "new york").
 
-If a default address is configured, but you want to explicitly search for a weather station nearby, call
+To search explicitly for a weather station in the vicinity, call
 
 ```
 wthrr auto
@@ -83,10 +83,14 @@ Options:
   </tr>
   <tr>
     <td align="center">
-      <img alt="" width="400" src="preview/first-run.png" />
+      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/first-run.png" target="_blank">
+        <img alt="" width="400" src="preview/first-run.png" />
+      </a>
     </td>
     <td align="center">
-      <img alt="" width="400" src="preview/hourly.png" />
+      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/hourly.png" target="_blank">
+        <img alt="" width="400" src="preview/hourly.png" />
+      </a>
     </td>
   </tr>
   <tr>
@@ -95,16 +99,20 @@ Options:
   </tr>
   <tr>
     <td align="center">
-      <img alt="" width="400" src="preview/week.png" />
+      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/week.png" target="_blank">
+        <img alt="" width="400" src="preview/week.png" />
+      </a>
     </td>
     <td align="center">
-      <img alt="" width="400" src="preview/yakuake.png" />
+      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/yakuake.png" target="_blank">
+        <img alt="" width="400" src="preview/yakuake.png" />
+      </a>
     </td>
   </tr>
 </table>
 
 <sup>\*Rendering and colors are influenced by the terminal used and its theme and font.<br>
-E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake / Console, also with a Dracula color scheme.</sup>
+E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake/Konsole, also with a Dracula color scheme.</sup>
 
 ## Config
 
@@ -144,6 +152,10 @@ Requirements and other installations methods can be found in [`INSTALL.md`](http
 The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section lists some of the features that are being worked on.
 
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
+
+## Disclaimer
+
+Until a stable version 1.0 is available, new features will be introduced, existing ones may change, or breaking changes may occur in minor(`0.<minor>.*`) versions.
 
 ## Credits
 
