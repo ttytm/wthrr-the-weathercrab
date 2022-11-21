@@ -42,7 +42,7 @@ impl Graph {
 			_ => "糖",
 		};
 		let precipitation_unit = match units.precipitation {
-			Some(Precipitation::inch) => "ⁱⁿ",
+			Some(Precipitation::inch) => "ᵢₙ",
 			_ => "ₘₘ",
 		};
 
