@@ -1,4 +1,5 @@
 use anyhow::Result;
+use colored::{Color, ColoredString, Colorize};
 use regex::Regex;
 
 pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
@@ -58,4 +59,19 @@ pub fn style_number(mut num: i32, sub: bool) -> Result<String> {
 	}
 
 	Ok(result)
+}
+
+pub trait ColorOption {
+	fn color_option(self, color: Color) -> ColoredString;
+}
+
+impl<'a> ColorOption for &'a str {
+	fn color_option(self, color: Color) -> ColoredString {
+		let use_color = true;
+		if use_color {
+			self.color(color)
+		} else {
+			self.normal()
+		}
+	}
 }

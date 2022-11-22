@@ -1,18 +1,21 @@
 use anyhow::Result;
+use colored::{
+	Color::{Blue, BrightBlack, Yellow},
+	Colorize,
+};
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, fmt::Write as _};
-use term_painter::{
-	Attr::Bold,
-	Color::{Blue, BrightBlack, Yellow},
-	ToStyle,
-};
 
 use crate::{
 	params::units::{Precipitation, Temperature, Time, Units},
 	weather::Weather,
 };
 
-use super::{border::*, utils::style_number, weathercode::WeatherCode};
+use super::{
+	border::*,
+	utils::{style_number, ColorOption},
+	weathercode::WeatherCode,
+};
 
 pub struct Graph {
 	temperatures: String,
@@ -35,85 +38,85 @@ const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
 
 impl Graph {
 	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant) {
-		BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
+		println!(
+			"{}",
+			&Separator::Blank.fmt(width, border_variant).color_option(BrightBlack)
+		);
 
 		let temperature_unit = match units.temperature {
 			Some(Temperature::fahrenheit) => "宅",
 			_ => "糖",
 		};
 		let precipitation_unit = match units.precipitation {
-			Some(Precipitation::inch) => "ᵢₙ",
-			_ => "ₘₘ",
+			Some(Precipitation::inch) => "ᵢₙ",
+			_ => "ₘₘ",
 		};
 
 		println!(
 			"{} {: <width$} {}",
-			BrightBlack.paint(Border::L.fmt(border_variant)),
-			Bold.paint("Hourly Forecast"),
-			BrightBlack.paint(Border::R.fmt(border_variant)),
+			Border::L.fmt(border_variant).color_option(BrightBlack),
+			"Hourly Forecast".bold(),
+			Border::R.fmt(border_variant).color_option(BrightBlack),
 			width = width - 2
 		);
 
-		BrightBlack.with(|| {
-			println!(
-				"{}",
-				match border_variant {
-					BorderVariant::double => Separator::Double.fmt(width, border_variant),
-					BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-					_ => Separator::Dashed.fmt(width, border_variant),
-				}
-			)
-		});
+		println!(
+			"{}",
+			&match border_variant {
+				BorderVariant::double => Separator::Double.fmt(width, border_variant),
+				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
+				_ => Separator::Dashed.fmt(width, border_variant),
+			}
+			.color_option(BrightBlack)
+		);
 
-		Yellow.with(|| {
-			println!(
-				"{} {: <width$}{}{}",
-				BrightBlack.paint(Border::L.fmt(border_variant)),
-				Bold.paint(self.temperatures),
-				temperature_unit,
-				BrightBlack.paint(Border::R.fmt(border_variant)),
-				width = width - 3
-			);
-			BrightBlack.with(|| println!("{}", Separator::Blank.fmt(width, border_variant)));
-			println!(
-				"{}{}{}",
-				BrightBlack.paint(Border::L.fmt(border_variant)),
-				Bold.paint(self.graph),
-				BrightBlack.paint(Border::R.fmt(border_variant))
-			);
+		println!(
+			"{} {: <width$}{}{}",
+			&Border::L.fmt(border_variant).color_option(BrightBlack),
+			&self.temperatures.color_option(Yellow).bold(),
+			temperature_unit.color_option(Yellow),
+			&Border::R.fmt(border_variant).color_option(BrightBlack),
+			width = width - 3
+		);
+		println!(
+			"{}",
+			&Separator::Blank.fmt(width, border_variant).color_option(BrightBlack)
+		);
+		println!(
+			"{}{}{}",
+			&Border::L.fmt(border_variant).color_option(BrightBlack),
+			&self.graph.color_option(Yellow),
+			&Border::R.fmt(border_variant).color_option(BrightBlack)
+		);
 
-			Blue.with(|| {
-				println!(
-					"{} {: <width$}{}{}",
-					BrightBlack.paint(Border::L.fmt(border_variant)),
-					Bold.paint(self.precipitation),
-					precipitation_unit,
-					BrightBlack.paint(Border::R.fmt(border_variant)),
-					width = width - 4
-				)
-			});
+		println!(
+			"{} {: <width$}{}{}",
+			Border::L.fmt(border_variant).color_option(BrightBlack),
+			&self.precipitation.color_option(Blue).bold(),
+			precipitation_unit.color_option(Blue),
+			Border::R.fmt(border_variant).color_option(BrightBlack),
+			width = width - 4
+		);
 
-			BrightBlack.with(|| {
-				println!(
-					"{}",
-					match border_variant {
-						BorderVariant::double => Separator::Double.fmt(width, border_variant),
-						BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-						_ => Separator::Dashed.fmt(width, border_variant),
-					}
-				)
-			});
-		});
+		println!(
+			"{}",
+			match border_variant {
+				BorderVariant::double => Separator::Double.fmt(width, border_variant),
+				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
+				_ => Separator::Dashed.fmt(width, border_variant),
+			}
+			.color_option(BrightBlack)
+		);
 
 		let hours = match units.time {
 			Some(Time::am_pm) => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!("{}", BrightBlack.paint(Border::L.fmt(border_variant)),);
+		print!("{}", Border::L.fmt(border_variant).color_option(BrightBlack));
 		for hour in hours {
 			print!("{: <9}", hour)
 		}
-		println!("{}", BrightBlack.paint(Border::R.fmt(border_variant)));
+		println!("{}", Border::R.fmt(border_variant).color_option(BrightBlack));
 	}
 
 	pub async fn prepare(weather: &Weather, night: bool, graph_variant: &GraphVariant, lang: &str) -> Result<Self> {

@@ -1,62 +1,54 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::Display;
+use strum_macros::{AsRefStr, Display};
 
-#[derive(Display)]
+#[derive(Display, AsRefStr)]
 pub enum Border {
-	#[strum(serialize = "╭")]
 	TL,
-	#[strum(serialize = "─")]
 	T,
-	#[strum(serialize = "╮")]
 	TR,
-	#[strum(serialize = "│")]
 	R,
-	#[strum(serialize = "╯")]
 	BR,
-	#[strum(serialize = "─")]
 	B,
-	#[strum(serialize = "╰")]
 	BL,
-	#[strum(serialize = "│")]
 	L,
 }
 
 impl Border {
-	pub fn fmt(&self, variant: &BorderVariant) -> char {
+	pub fn fmt<'a>(&self, variant: &BorderVariant) -> &'a str {
 		match self {
 			Border::TL => match variant {
-				BorderVariant::single => '┌',
-				BorderVariant::solid => '┏',
-				BorderVariant::double => '╔',
-				_ => '╭',
+				BorderVariant::single => "┌",
+				BorderVariant::solid => "┏",
+				BorderVariant::double => "╔",
+				_ => "╭",
 			},
 			Border::T | Border::B => match variant {
-				BorderVariant::double => '═',
-				BorderVariant::solid => '━',
-				_ => '─',
+				BorderVariant::double => "═",
+				BorderVariant::solid => "━",
+				_ => "─",
 			},
 			Border::TR => match variant {
-				BorderVariant::single => '┐',
-				BorderVariant::solid => '┓',
-				BorderVariant::double => '╗',
-				_ => '╮',
+				BorderVariant::single => "┐",
+				BorderVariant::solid => "┓",
+				BorderVariant::double => "╗",
+				_ => "╮",
 			},
 			Border::R | Border::L => match variant {
-				BorderVariant::double => '║',
-				BorderVariant::solid => '┃',
-				_ => '│',
+				BorderVariant::double => "║",
+				BorderVariant::solid => "┃",
+				_ => "│",
 			},
 			Border::BR => match variant {
-				BorderVariant::single => '┘',
-				BorderVariant::solid => '┛',
-				BorderVariant::double => '╝',
-				_ => '╯',
+				BorderVariant::single => "┘",
+				BorderVariant::solid => "┛",
+				BorderVariant::double => "╝",
+				_ => "╯",
 			},
 			Border::BL => match variant {
-				BorderVariant::single => '└',
-				BorderVariant::solid => '┗',
-				BorderVariant::double => '╚',
-				_ => '╰',
+				BorderVariant::single => "└",
+				BorderVariant::solid => "┗",
+				BorderVariant::double => "╚",
+				_ => "╰",
 			},
 		}
 	}
@@ -83,13 +75,13 @@ impl Edge {
 			Self::Top => format!(
 				"{}{: >width$}{}",
 				Border::TL.fmt(variant),
-				Border::T.fmt(variant).to_string().repeat(width),
+				Border::T.fmt(variant).repeat(width),
 				Border::TR.fmt(variant),
 			),
 			Self::Bottom => format!(
 				"{}{: >width$}{}",
 				Border::BL.fmt(variant),
-				Border::B.fmt(variant).to_string().repeat(width),
+				Border::B.fmt(variant).repeat(width),
 				Border::BR.fmt(variant),
 			),
 		}
