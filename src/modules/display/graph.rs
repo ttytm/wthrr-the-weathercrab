@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, fmt::Write as _};
 
 use crate::{
+	config::ColorVariant,
 	params::units::{Precipitation, Temperature, Time, Units},
 	weather::Weather,
 };
@@ -37,10 +38,12 @@ pub enum GraphVariant {
 const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
 
 impl Graph {
-	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant) {
+	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant, color_variant: &ColorVariant) {
 		println!(
 			"{}",
-			&Separator::Blank.fmt(width, border_variant).color_option(BrightBlack)
+			&Separator::Blank
+				.fmt(width, border_variant)
+				.color_option(BrightBlack, color_variant)
 		);
 
 		let temperature_unit = match units.temperature {
@@ -54,9 +57,9 @@ impl Graph {
 
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack),
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
 			"Hourly Forecast".bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack),
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
 			width = width - 2
 		);
 
@@ -67,34 +70,36 @@ impl Graph {
 				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
 				_ => Separator::Dashed.fmt(width, border_variant),
 			}
-			.color_option(BrightBlack)
+			.color_option(BrightBlack, color_variant)
 		);
 
 		println!(
 			"{} {: <width$}{}{}",
-			&Border::L.fmt(border_variant).color_option(BrightBlack),
-			&self.temperatures.color_option(Yellow).bold(),
-			temperature_unit.color_option(Yellow),
-			&Border::R.fmt(border_variant).color_option(BrightBlack),
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			self.temperatures.color_option(Yellow, color_variant).bold(),
+			temperature_unit.color_option(Yellow, color_variant),
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
 			width = width - 3
 		);
 		println!(
 			"{}",
-			&Separator::Blank.fmt(width, border_variant).color_option(BrightBlack)
+			&Separator::Blank
+				.fmt(width, border_variant)
+				.color_option(BrightBlack, color_variant)
 		);
 		println!(
 			"{}{}{}",
-			&Border::L.fmt(border_variant).color_option(BrightBlack),
-			&self.graph.color_option(Yellow),
-			&Border::R.fmt(border_variant).color_option(BrightBlack)
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			self.graph.color_option(Yellow, color_variant),
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
 		);
 
 		println!(
 			"{} {: <width$}{}{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack),
-			&self.precipitation.color_option(Blue).bold(),
-			precipitation_unit.color_option(Blue),
-			Border::R.fmt(border_variant).color_option(BrightBlack),
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			self.precipitation.color_option(Blue, color_variant).bold(),
+			precipitation_unit.color_option(Blue, color_variant),
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
 			width = width - 4
 		);
 
@@ -105,18 +110,24 @@ impl Graph {
 				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
 				_ => Separator::Dashed.fmt(width, border_variant),
 			}
-			.color_option(BrightBlack)
+			.color_option(BrightBlack, color_variant)
 		);
 
 		let hours = match units.time {
 			Some(Time::am_pm) => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!("{}", Border::L.fmt(border_variant).color_option(BrightBlack));
+		print!(
+			"{}",
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant)
+		);
 		for hour in hours {
 			print!("{: <9}", hour)
 		}
-		println!("{}", Border::R.fmt(border_variant).color_option(BrightBlack));
+		println!(
+			"{}",
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+		);
 	}
 
 	pub async fn prepare(weather: &Weather, night: bool, graph_variant: &GraphVariant, lang: &str) -> Result<Self> {

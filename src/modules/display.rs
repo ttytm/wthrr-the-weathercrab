@@ -33,6 +33,7 @@ impl Product {
 				units,
 				&gui.border.unwrap_or_default(),
 				&gui.graph.unwrap_or_default(),
+				&gui.color.unwrap_or_default(),
 				lang,
 			)
 			.await?;
@@ -43,15 +44,17 @@ impl Product {
 				units,
 				&gui.border.unwrap_or_default(),
 				&gui.graph.unwrap_or_default(),
+				&gui.color.unwrap_or_default(),
 				lang,
 			)
 			.await?;
 		}
 
 		// Disclaimer
-		println!(" {}", "Weather data by Open-Meteo.com".color_option(BrightBlack));
-
-		println!();
+		println!(
+			" {}",
+			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &gui.color.unwrap_or_default())
+		);
 
 		Ok(())
 	}

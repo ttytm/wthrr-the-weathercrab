@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
-use crate::{args::Forecast as ForecastParams, params::units::Units};
+use crate::{args::Forecast as ForecastParams, config::ColorVariant, params::units::Units};
 
 use super::{
 	border::*,
@@ -35,6 +35,7 @@ impl Forecast {
 		units: &Units,
 		border_variant: &BorderVariant,
 		graph_variant: &GraphVariant,
+		color_variant: &ColorVariant,
 		lang: &str,
 	) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
@@ -44,7 +45,16 @@ impl Forecast {
 		let (mut include_day, mut include_week) = (false, false);
 		for val in forecast_params {
 			if ForecastParams::disable == *val {
-				Current::render(product, false, units, border_variant, graph_variant, lang).await?;
+				Current::render(
+					product,
+					false,
+					units,
+					border_variant,
+					graph_variant,
+					color_variant,
+					lang,
+				)
+				.await?;
 				return Ok(());
 			}
 			if ForecastParams::day == *val {
@@ -56,7 +66,8 @@ impl Forecast {
 		}
 
 		if include_day {
-			let dimensions_current = Current::render(product, true, units, border_variant, graph_variant, lang).await?;
+			let dimensions_current =
+				Current::render(product, true, units, border_variant, graph_variant, color_variant, lang).await?;
 
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
@@ -71,7 +82,12 @@ impl Forecast {
 		}
 
 		// Border Top
-		println!("{}", &Edge::Top.fmt(width, border_variant).color_option(BrightBlack));
+		println!(
+			"{}",
+			&Edge::Top
+				.fmt(width, border_variant)
+				.color_option(BrightBlack, color_variant)
+		);
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -94,9 +110,9 @@ impl Forecast {
 			);
 			println!(
 				"{} {: <width$} {}",
-				&Border::L.fmt(border_variant).color_option(BrightBlack),
+				&Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
 				forecast_day,
-				&Border::R.fmt(border_variant).color_option(BrightBlack),
+				&Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
 				width = width - adjust_lang_width(&forecast.days[n].interpretation, lang) - 2,
 			);
 			if chunks.peek().is_some() {
@@ -107,7 +123,7 @@ impl Forecast {
 						BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
 						_ => Separator::Single.fmt(width, border_variant),
 					}
-					.color_option(BrightBlack)
+					.color_option(BrightBlack, color_variant)
 				)
 			}
 
@@ -115,7 +131,12 @@ impl Forecast {
 		}
 
 		// Border Bottom
-		println!("{}", Edge::Bottom.fmt(width, border_variant).color_option(BrightBlack));
+		println!(
+			"{}",
+			Edge::Bottom
+				.fmt(width, border_variant)
+				.color_option(BrightBlack, color_variant)
+		);
 
 		Ok(())
 	}

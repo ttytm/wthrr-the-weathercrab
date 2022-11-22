@@ -33,6 +33,7 @@ impl Default for Config {
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Gui {
 	pub border: Option<BorderVariant>,
+	pub color: Option<ColorVariant>,
 	pub graph: Option<GraphVariant>,
 	pub greeting: Option<bool>,
 }
@@ -41,10 +42,19 @@ impl Default for Gui {
 	fn default() -> Self {
 		Self {
 			border: Some(BorderVariant::default()),
+			color: Some(ColorVariant::default),
 			graph: Some(GraphVariant::default()),
 			greeting: Some(true),
 		}
 	}
+}
+
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(non_camel_case_types)]
+pub enum ColorVariant {
+	#[default]
+	default,
+	plain,
 }
 
 impl Config {
