@@ -133,6 +133,7 @@ precipitation = 'mm' # Precipitation units 'mm' | 'inch'
 
 [gui]
 border = 'rounded' # Border style: 'rounded' | 'single' | 'solid' | 'double'
+color = 'default' # Color: 'default' | 'plain'
 graph = 'lines' # Graph style: 'lines' | 'lines_shallow' | 'dots' | 'dots_double'
 greeting = true # Display greeting message: true | false
 ```
