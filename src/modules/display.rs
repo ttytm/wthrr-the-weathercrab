@@ -1,13 +1,10 @@
 use anyhow::Result;
+use colored::Color::BrightBlack;
 use regex::Regex;
-use term_painter::{
-	Color::{BrightBlack, NotSet},
-	ToStyle,
-};
 
 use crate::{args::Forecast as ForecastParams, config::Gui, params::units::Units, weather::Weather};
 
-use self::{current::Current, forecast::Forecast};
+use self::{current::Current, forecast::Forecast, utils::ColorOption};
 
 pub mod border;
 mod current;
@@ -36,6 +33,7 @@ impl Product {
 				units,
 				&gui.border.unwrap_or_default(),
 				&gui.graph.unwrap_or_default(),
+				&gui.color.unwrap_or_default(),
 				lang,
 			)
 			.await?;
@@ -46,16 +44,17 @@ impl Product {
 				units,
 				&gui.border.unwrap_or_default(),
 				&gui.graph.unwrap_or_default(),
+				&gui.color.unwrap_or_default(),
 				lang,
 			)
 			.await?;
 		}
 
 		// Disclaimer
-		BrightBlack.with(|| println!(" Weather data by Open-Meteo.com"));
-
-		// Reset colors
-		NotSet.with(|| println!());
+		println!(
+			" {}",
+			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &gui.color.unwrap_or_default())
+		);
 
 		Ok(())
 	}
