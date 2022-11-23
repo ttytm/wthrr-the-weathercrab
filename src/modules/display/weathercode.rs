@@ -16,24 +16,15 @@ impl WeatherCode {
 		match c {
 			0 => {
 				interpretation = translate(lang, "Clear sky").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			1 => {
 				interpretation = translate(lang, "Mostly Clear").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			2 => {
 				interpretation = translate(lang, "Partly Cloudy").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			3 => {
 				interpretation = translate(lang, "Overcast").await?;
@@ -41,10 +32,7 @@ impl WeatherCode {
 			}
 			45 => {
 				interpretation = translate(lang, "Fog").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			48 => {
 				interpretation = translate(lang, "Depositing Rime Fog").await?;
@@ -52,94 +40,55 @@ impl WeatherCode {
 			}
 			51 => {
 				interpretation = translate(lang, "Light Drizzle").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			53 => {
 				interpretation = translate(lang, "Moderate Drizzle").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			55 => {
 				interpretation = translate(lang, "Dense Drizzle").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			56 => {
 				interpretation = translate(lang, "Light Freezing Drizzle").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = 'ﭽ',
-				}
+				icon = if is_night { '' } else { 'ﭽ' };
 			}
 			57 => {
 				interpretation = translate(lang, "Dense Freezing Drizzle").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = 'ﭽ',
-				}
+				icon = if is_night { '' } else { 'ﭽ' };
 			}
 			61 => {
 				interpretation = translate(lang, "Slight Rain").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			63 => {
 				interpretation = translate(lang, "Moderate Rain").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			65 => {
 				interpretation = translate(lang, "Heavy Rain").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			66 => {
 				interpretation = translate(lang, "Light Freezing Rain").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			67 => {
 				interpretation = translate(lang, "Heavy Freezing Rain").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			71 => {
 				interpretation = translate(lang, "Slight Snow Fall").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			73 => {
 				interpretation = translate(lang, "Moderate Snow Fall").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			75 => {
 				interpretation = translate(lang, "Heavy Snow Fall").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			77 => {
 				interpretation = translate(lang, "Snow Grains").await?;
@@ -147,59 +96,35 @@ impl WeatherCode {
 			}
 			80 => {
 				interpretation = translate(lang, "Slight Rain Showers").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			81 => {
 				interpretation = translate(lang, "Moderate Rain Showers").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			82 => {
 				interpretation = translate(lang, "Violent Rain Showers").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			85 => {
 				interpretation = translate(lang, "Slight Snow Showers").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			86 => {
 				interpretation = translate(lang, "Heavy Snow Showers").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			95 => {
 				interpretation = translate(lang, "Thunderstorm").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			96 => {
 				interpretation = translate(lang, "Thunderstorm, Slight Hail").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			99 => {
 				interpretation = translate(lang, "Thunderstorm, Heavy Hail").await?;
-				match is_night {
-					true => icon = '',
-					_ => icon = '',
-				}
+				icon = if is_night { '' } else { '' };
 			}
 			_ => return Err(anyhow!("Unknown weather code")),
 		}

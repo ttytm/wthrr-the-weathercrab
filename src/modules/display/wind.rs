@@ -1,7 +1,6 @@
 use anyhow::{anyhow, Result};
 use strum_macros::Display;
 
-// to show a different approach then in weathercode.rs we use an enum
 #[derive(Display)]
 pub enum WindDirection {
 	NW,

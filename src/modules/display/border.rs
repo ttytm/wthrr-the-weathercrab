@@ -109,7 +109,6 @@ impl Separator {
 			Self::Single => format!("{}{:─>width$}{}", '├', "", '┤'),
 			Self::Solid => format!("┠{:─>width$}┨", ""),
 			Self::Double => format!("╟{:─>width$}╢", ""),
-			// Self::Double => format!("╠{:═>width$}╣", ""),
 		}
 	}
 }

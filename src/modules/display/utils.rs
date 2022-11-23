@@ -5,7 +5,7 @@ use regex::Regex;
 use crate::config::ColorVariant;
 
 pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
-	let correction = match lang {
+	match lang {
 		"zh" => {
 			let re = Regex::new(r"\p{han}").unwrap();
 			re.find_iter(string).count()
@@ -21,9 +21,7 @@ pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
 			re.find_iter(string).count() - nu.find_iter(string).count()
 		}
 		_ => 0,
-	};
-
-	correction
+	}
 }
 
 pub fn style_number(mut num: i32, sub: bool) -> Result<String> {
