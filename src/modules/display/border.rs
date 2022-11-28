@@ -106,7 +106,7 @@ impl Separator {
 				Border::R.fmt(border_variant)
 			),
 			Self::Dashed => format!("├{:┈>width$}┤", ""),
-			Self::Single => format!("{}{:─>width$}{}", '├', "", '┤'),
+			Self::Single => format!("├{:─>width$}┤", ""),
 			Self::Solid => format!("┠{:─>width$}┨", ""),
 			Self::Double => format!("╟{:─>width$}╢", ""),
 		}

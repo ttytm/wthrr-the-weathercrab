@@ -121,7 +121,7 @@ impl Forecast {
 					&match border_variant {
 						BorderVariant::double => Separator::Double.fmt(width, border_variant),
 						BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-						_ => Separator::Single.fmt(width, border_variant),
+						_ => Separator::Dashed.fmt(width, border_variant),
 					}
 					.color_option(BrightBlack, color_variant)
 				)

@@ -256,7 +256,7 @@ impl Current {
 		};
 
 		let hourly_forecast = match add_hourly {
-			true => Some(Graph::prepare(weather, night, graph_variant, lang).await?),
+			true => Some(Graph::prepare(weather, current_hour, night, graph_variant, lang).await?),
 			_ => None,
 		};
 

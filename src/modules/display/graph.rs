@@ -1,4 +1,5 @@
 use anyhow::Result;
+use chrono::{Timelike, Utc};
 use colored::{
 	Color::{Blue, BrightBlack, Yellow},
 	Colorize,
@@ -22,6 +23,7 @@ pub struct Graph {
 	temperatures: String,
 	graph: String,
 	precipitation: String,
+	time_indicator_col: usize,
 }
 
 #[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
@@ -65,12 +67,8 @@ impl Graph {
 
 		println!(
 			"{}",
-			&match border_variant {
-				BorderVariant::double => Separator::Double.fmt(width, border_variant),
-				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-				_ => Separator::Dashed.fmt(width, border_variant),
-			}
-			.color_option(BrightBlack, color_variant)
+			self.prepare_separator(border_variant, width, '╤')
+				.color_option(BrightBlack, color_variant),
 		);
 
 		println!(
@@ -105,12 +103,8 @@ impl Graph {
 
 		println!(
 			"{}",
-			match border_variant {
-				BorderVariant::double => Separator::Double.fmt(width, border_variant),
-				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-				_ => Separator::Dashed.fmt(width, border_variant),
-			}
-			.color_option(BrightBlack, color_variant)
+			self.prepare_separator(border_variant, width, '╧')
+				.color_option(BrightBlack, color_variant),
 		);
 
 		let hours = match units.time {
@@ -130,12 +124,24 @@ impl Graph {
 		);
 	}
 
-	pub async fn prepare(weather: &Weather, night: bool, graph_variant: &GraphVariant, lang: &str) -> Result<Self> {
+	pub async fn prepare(
+		weather: &Weather,
+		current_hour: usize,
+		night: bool,
+		graph_variant: &GraphVariant,
+		lang: &str,
+	) -> Result<Self> {
 		let temperatures = Self::prepare_temperature(weather, night, lang).await?;
 		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
 		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
+		let time_indicator_col = current_hour * 3 + (Timelike::minute(&Utc::now()) / 20) as usize;
 
-		Ok(Graph { temperatures, graph, precipitation })
+		Ok(Graph {
+			temperatures,
+			graph,
+			time_indicator_col,
+			precipitation,
+		})
 	}
 
 	async fn prepare_temperature(weather: &Weather, night: bool, lang: &str) -> Result<String> {
@@ -212,5 +218,33 @@ impl Graph {
 		}
 
 		Ok(graph)
+	}
+
+	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator: char) -> String {
+		let col_correction = 3;
+
+		match border_variant {
+			BorderVariant::double => format!(
+				"╟{:─>current_hour$}{:─>width$}╢",
+				time_indicator,
+				"",
+				current_hour = self.time_indicator_col + col_correction,
+				width = width - self.time_indicator_col - col_correction
+			),
+			BorderVariant::solid => format!(
+				"┠{:─>current_hour$}{:─>width$}┨",
+				time_indicator,
+				"",
+				current_hour = self.time_indicator_col + col_correction,
+				width = width - self.time_indicator_col - col_correction
+			),
+			_ => format!(
+				"├{:┈>current_hour$}{:┈>width$}┤",
+				time_indicator,
+				"",
+				current_hour = self.time_indicator_col + col_correction,
+				width = width - self.time_indicator_col - col_correction
+			),
+		}
 	}
 }
