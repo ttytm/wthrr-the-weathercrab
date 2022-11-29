@@ -197,14 +197,22 @@ impl HourlyForecast {
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
-		let graph_glyphs = match graph_variant {
-			GraphVariant::lines => ['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
-			GraphVariant::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
-			GraphVariant::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
-			GraphVariant::dots_double => ['⣀', '⠤', '⠒', '⠉'].to_vec(),
+		// TODO: use config variable
+		let double = false;
+
+		let mut graph_glyphs = match graph_variant {
+			GraphVariant::lines => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
+			GraphVariant::lines_shallow => vec!['⎽', '⎼', '⎻', '⎺'],
+			GraphVariant::dots => vec!['⡀', '⠄', '⠂', '⠁'],
+			GraphVariant::dots_double => vec!['⣀', '⠤', '⠒', '⠉'],
 			// somthing like this is better suited for a graph that spans more the one line
 			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
 		};
+
+		if double {
+			graph_glyphs.append(&mut graph_glyphs.to_vec());
+		}
+		println!("{:?}", graph_glyphs);
 
 		let lvl_margin = (max_temp - min_temp) / (graph_glyphs.len() - 1) as f64;
 
