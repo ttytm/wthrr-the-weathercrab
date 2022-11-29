@@ -21,9 +21,14 @@ use super::{
 
 pub struct Graph {
 	temperatures: String,
-	graph: String,
+	graph: GraphS,
 	precipitation: String,
 	time_indicator_col: usize,
+}
+
+struct GraphS {
+	top: String,
+	bot: String,
 }
 
 #[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
@@ -88,7 +93,13 @@ impl Graph {
 		println!(
 			"{}{}{}",
 			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
-			self.graph.color_option(Yellow, color_variant),
+			self.graph.top.color_option(Yellow, color_variant),
+			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+		);
+		println!(
+			"{}{}{}",
+			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			self.graph.bot.color_option(Yellow, color_variant),
 			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
 		);
 
@@ -171,30 +182,183 @@ impl Graph {
 		Ok(result)
 	}
 
-	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<String> {
+	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<GraphS> {
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
-		let graph_levels = match graph_variant {
-			GraphVariant::lines => ['🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
+		let graph_lvls = match graph_variant {
+			GraphVariant::lines => ['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
 			GraphVariant::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
 			GraphVariant::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
 			GraphVariant::dots_double => ['⣀', '⠤', '⠒', '⠉'].to_vec(),
 			// somthing like this is better suited for a graph that spans more the one line
 			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
 		};
-		let level_margin = (max_temp - min_temp) / (graph_levels.len() - 1) as f64;
-		let mut last_level = None;
-		let mut graph = String::new();
 
+		let graph_lvl_idx_sum = graph_lvls.len() - 1;
+		let lvl_margin = (max_temp - min_temp) / graph_lvl_idx_sum as f64;
+		let mut last_lvl: Option<usize> = None;
+		let mut graph = String::new();
+		let mut graph_two = String::new();
+
+		// create graph - calculate and push three characters per iteration to graph strings
 		for (i, temp) in temperatures.iter().enumerate() {
+			let curr_lvl = ((temp - min_temp) / lvl_margin) as usize;
+			let next_lvl = ((temperatures[i + 1] - min_temp) / lvl_margin) as usize;
+			/* let correction = if next_lvl > curr_lvl + 1 || next_lvl < curr_lvl - 1 {
+				Some(1)
+			} else {
+				None
+			}; */
+
+			// earlier compare with next level
+			if let Some(last_lvl) = last_lvl {
+				match last_lvl.cmp(&curr_lvl) {
+					/* Ordering::Less => graph.push(graph_lvls[last_lvl - 1]),
+					Ordering::Equal => graph.push(graph_lvls[last_lvl]),
+					Ordering::Greater => graph.push(graph_lvls[last_lvl]), */
+					// ---
+					Ordering::Less => {
+						let idx = if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+							curr_lvl - 2
+						} else {
+							curr_lvl - 1
+						};
+						graph.push(graph_lvls[idx])
+					}
+					Ordering::Equal => {
+						let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+							curr_lvl + 1
+						} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+							curr_lvl - 1
+						} else {
+							curr_lvl
+						};
+						graph.push(graph_lvls[idx])
+					}
+					Ordering::Greater => {
+						let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+							curr_lvl + 2
+						} else {
+							curr_lvl + 1
+						};
+						graph.push(graph_lvls[idx])
+					} // ---
+					  /* Ordering::Less => {
+						  graph.push(graph_lvls[adjust_index(last_lvl - 1, next_lvl, graph_lvl_idx_sum, Adjustment::Up)])
+					  }
+					  Ordering::Equal => graph.push(graph_lvls[adjust_index(last_lvl, next_lvl, graph_lvl_idx_sum)]),
+					  Ordering::Greater => graph.push(graph_lvls[adjust_index(last_lvl, next_lvl, graph_lvl_idx_sum)]), */
+				}
+			} else {
+				// first iteration without a last_lvl
+				let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+					curr_lvl + 1
+				} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+					curr_lvl - 1
+				} else {
+					curr_lvl
+				};
+				graph.push(graph_lvls[idx])
+			}
+
+			/* fn adjust_index(curr_index: usize, next_level: usize, graph_index_sum: usize, adj: Adjustment) -> usize {
+				/* if nex_lvl > !(curr_index + 1) ||if curr_index > 0 && next_level < curr_index - 1 {
+				} */
+				match adj {
+					Adjustment::Up => {
+						if curr_index < graph_index_sum && next_level > curr_index + 1 {
+							return curr_index + 1;
+						} else {
+							return curr_index;
+						}
+					}
+					Adjustment::Down => {
+						if curr_index > 0 && next_level < curr_index - 1 {
+							return curr_index - 1;
+						} else {
+							return curr_index;
+						}
+					}
+				}
+				/* if curr_index < graph_index_sum && next_level > curr_index + 1 {
+					curr_index + 1
+				} else if curr_index > 0 && next_level < curr_index - 1 {
+					curr_index - 1
+				} else {
+					curr_index
+				} */
+			} */
+
+			// TODO: compare with next level if difference is > 1 then current_level + 1
+			// graph.push(graph_lvls[curr_lvl]);
+			// ---
+			let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+				curr_lvl + 1
+			} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+				curr_lvl - 1
+			} else {
+				curr_lvl
+			};
+			graph.push(graph_lvls[idx]);
+			// ---
+			// graph.push(graph_lvls[adjust_index(curr_lvl, next_lvl, graph_lvl_idx_sum)]);
+
+			// TODO: if difference is > 1 then current_level + 2
+			match next_lvl.cmp(&curr_lvl) {
+				/* Ordering::Less => graph.push(graph_lvls[curr_lvl - 1]),
+				Ordering::Equal => graph.push(graph_lvls[curr_lvl]),
+				Ordering::Greater => graph.push(graph_lvls[curr_lvl + 1]),*/
+				// ---
+				Ordering::Less => {
+					let idx = if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+						curr_lvl - 2
+					} else {
+						curr_lvl - 1
+					};
+					graph.push(graph_lvls[idx])
+				}
+				Ordering::Equal => {
+					let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+						curr_lvl + 1
+					} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
+						curr_lvl - 1
+					} else {
+						curr_lvl
+					};
+					graph.push(graph_lvls[idx])
+				}
+				Ordering::Greater => {
+					let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
+						curr_lvl + 2
+					} else {
+						curr_lvl + 1
+					};
+					graph.push(graph_lvls[idx])
+				} // ---
+				  // ---
+				  /* Ordering::Less => graph.push(graph_lvls[adjust_index(curr_lvl - 1, next_lvl, graph_lvl_idx_sum)]),
+				  Ordering::Equal => graph.push(graph_lvls[adjust_index(curr_lvl, next_lvl, graph_lvl_idx_sum)]),
+				  Ordering::Greater => graph.push(graph_lvls[adjust_index(curr_lvl + 1, next_lvl, graph_lvl_idx_sum)]), */
+			}
+
+			if i == 23 {
+				break;
+			}
+
+			// print!("{}-{}-{} ", last_lvl.unwrap_or_default(), curr_lvl, next_lvl);
+
+			last_lvl = Some(next_lvl);
+		}
+
+		/* for (i, temp) in temperatures.iter().enumerate() {
 			let current_level = ((temp - min_temp) / level_margin) as usize;
 
 			if let Some(last_level) = last_level {
-				match current_level.cmp(&last_level) {
-					Ordering::Greater => graph.push(graph_levels[current_level + 1]),
-					Ordering::Less => graph.push(graph_levels[current_level - 1]),
-					Ordering::Equal => graph.push(graph_levels[current_level]),
+				match last_level.cmp(&current_level) {
+					Ordering::Greater => graph.push(graph_levels[last_level + 1]),
+					Ordering::Less => graph.push(graph_levels[last_level - 1]),
+					Ordering::Equal => graph.push(graph_levels[last_level]),
 				}
 			} else {
 				graph.push(graph_levels[current_level])
@@ -204,9 +368,9 @@ impl Graph {
 
 			let next_level = ((temperatures[i + 1] - min_temp) / level_margin) as usize;
 
-			match current_level.cmp(&next_level) {
-				Ordering::Greater => graph.push(graph_levels[current_level - 1]),
-				Ordering::Less => graph.push(graph_levels[current_level + 1]),
+			match next_level.cmp(&current_level) {
+				Ordering::Greater => graph.push(graph_levels[current_level + 1]),
+				Ordering::Less => graph.push(graph_levels[current_level - 1]),
 				Ordering::Equal => graph.push(graph_levels[current_level]),
 			}
 
@@ -215,9 +379,9 @@ impl Graph {
 			}
 
 			last_level = Some(next_level);
-		}
+		} */
 
-		Ok(graph)
+		Ok(GraphS { top: graph_two, bot: graph })
 	}
 
 	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator: char) -> String {
@@ -248,4 +412,10 @@ impl Graph {
 			),
 		}
 	}
+}
+
+enum Adjustment {
+	Up,
+	Down,
+	Both,
 }
