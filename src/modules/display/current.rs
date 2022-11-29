@@ -5,7 +5,7 @@ use crate::{config::ColorVariant, params::units::Time, params::units::Units, tra
 
 use super::{
 	border::*,
-	graph::{Graph, GraphVariant},
+	graph::{GraphVariant, HourlyForecast},
 	utils::{adjust_lang_width, ColorOption},
 	weathercode::WeatherCode,
 	wind::WindDirection,
@@ -23,7 +23,7 @@ pub struct Current {
 	sun_rise: String,
 	sun_set: String,
 	wmo_code: WeatherCode,
-	hourly_forecast: Option<Graph>,
+	hourly_forecast: Option<HourlyForecast>,
 	dimensions: Dimensions,
 }
 
@@ -256,7 +256,7 @@ impl Current {
 		};
 
 		let hourly_forecast = match add_hourly {
-			true => Some(Graph::prepare(weather, current_hour, night, graph_variant, lang).await?),
+			true => Some(HourlyForecast::prepare(weather, current_hour, night, graph_variant, lang).await?),
 			_ => None,
 		};
 

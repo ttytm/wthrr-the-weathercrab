@@ -19,16 +19,26 @@ use super::{
 	weathercode::WeatherCode,
 };
 
-pub struct Graph {
+const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
+
+pub struct HourlyForecast {
 	temperatures: String,
-	graph: GraphS,
+	graph: Graph,
 	precipitation: String,
 	time_indicator_col: usize,
 }
 
-struct GraphS {
-	top: String,
-	bot: String,
+struct Graph {
+	one: String,
+	two: String,
+}
+
+struct GraphLvls {
+	glyphs: Vec<char>,
+	margin: f64,
+	last: Option<usize>,
+	current: usize,
+	next: usize,
 }
 
 #[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
@@ -42,9 +52,7 @@ pub enum GraphVariant {
 	// dots_fill,
 }
 
-const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
-
-impl Graph {
+impl HourlyForecast {
 	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant, color_variant: &ColorVariant) {
 		println!(
 			"{}",
@@ -90,16 +98,19 @@ impl Graph {
 				.fmt(width, border_variant)
 				.color_option(BrightBlack, color_variant)
 		);
+
+		if self.graph.two.chars().count() > 0 {
+			println!(
+				"{}{}{}",
+				Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+				self.graph.two.color_option(Yellow, color_variant),
+				Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+			);
+		}
 		println!(
 			"{}{}{}",
 			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
-			self.graph.top.color_option(Yellow, color_variant),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
-		);
-		println!(
-			"{}{}{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
-			self.graph.bot.color_option(Yellow, color_variant),
+			self.graph.one.color_option(Yellow, color_variant),
 			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
 		);
 
@@ -147,7 +158,7 @@ impl Graph {
 		let graph = Self::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
 		let time_indicator_col = current_hour * 3 + (Timelike::minute(&Utc::now()) / 20) as usize;
 
-		Ok(Graph {
+		Ok(HourlyForecast {
 			temperatures,
 			graph,
 			time_indicator_col,
@@ -182,11 +193,11 @@ impl Graph {
 		Ok(result)
 	}
 
-	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<GraphS> {
+	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<Graph> {
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
-		let graph_lvls = match graph_variant {
+		let graph_glyphs = match graph_variant {
 			GraphVariant::lines => ['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
 			GraphVariant::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
 			GraphVariant::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
@@ -195,193 +206,58 @@ impl Graph {
 			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
 		};
 
-		let graph_lvl_idx_sum = graph_lvls.len() - 1;
-		let lvl_margin = (max_temp - min_temp) / graph_lvl_idx_sum as f64;
-		let mut last_lvl: Option<usize> = None;
-		let mut graph = String::new();
-		let mut graph_two = String::new();
+		let lvl_margin = (max_temp - min_temp) / (graph_glyphs.len() - 1) as f64;
+
+		let mut graph_lvls = GraphLvls {
+			glyphs: graph_glyphs,
+			last: None,
+			current: 0,
+			next: 0,
+			margin: lvl_margin,
+		};
+
+		let mut graph = Graph {
+			one: String::new(),
+			two: String::new(),
+		};
 
 		// create graph - calculate and push three characters per iteration to graph strings
 		for (i, temp) in temperatures.iter().enumerate() {
-			let curr_lvl = ((temp - min_temp) / lvl_margin) as usize;
-			let next_lvl = ((temperatures[i + 1] - min_temp) / lvl_margin) as usize;
-			/* let correction = if next_lvl > curr_lvl + 1 || next_lvl < curr_lvl - 1 {
-				Some(1)
-			} else {
-				None
-			}; */
+			graph_lvls.current = ((temp - min_temp) / graph_lvls.margin) as usize;
+			graph_lvls.next = ((temperatures[i + 1] - min_temp) / graph_lvls.margin) as usize;
 
-			// earlier compare with next level
-			if let Some(last_lvl) = last_lvl {
-				match last_lvl.cmp(&curr_lvl) {
-					/* Ordering::Less => graph.push(graph_lvls[last_lvl - 1]),
-					Ordering::Equal => graph.push(graph_lvls[last_lvl]),
-					Ordering::Greater => graph.push(graph_lvls[last_lvl]), */
-					// ---
-					Ordering::Less => {
-						let idx = if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-							curr_lvl - 2
-						} else {
-							curr_lvl - 1
-						};
-						graph.push(graph_lvls[idx])
-					}
-					Ordering::Equal => {
-						let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-							curr_lvl + 1
-						} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-							curr_lvl - 1
-						} else {
-							curr_lvl
-						};
-						graph.push(graph_lvls[idx])
-					}
-					Ordering::Greater => {
-						let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-							curr_lvl + 2
-						} else {
-							curr_lvl + 1
-						};
-						graph.push(graph_lvls[idx])
-					} // ---
-					  /* Ordering::Less => {
-						  graph.push(graph_lvls[adjust_index(last_lvl - 1, next_lvl, graph_lvl_idx_sum, Adjustment::Up)])
-					  }
-					  Ordering::Equal => graph.push(graph_lvls[adjust_index(last_lvl, next_lvl, graph_lvl_idx_sum)]),
-					  Ordering::Greater => graph.push(graph_lvls[adjust_index(last_lvl, next_lvl, graph_lvl_idx_sum)]), */
+			// char 1/3 - compare with last level
+			if let Some(last_lvl) = graph_lvls.last {
+				match Some(last_lvl.cmp(&graph_lvls.current)) {
+					Some(o) if o == Ordering::Less => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+					Some(o) if o == Ordering::Equal => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+					Some(o) if o == Ordering::Greater => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+					_ => {}
 				}
 			} else {
-				// first iteration without a last_lvl
-				let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-					curr_lvl + 1
-				} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-					curr_lvl - 1
-				} else {
-					curr_lvl
-				};
-				graph.push(graph_lvls[idx])
+				// first iteration - without a last_lvl
+				graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)])
 			}
 
-			/* fn adjust_index(curr_index: usize, next_level: usize, graph_index_sum: usize, adj: Adjustment) -> usize {
-				/* if nex_lvl > !(curr_index + 1) ||if curr_index > 0 && next_level < curr_index - 1 {
-				} */
-				match adj {
-					Adjustment::Up => {
-						if curr_index < graph_index_sum && next_level > curr_index + 1 {
-							return curr_index + 1;
-						} else {
-							return curr_index;
-						}
-					}
-					Adjustment::Down => {
-						if curr_index > 0 && next_level < curr_index - 1 {
-							return curr_index - 1;
-						} else {
-							return curr_index;
-						}
-					}
-				}
-				/* if curr_index < graph_index_sum && next_level > curr_index + 1 {
-					curr_index + 1
-				} else if curr_index > 0 && next_level < curr_index - 1 {
-					curr_index - 1
-				} else {
-					curr_index
-				} */
-			} */
+			// char 2/3
+			graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)]);
 
-			// TODO: compare with next level if difference is > 1 then current_level + 1
-			// graph.push(graph_lvls[curr_lvl]);
-			// ---
-			let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-				curr_lvl + 1
-			} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-				curr_lvl - 1
-			} else {
-				curr_lvl
-			};
-			graph.push(graph_lvls[idx]);
-			// ---
-			// graph.push(graph_lvls[adjust_index(curr_lvl, next_lvl, graph_lvl_idx_sum)]);
-
-			// TODO: if difference is > 1 then current_level + 2
-			match next_lvl.cmp(&curr_lvl) {
-				/* Ordering::Less => graph.push(graph_lvls[curr_lvl - 1]),
-				Ordering::Equal => graph.push(graph_lvls[curr_lvl]),
-				Ordering::Greater => graph.push(graph_lvls[curr_lvl + 1]),*/
-				// ---
-				Ordering::Less => {
-					let idx = if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-						curr_lvl - 2
-					} else {
-						curr_lvl - 1
-					};
-					graph.push(graph_lvls[idx])
-				}
-				Ordering::Equal => {
-					let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-						curr_lvl + 1
-					} else if curr_lvl > 0 && next_lvl < curr_lvl - 1 {
-						curr_lvl - 1
-					} else {
-						curr_lvl
-					};
-					graph.push(graph_lvls[idx])
-				}
-				Ordering::Greater => {
-					let idx = if curr_lvl < graph_lvl_idx_sum && next_lvl > curr_lvl + 1 {
-						curr_lvl + 2
-					} else {
-						curr_lvl + 1
-					};
-					graph.push(graph_lvls[idx])
-				} // ---
-				  // ---
-				  /* Ordering::Less => graph.push(graph_lvls[adjust_index(curr_lvl - 1, next_lvl, graph_lvl_idx_sum)]),
-				  Ordering::Equal => graph.push(graph_lvls[adjust_index(curr_lvl, next_lvl, graph_lvl_idx_sum)]),
-				  Ordering::Greater => graph.push(graph_lvls[adjust_index(curr_lvl + 1, next_lvl, graph_lvl_idx_sum)]), */
+			// char 3/3 - compare with next level
+			match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
+				Some(o) if o == Ordering::Less => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+				Some(o) if o == Ordering::Equal => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+				Some(o) if o == Ordering::Greater => graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]),
+				_ => {}
 			}
 
 			if i == 23 {
 				break;
 			}
 
-			// print!("{}-{}-{} ", last_lvl.unwrap_or_default(), curr_lvl, next_lvl);
-
-			last_lvl = Some(next_lvl);
+			graph_lvls.last = Some(graph_lvls.next);
 		}
 
-		/* for (i, temp) in temperatures.iter().enumerate() {
-			let current_level = ((temp - min_temp) / level_margin) as usize;
-
-			if let Some(last_level) = last_level {
-				match last_level.cmp(&current_level) {
-					Ordering::Greater => graph.push(graph_levels[last_level + 1]),
-					Ordering::Less => graph.push(graph_levels[last_level - 1]),
-					Ordering::Equal => graph.push(graph_levels[last_level]),
-				}
-			} else {
-				graph.push(graph_levels[current_level])
-			}
-
-			graph.push(graph_levels[current_level]);
-
-			let next_level = ((temperatures[i + 1] - min_temp) / level_margin) as usize;
-
-			match next_level.cmp(&current_level) {
-				Ordering::Greater => graph.push(graph_levels[current_level + 1]),
-				Ordering::Less => graph.push(graph_levels[current_level - 1]),
-				Ordering::Equal => graph.push(graph_levels[current_level]),
-			}
-
-			if i == 23 {
-				break;
-			}
-
-			last_level = Some(next_level);
-		} */
-
-		Ok(GraphS { top: graph_two, bot: graph })
+		Ok(graph)
 	}
 
 	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator: char) -> String {
@@ -414,8 +290,32 @@ impl Graph {
 	}
 }
 
-enum Adjustment {
-	Up,
-	Down,
-	Both,
+impl GraphLvls {
+	fn get_idx(&self, pending_comparison: Ordering) -> usize {
+		match pending_comparison {
+			Ordering::Less => {
+				if self.next < self.current - 1 && self.current > 1 {
+					self.current - 2
+				} else {
+					self.current - 1
+				}
+			}
+			Ordering::Equal => {
+				if self.next > self.current + 1 && self.current < self.glyphs.len() {
+					self.current + 1
+				} else if self.next < self.current && self.current > 0 {
+					self.current - 1
+				} else {
+					self.current
+				}
+			}
+			Ordering::Greater => {
+				if self.next > self.current + 1 && self.current + 1 < self.glyphs.len() {
+					self.current + 2
+				} else {
+					self.current + 1
+				}
+			}
+		}
+	}
 }
