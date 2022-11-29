@@ -198,7 +198,7 @@ impl HourlyForecast {
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
 		// TODO: use config variable
-		let double = false;
+		let double = true;
 
 		let mut graph_glyphs = match graph_variant {
 			GraphVariant::lines => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
@@ -212,7 +212,6 @@ impl HourlyForecast {
 		if double {
 			graph_glyphs.append(&mut graph_glyphs.to_vec());
 		}
-		println!("{:?}", graph_glyphs);
 
 		let lvl_margin = (max_temp - min_temp) / (graph_glyphs.len() - 1) as f64;
 
@@ -229,8 +228,121 @@ impl HourlyForecast {
 			two: String::new(),
 		};
 
-		// create graph - calculate and push three characters per iteration to graph strings
+		// Create Graph - calculate and push three characters per iteration to graph strings
+		// Two Lines
 		for (i, temp) in temperatures.iter().enumerate() {
+			graph_lvls.current = ((temp - min_temp) / graph_lvls.margin) as usize;
+			graph_lvls.next = ((temperatures[i + 1] - min_temp) / graph_lvls.margin) as usize;
+
+			let graph_one_idx_sum = (graph_lvls.glyphs.len() - 1) / 2;
+
+			// Char 1/3 - compare with last level
+			if let Some(last_lvl) = graph_lvls.last {
+				if graph_lvls.current > graph_one_idx_sum {
+					match Some(last_lvl.cmp(&graph_lvls.current)) {
+						Some(o) if o == Ordering::Less => {
+							graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.one.push(' ');
+						}
+						Some(o) if o == Ordering::Equal => {
+							graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.one.push(' ');
+						}
+						Some(o) if o == Ordering::Greater => {
+							graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.one.push(' ');
+						}
+						_ => {}
+					}
+				} else {
+					match Some(last_lvl.cmp(&graph_lvls.current)) {
+						Some(o) if o == Ordering::Less => {
+							graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.two.push(' ');
+						}
+						Some(o) if o == Ordering::Equal => {
+							graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.two.push(' ');
+						}
+						Some(o) if o == Ordering::Greater => {
+							graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+							graph.two.push(' ');
+						}
+						_ => {}
+					}
+				}
+			} else {
+				// First iteration - without a last level
+				if graph_lvls.current > graph_one_idx_sum {
+					graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)]);
+					graph.one.push(' ');
+				} else {
+					graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)]);
+					graph.two.push(' ');
+				}
+			}
+
+			// Char 2/3
+			if graph_lvls.current > graph_one_idx_sum {
+				graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)]);
+				graph.one.push(' ');
+			} else {
+				graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(Ordering::Equal)]);
+				graph.two.push(' ');
+			}
+
+			// Char 3/3 - compare with next level
+			if graph_lvls.current > graph_one_idx_sum {
+				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
+					Some(o) if o == Ordering::Less => {
+						graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.one.push(' ');
+					}
+					Some(o) if o == Ordering::Equal => {
+						graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.one.push(' ');
+					}
+					Some(o) if o == Ordering::Greater => {
+						graph.two.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.one.push(' ');
+					}
+					_ => {}
+				}
+			} else {
+				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
+					Some(o) if o == Ordering::Less => {
+						graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.two.push(' ');
+					}
+					Some(o) if o == Ordering::Equal => {
+						graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.two.push(' ');
+					}
+					Some(o) if o == Ordering::Greater => {
+						graph.one.push(graph_lvls.glyphs[graph_lvls.get_idx(o)]);
+						graph.two.push(' ');
+					}
+					_ => {}
+				}
+			}
+
+			if i == 23 {
+				break;
+			}
+
+			let lvl_diff: isize = (graph_lvls.next - graph_lvls.current) as isize;
+
+			graph_lvls.last = if lvl_diff.is_negative() && lvl_diff < -1 {
+				Some(graph_lvls.current - 2)
+			} else if lvl_diff.is_positive() && lvl_diff > 1 {
+				Some(graph_lvls.current + 2)
+			} else {
+				Some(graph_lvls.next)
+			};
+		}
+
+		// Single Line
+		/* for (i, temp) in temperatures.iter().enumerate() {
 			graph_lvls.current = ((temp - min_temp) / graph_lvls.margin) as usize;
 			graph_lvls.next = ((temperatures[i + 1] - min_temp) / graph_lvls.margin) as usize;
 
@@ -263,7 +375,7 @@ impl HourlyForecast {
 			}
 
 			graph_lvls.last = Some(graph_lvls.next);
-		}
+		} */
 
 		Ok(graph)
 	}
@@ -300,28 +412,53 @@ impl HourlyForecast {
 
 impl GraphLvls {
 	fn get_idx(&self, pending_comparison: Ordering) -> usize {
+		let graph_one_idx_sum = (self.glyphs.len() - 1) / 2;
+
 		match pending_comparison {
 			Ordering::Less => {
 				if self.next < self.current - 1 && self.current > 1 {
-					self.current - 2
+					if self.current - 2 > graph_one_idx_sum || self.current <= graph_one_idx_sum {
+						self.current - 2
+					} else if self.current - 1 > graph_one_idx_sum || self.current <= graph_one_idx_sum {
+						self.current - 1
+					} else {
+						self.current
+					}
 				} else {
-					self.current - 1
+					self.current
 				}
 			}
 			Ordering::Equal => {
 				if self.next > self.current + 1 && self.current < self.glyphs.len() {
-					self.current + 1
-				} else if self.next < self.current && self.current > 0 {
+					if self.current + 1 <= graph_one_idx_sum || self.current > graph_one_idx_sum {
+						self.current + 1
+					} else {
+						self.current
+					}
+				// this additional clause should further improve details, but makes the graph look a bit scattered
+				/* } else if self.next < self.current && self.current > 0 {
+				if self.current - 1 > graph_one_idx_sum || self.current <= graph_one_idx_sum {
 					self.current - 1
+				} else {
+					self.current
+				} */
 				} else {
 					self.current
 				}
 			}
 			Ordering::Greater => {
 				if self.next > self.current + 1 && self.current + 1 < self.glyphs.len() {
-					self.current + 2
-				} else {
+					if self.current + 2 <= graph_one_idx_sum || self.current > graph_one_idx_sum {
+						self.current + 2
+					} else if self.current + 1 <= graph_one_idx_sum || self.current > graph_one_idx_sum {
+						self.current + 1
+					} else {
+						self.current
+					}
+				} else if self.current + 1 <= graph_one_idx_sum || self.current > graph_one_idx_sum {
 					self.current + 1
+				} else {
+					self.current
 				}
 			}
 		}
