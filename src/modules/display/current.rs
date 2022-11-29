@@ -5,7 +5,8 @@ use crate::{config::ColorVariant, params::units::Time, params::units::Units, tra
 
 use super::{
 	border::*,
-	graph::{GraphVariant, HourlyForecast},
+	graph::GraphVariant,
+	hourly::HourlyForecast,
 	utils::{adjust_lang_width, ColorOption},
 	weathercode::WeatherCode,
 	wind::WindDirection,

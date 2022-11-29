@@ -7,9 +7,11 @@ use crate::{args::Forecast as ForecastParams, config::Gui, params::units::Units,
 use self::{current::Current, forecast::Forecast, utils::ColorOption};
 
 pub mod border;
+pub mod graph;
+pub mod hourly;
+
 mod current;
 mod forecast;
-pub mod graph;
 mod greeting;
 mod utils;
 mod weathercode;
