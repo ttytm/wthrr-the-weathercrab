@@ -17,16 +17,14 @@ struct GraphLvls {
 pub enum GraphVariant {
 	#[default]
 	lines,
-	lines_shallow,
-	dots,
-	dots_double,
-	// dots_fill,
+	lines_dotted,
+	dotted,
 }
 
 impl Graph {
 	pub fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<Graph> {
 		// TODO: use config variable
-		let graph_rows = "single";
+		let graph_rows = "double";
 		let mut graph = Graph(String::new(), String::new());
 
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
@@ -103,15 +101,24 @@ impl Graph {
 				if graph_lvls.current > graph_one_idx_sum {
 					match Some(last_lvl.cmp(&graph_lvls.current)) {
 						Some(o) if o == Ordering::Less => {
-							graph.0.push(' ');
+							match graph_variant {
+								GraphVariant::dotted => graph.0.push('⣿'),
+								_ => graph.0.push(' '),
+							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 						}
 						Some(o) if o == Ordering::Equal => {
-							graph.0.push(' ');
+							match graph_variant {
+								GraphVariant::dotted => graph.0.push('⣿'),
+								_ => graph.0.push(' '),
+							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 						}
 						Some(o) if o == Ordering::Greater => {
-							graph.0.push(' ');
+							match graph_variant {
+								GraphVariant::dotted => graph.0.push('⣿'),
+								_ => graph.0.push(' '),
+							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 						}
 						_ => {}
@@ -136,7 +143,10 @@ impl Graph {
 			} else {
 				// First iteration - without a last level
 				if graph_lvls.current > graph_one_idx_sum {
-					graph.0.push(' ');
+					match graph_variant {
+						GraphVariant::dotted => graph.0.push('⣿'),
+						_ => graph.0.push(' '),
+					}
 					graph
 						.1
 						.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
@@ -150,10 +160,13 @@ impl Graph {
 
 			// Char 2/3
 			if graph_lvls.current > graph_one_idx_sum {
+				match graph_variant {
+					GraphVariant::dotted => graph.0.push('⣿'),
+					_ => graph.0.push(' '),
+				}
 				graph
 					.1
 					.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
-				graph.0.push(' ');
 			} else {
 				graph
 					.0
@@ -165,16 +178,25 @@ impl Graph {
 			if graph_lvls.current > graph_one_idx_sum {
 				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
 					Some(o) if o == Ordering::Less => {
+						match graph_variant {
+							GraphVariant::dotted => graph.0.push('⣿'),
+							_ => graph.0.push(' '),
+						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
-						graph.0.push(' ');
 					}
 					Some(o) if o == Ordering::Equal => {
+						match graph_variant {
+							GraphVariant::dotted => graph.0.push('⣿'),
+							_ => graph.0.push(' '),
+						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
-						graph.0.push(' ');
 					}
 					Some(o) if o == Ordering::Greater => {
+						match graph_variant {
+							GraphVariant::dotted => graph.0.push('⣿'),
+							_ => graph.0.push(' '),
+						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
-						graph.0.push(' ');
 					}
 					_ => {}
 				}
@@ -219,11 +241,8 @@ impl GraphLvls {
 	fn get_glyphs(graph_variant: &GraphVariant, graph_rows: &str) -> Vec<char> {
 		let mut glyphs = match graph_variant {
 			GraphVariant::lines => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
-			GraphVariant::lines_shallow => vec!['⎽', '⎼', '⎻', '⎺'],
-			GraphVariant::dots => vec!['⡀', '⠄', '⠂', '⠁'],
-			GraphVariant::dots_double => vec!['⣀', '⠤', '⠒', '⠉'],
-			// somthing like this is better suited for a graph that spans more the one line
-			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
+			GraphVariant::lines_dotted => vec!['⣀', '⠤', '⠒', '⠉'],
+			GraphVariant::dotted => vec!['⣀', '⣤', '⣶', '⣿'],
 		};
 
 		if graph_rows == "double" {
