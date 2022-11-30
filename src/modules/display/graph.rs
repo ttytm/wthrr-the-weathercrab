@@ -224,7 +224,7 @@ impl Graph {
 		let mut current_hour = self.time_indicator_col + 3;
 
 		if current_hour > width {
-			current_hour = current_hour - width
+			current_hour -= width
 		}
 
 		match border_variant {
