@@ -170,29 +170,30 @@ impl HourlyForecast {
 	}
 
 	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator: char) -> String {
-		let col_correction = 3;
+		let mut current_hour = self.time_indicator_col + 3;
+
+		if current_hour > width {
+			current_hour -= width
+		}
 
 		match border_variant {
 			BorderVariant::double => format!(
 				"╟{:─>current_hour$}{:─>width$}╢",
 				time_indicator,
 				"",
-				current_hour = self.time_indicator_col + col_correction,
-				width = width - self.time_indicator_col - col_correction
+				width = width - current_hour
 			),
 			BorderVariant::solid => format!(
 				"┠{:─>current_hour$}{:─>width$}┨",
 				time_indicator,
 				"",
-				current_hour = self.time_indicator_col + col_correction,
-				width = width - self.time_indicator_col - col_correction
+				width = width - current_hour
 			),
 			_ => format!(
 				"├{:┈>current_hour$}{:┈>width$}┤",
 				time_indicator,
 				"",
-				current_hour = self.time_indicator_col + col_correction,
-				width = width - self.time_indicator_col - col_correction
+				width = width - current_hour
 			),
 		}
 	}
