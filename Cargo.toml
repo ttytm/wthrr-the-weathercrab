@@ -1,6 +1,6 @@
 [package]
 name = "wthrr"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Turiiya <tobmoj@web.de>"]
 edition = "2021"
 license = "MIT"
