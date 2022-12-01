@@ -9,7 +9,7 @@ use std::fmt::Write as _;
 use crate::{
 	config::ColorVariant,
 	params::units::{Precipitation, Temperature, Time, Units},
-	weather::Weather,
+	weather::{Hourly, Weather},
 };
 
 use super::{
@@ -19,12 +19,12 @@ use super::{
 	weathercode::WeatherCode,
 };
 
-const DISPLAY_HOURS: [usize; 8] = [1, 3, 6, 9, 12, 15, 18, 21];
+const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
 
 pub struct HourlyForecast {
 	temperatures: String,
-	graph: Graph,
 	precipitation: String,
+	graph: Graph,
 	time_indicator_col: usize,
 }
 
@@ -129,28 +129,57 @@ impl HourlyForecast {
 		graph_cfg: &GraphConfig,
 		lang: &str,
 	) -> Result<Self> {
-		let temperatures = Self::prepare_temperature(weather, night, lang).await?;
-		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
-		let graph = Graph::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_cfg)?;
-		let time_indicator_col = current_hour * 3 + (Timelike::minute(&Utc::now()) / 20) as usize;
+		let Hourly {
+			temperature_2m,
+			weathercode,
+			precipitation,
+			..
+		} = &weather.hourly;
+
+		// slice 25 items to use the 25th in the last "next_level" of a graph
+		// show weather of the next day if it is the last hour of the current day
+		let temperatures = if current_hour != 23 {
+			&temperature_2m[..=24]
+		} else {
+			&temperature_2m[25..=49]
+		};
+		let weather_codes = if current_hour != 23 {
+			&weathercode[..=24]
+		} else {
+			&weathercode[25..=49]
+		};
+		let precipitation = if current_hour != 23 {
+			&precipitation[..=24]
+		} else {
+			&precipitation[25..=49]
+		};
+
+		// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
+		let time_indicator_col =
+			if current_hour != 23 { (current_hour * 3) + 3 } else { 0 } + (Timelike::minute(&Utc::now()) / 20) as usize;
 
 		Ok(HourlyForecast {
-			temperatures,
-			graph,
+			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, lang).await?,
+			precipitation: Self::prepare_precipitation(precipitation)?,
+			graph: Graph::prepare_graph(temperatures, graph_cfg)?,
 			time_indicator_col,
-			precipitation,
 		})
 	}
 
-	async fn prepare_temperature(weather: &Weather, night: bool, lang: &str) -> Result<String> {
+	async fn prepare_temperatures(
+		temperatures: &[f64],
+		weather_codes: &[f64],
+		night: bool,
+		lang: &str,
+	) -> Result<String> {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {
-			let temp = weather.hourly.temperature_2m[hour].round() as i32;
+			let temp = temperatures[hour].round() as i32;
 			let temp_sub = style_number(temp, true)?;
-			let wmo_code = WeatherCode::resolve(&weather.hourly.weathercode[hour], Some(night), lang).await?;
-			let length = if hour == 1 { 1 } else { 8 };
-			let _ = write!(result, "{: >length$}{}", temp_sub, wmo_code.icon);
+			let wmo_code = WeatherCode::resolve(&weather_codes[hour], Some(night), lang).await?;
+			let colspan = if hour == 0 { 2 } else { 8 };
+			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);
 		}
 
 		Ok(result)
@@ -162,38 +191,34 @@ impl HourlyForecast {
 		for hour in DISPLAY_HOURS {
 			let prec = precipitation[hour].ceil() as i32;
 			let precipitation_sup = style_number(prec, true)?;
-			let length = if hour == 1 { 2 } else { 8 };
-			let _ = write!(result, "{: >length$} ", precipitation_sup);
+			let colspan = if hour == 0 { 2 } else { 8 };
+			let _ = write!(result, "{: >colspan$} ", precipitation_sup);
 		}
 
 		Ok(result)
 	}
 
-	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator: char) -> String {
-		let mut current_hour = self.time_indicator_col + 3;
-
-		if current_hour > width {
-			current_hour -= width
-		}
+	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator_glyph: char) -> String {
+		let time_indicator_col = self.time_indicator_col;
 
 		match border_variant {
 			BorderVariant::double => format!(
-				"╟{:─>current_hour$}{:─>width$}╢",
-				time_indicator,
+				"╟{:─>time_indicator_col$}{:─>width$}╢",
+				time_indicator_glyph,
 				"",
-				width = width - current_hour
+				width = width - time_indicator_col
 			),
 			BorderVariant::solid => format!(
-				"┠{:─>current_hour$}{:─>width$}┨",
-				time_indicator,
+				"┠{:─>time_indicator_col$}{:─>width$}┨",
+				time_indicator_glyph,
 				"",
-				width = width - current_hour
+				width = width - time_indicator_col
 			),
 			_ => format!(
-				"├{:┈>current_hour$}{:┈>width$}┤",
-				time_indicator,
+				"├{:┈>time_indicator_col$}{:┈>width$}┤",
+				time_indicator_glyph,
 				"",
-				width = width - current_hour
+				width = width - time_indicator_col
 			),
 		}
 	}
