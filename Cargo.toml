@@ -1,6 +1,6 @@
 [package]
 name = "wthrr"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Turiiya <tobmoj@web.de>"]
 edition = "2021"
 license = "MIT"
@@ -14,10 +14,17 @@ categories = ["command-line-utilities"]
 [dependencies]
 anyhow = "1.0"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
-clap = { version = "4.0", features = ["derive"] }
+clap = { version = "4.0", default-features = false, features = [
+	"derive",
+	"std",
+	"help",
+	"usage",
+	"error-context",
+	"suggestions",
+] }
 colored = "2.0"
 confy = { version = "0.5"  } 
-dialoguer = "0.10.1"
+dialoguer = { version = "0.10.1", default-features = false }
 regex = { version = "1.7", default-features = false, features = ["std"]  } 
 reqwest = { version ="0.11", features=["json"]}
 serde = { version = "1.0", features = ["derive"] }
