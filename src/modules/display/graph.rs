@@ -2,6 +2,40 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
+pub struct GraphConfig {
+	pub style: Option<GraphStyle>,
+	pub rowspan: Option<GraphRows>,
+	pub time_indicator: Option<bool>,
+}
+
+impl Default for GraphConfig {
+	fn default() -> Self {
+		Self {
+			style: Some(GraphStyle::default()),
+			rowspan: Some(GraphRows::default()),
+			time_indicator: Some(true),
+		}
+	}
+}
+
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(non_camel_case_types)]
+pub enum GraphStyle {
+	#[default]
+	lines,
+	dotted_lines,
+	dotted,
+}
+
+#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
+#[allow(non_camel_case_types)]
+pub enum GraphRows {
+	single,
+	#[default]
+	double,
+}
+
 pub struct Graph(pub String, pub String);
 
 struct GraphLvls {
@@ -12,20 +46,11 @@ struct GraphLvls {
 	last: Option<usize>,
 }
 
-#[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
-#[allow(non_camel_case_types)]
-pub enum GraphVariant {
-	#[default]
-	lines,
-	lines_dotted,
-	dotted,
-}
-
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<Graph> {
-		// TODO: use config variable
-		let graph_rows = "double";
+	pub fn prepare_graph(temperatures: &[f64], graph_cfg: &GraphConfig) -> Result<Graph> {
 		let mut graph = Graph(String::new(), String::new());
+		let style = graph_cfg.style.unwrap_or_default();
+		let rowspan = graph_cfg.rowspan.unwrap_or_default();
 
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
@@ -37,12 +62,12 @@ impl Graph {
 			next: 0,
 			last: None,
 		};
-		graph_lvls.glyphs = GraphLvls::get_glyphs(graph_variant, graph_rows);
+		graph_lvls.glyphs = GraphLvls::get_glyphs(&style, &rowspan);
 		graph_lvls.margin = (max_temp - min_temp) / (graph_lvls.glyphs.len() - 1) as f64;
 
 		// Create Graph - calculate and push three characters per iteration to graph strings
 		// Single Line Graph
-		if graph_rows == "single" {
+		if rowspan == GraphRows::single {
 			for (i, temp) in temperatures.iter().enumerate() {
 				graph_lvls.current = ((temp - min_temp) / graph_lvls.margin) as usize;
 				graph_lvls.next = ((temperatures[i + 1] - min_temp) / graph_lvls.margin) as usize;
@@ -101,22 +126,22 @@ impl Graph {
 				if graph_lvls.current > graph_one_idx_sum {
 					match Some(last_lvl.cmp(&graph_lvls.current)) {
 						Some(o) if o == Ordering::Less => {
-							match graph_variant {
-								GraphVariant::dotted => graph.0.push('⣿'),
+							match style {
+								GraphStyle::dotted => graph.0.push('⣿'),
 								_ => graph.0.push(' '),
 							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 						}
 						Some(o) if o == Ordering::Equal => {
-							match graph_variant {
-								GraphVariant::dotted => graph.0.push('⣿'),
+							match style {
+								GraphStyle::dotted => graph.0.push('⣿'),
 								_ => graph.0.push(' '),
 							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 						}
 						Some(o) if o == Ordering::Greater => {
-							match graph_variant {
-								GraphVariant::dotted => graph.0.push('⣿'),
+							match style {
+								GraphStyle::dotted => graph.0.push('⣿'),
 								_ => graph.0.push(' '),
 							}
 							graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
@@ -143,8 +168,8 @@ impl Graph {
 			} else {
 				// First iteration - without a last level
 				if graph_lvls.current > graph_one_idx_sum {
-					match graph_variant {
-						GraphVariant::dotted => graph.0.push('⣿'),
+					match style {
+						GraphStyle::dotted => graph.0.push('⣿'),
 						_ => graph.0.push(' '),
 					}
 					graph
@@ -160,8 +185,8 @@ impl Graph {
 
 			// Char 2/3
 			if graph_lvls.current > graph_one_idx_sum {
-				match graph_variant {
-					GraphVariant::dotted => graph.0.push('⣿'),
+				match style {
+					GraphStyle::dotted => graph.0.push('⣿'),
 					_ => graph.0.push(' '),
 				}
 				graph
@@ -178,22 +203,22 @@ impl Graph {
 			if graph_lvls.current > graph_one_idx_sum {
 				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
 					Some(o) if o == Ordering::Less => {
-						match graph_variant {
-							GraphVariant::dotted => graph.0.push('⣿'),
+						match style {
+							GraphStyle::dotted => graph.0.push('⣿'),
 							_ => graph.0.push(' '),
 						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 					}
 					Some(o) if o == Ordering::Equal => {
-						match graph_variant {
-							GraphVariant::dotted => graph.0.push('⣿'),
+						match style {
+							GraphStyle::dotted => graph.0.push('⣿'),
 							_ => graph.0.push(' '),
 						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
 					}
 					Some(o) if o == Ordering::Greater => {
-						match graph_variant {
-							GraphVariant::dotted => graph.0.push('⣿'),
+						match style {
+							GraphStyle::dotted => graph.0.push('⣿'),
 							_ => graph.0.push(' '),
 						}
 						graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(o)]);
@@ -238,14 +263,14 @@ impl Graph {
 }
 
 impl GraphLvls {
-	fn get_glyphs(graph_variant: &GraphVariant, graph_rows: &str) -> Vec<char> {
+	fn get_glyphs(graph_variant: &GraphStyle, graph_rows: &GraphRows) -> Vec<char> {
 		let mut glyphs = match graph_variant {
-			GraphVariant::lines => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
-			GraphVariant::lines_dotted => vec!['⣀', '⠤', '⠒', '⠉'],
-			GraphVariant::dotted => vec!['⣀', '⣤', '⣶', '⣿'],
+			GraphStyle::lines => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
+			GraphStyle::dotted_lines => vec!['⣀', '⠤', '⠒', '⠉'],
+			GraphStyle::dotted => vec!['⣀', '⣤', '⣶', '⣿'],
 		};
 
-		if graph_rows == "double" {
+		if graph_rows == &GraphRows::double {
 			glyphs.append(&mut glyphs.to_vec())
 		}
 

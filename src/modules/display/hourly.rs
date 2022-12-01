@@ -14,7 +14,7 @@ use crate::{
 
 use super::{
 	border::*,
-	graph::{Graph, GraphVariant},
+	graph::{Graph, GraphConfig},
 	utils::{style_number, ColorOption},
 	weathercode::WeatherCode,
 };
@@ -126,12 +126,12 @@ impl HourlyForecast {
 		weather: &Weather,
 		current_hour: usize,
 		night: bool,
-		graph_variant: &GraphVariant,
+		graph_cfg: &GraphConfig,
 		lang: &str,
 	) -> Result<Self> {
 		let temperatures = Self::prepare_temperature(weather, night, lang).await?;
 		let precipitation = Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?;
-		let graph = Graph::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_variant)?;
+		let graph = Graph::prepare_graph(&weather.hourly.temperature_2m[..=24], graph_cfg)?;
 		let time_indicator_col = current_hour * 3 + (Timelike::minute(&Utc::now()) / 20) as usize;
 
 		Ok(HourlyForecast {

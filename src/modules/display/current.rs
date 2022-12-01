@@ -1,11 +1,11 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::{config::ColorVariant, params::units::Time, params::units::Units, translation::translate};
+use crate::{config::Gui, params::units::Time, params::units::Units, translation::translate};
 
 use super::{
 	border::*,
-	graph::GraphVariant,
+	graph::GraphConfig,
 	hourly::HourlyForecast,
 	utils::{adjust_lang_width, ColorOption},
 	weathercode::WeatherCode,
@@ -38,9 +38,7 @@ impl Current {
 		product: &Product,
 		add_hourly: bool,
 		units: &Units,
-		border_variant: &BorderVariant,
-		graph_variant: &GraphVariant,
-		color_variant: &ColorVariant,
+		gui_cfg: &Gui,
 		lang: &str,
 	) -> Result<Dimensions> {
 		let Current {
@@ -56,53 +54,54 @@ impl Current {
 			wmo_code,
 			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, add_hourly, lang, units, graph_variant).await?;
+		} = Self::prepare(product, add_hourly, lang, units, &gui_cfg.graph.unwrap_or_default()).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
+
+		let border_cfg = gui_cfg.border.unwrap_or_default();
+		let color_cfg = gui_cfg.color.unwrap_or_default();
 
 		// Border Top
 		println!(
 			"{}",
-			&Edge::Top
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+			&Edge::Top.fmt(width, &border_cfg).color_option(BrightBlack, &color_cfg)
 		);
 
 		// Address / Title
 		println!(
 			"{} {: ^width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			address.bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - adjust_lang_width(&address, lang)
 		);
 
 		// Separator
 		println!(
 			"{}",
-			&match border_variant {
-				BorderVariant::double => Separator::Double.fmt(width, border_variant),
-				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
-				_ => Separator::Single.fmt(width, border_variant),
+			&match &border_cfg {
+				BorderVariant::double => Separator::Double.fmt(width, &border_cfg),
+				BorderVariant::solid => Separator::Solid.fmt(width, &border_cfg),
+				_ => Separator::Single.fmt(width, &border_cfg),
 			}
-			.color_option(BrightBlack, color_variant)
+			.color_option(BrightBlack, &color_cfg)
 		);
 
 		// Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			(temperature + " " + &wmo_code.interpretation).bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - adjust_lang_width(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			apparent_temperature,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - adjust_lang_width(&apparent_temperature, lang)
 		);
 
@@ -110,8 +109,8 @@ impl Current {
 		println!(
 			"{}",
 			Separator::Blank
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+				.fmt(width, &border_cfg)
+				.color_option(BrightBlack, &color_cfg)
 		);
 
 		// Humidity & Dewpoint
@@ -123,45 +122,43 @@ impl Current {
 		);
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			humidity_dewpoint_split,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
 		);
 
 		// Wind & Pressure
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			wind,
 			pressure,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - cell_width
 		);
 
 		// Sunrise & Sunset
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			sun_rise,
 			sun_set,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border_cfg).color_option(BrightBlack, &color_cfg),
 			width = width - 2 - cell_width
 		);
 
 		// Hourly Forecast
 		if hourly_forecast.is_some() {
-			hourly_forecast
-				.unwrap()
-				.render(width, units, border_variant, color_variant)
+			hourly_forecast.unwrap().render(width, units, &border_cfg, &color_cfg)
 		}
 
 		// Border Bottom
 		println!(
 			"{}",
 			Edge::Bottom
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+				.fmt(width, &border_cfg)
+				.color_option(BrightBlack, &color_cfg)
 		);
 
 		Ok(dimensions)
@@ -172,7 +169,7 @@ impl Current {
 		add_hourly: bool,
 		lang: &str,
 		units: &Units,
-		graph_variant: &GraphVariant,
+		graph_cfg: &GraphConfig,
 	) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;
@@ -257,7 +254,7 @@ impl Current {
 		};
 
 		let hourly_forecast = match add_hourly {
-			true => Some(HourlyForecast::prepare(weather, current_hour, night, graph_variant, lang).await?),
+			true => Some(HourlyForecast::prepare(weather, current_hour, night, graph_cfg, lang).await?),
 			_ => None,
 		};
 

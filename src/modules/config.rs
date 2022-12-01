@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
 	args::{Cli, Forecast},
-	display::{border::BorderVariant, graph::GraphVariant},
+	display::{border::BorderVariant, graph::GraphConfig},
 	params::{units::Units, Params},
 	translation::translate,
 };
@@ -34,8 +34,8 @@ impl Default for Config {
 pub struct Gui {
 	pub border: Option<BorderVariant>,
 	pub color: Option<ColorVariant>,
-	pub graph: Option<GraphVariant>,
 	pub greeting: Option<bool>,
+	pub graph: Option<GraphConfig>,
 }
 
 impl Default for Gui {
@@ -43,7 +43,7 @@ impl Default for Gui {
 		Self {
 			border: Some(BorderVariant::default()),
 			color: Some(ColorVariant::default),
-			graph: Some(GraphVariant::default()),
+			graph: Some(GraphConfig::default()),
 			greeting: Some(true),
 		}
 	}
