@@ -38,7 +38,7 @@ mod tests {
 
 	#[tokio::test]
 	async fn translate_string() -> Result<()> {
-		let (target_lang, input) = ("de_DE", "tounge-twister");
+		let (target_lang, input) = ("de_DE", "tongue-twister");
 
 		let res = translate(target_lang, input).await?;
 

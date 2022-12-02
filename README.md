@@ -116,7 +116,7 @@ E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using ki
 
 ## Config
 
-Values such as address and units can be stored as defaults in wthrr's config file by adding the `-s` flag to a run.
+The address, units and default forecast can be saved as default values in wthrr's config file by adding the `-s` flag to a run.
 
 If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.toml`
 

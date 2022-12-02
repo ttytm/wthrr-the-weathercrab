@@ -30,7 +30,7 @@ There are several alternatives to `cargo install wthrr`
   ```
   pkgin install wthrr
   ```
-- A Nix flake is also avaiable
+- A Nix flake is also available
   ```
   nix profile install "github:tobealive/wthrr-the-weathercrab"
   ```

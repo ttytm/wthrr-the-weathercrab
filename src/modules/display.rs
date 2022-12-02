@@ -47,8 +47,8 @@ impl Product {
 		let address_len = address.chars().count();
 
 		address = if address_len > max_width {
-			// For many places with overlong names the results seem better when partially removing text
-			// between first and second comma instead of removing it between penultimate and last comma
+			// For most locations with overly long addresses, the results seem to be better if
+			// truncated between the first and second comma instead the penultimate and last comma.
 			// let last_comma = title.matches(',').count();
 			let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
 			let re = Regex::new(&prep_re).unwrap();
