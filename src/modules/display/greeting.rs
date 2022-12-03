@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::translation::translate;
+use crate::modules::translation::translate;
 
 pub async fn render(greet: bool, lang: &str) -> Result<()> {
 	if !greet {

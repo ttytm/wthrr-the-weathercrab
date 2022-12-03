@@ -2,7 +2,7 @@ use anyhow::Result;
 use colored::{Color, ColoredString, Colorize};
 use regex::Regex;
 
-use crate::config::ColorVariant;
+use crate::modules::config::ColorVariant;
 
 pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
 	match lang {

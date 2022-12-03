@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
-use crate::{args::Forecast as ForecastParams, config::ColorVariant, params::units::Units};
+use crate::modules::{args::Forecast as ForecastParams, config::ColorVariant, params::units::Units};
 
 use super::{
 	border::*,

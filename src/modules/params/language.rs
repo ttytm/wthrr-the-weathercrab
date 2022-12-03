@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::config::Config;
+use crate::modules::config::Config;
 
 pub fn get(lang_arg: &str, lang_cfg: &str) -> Result<String> {
 	let lang = if !lang_arg.is_empty() {

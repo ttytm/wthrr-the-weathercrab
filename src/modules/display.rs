@@ -2,7 +2,7 @@ use anyhow::Result;
 use colored::Color::BrightBlack;
 use regex::Regex;
 
-use crate::{args::Forecast as ForecastParams, config::Gui, params::units::Units, weather::Weather};
+use crate::modules::{args::Forecast as ForecastParams, config::Gui, params::units::Units, weather::Weather};
 
 use self::{current::Current, forecast::Forecast, utils::ColorOption};
 

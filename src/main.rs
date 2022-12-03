@@ -1,9 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 
-use modules::config::Config;
-use modules::*;
-use modules::{args::Cli, display::Product, location::Geolocation, params::Params, weather::Weather};
+use modules::{args::Cli, config::Config, display::Product, location::Geolocation, params::Params, weather::Weather};
 
 mod modules;
 

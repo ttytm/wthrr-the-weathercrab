@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::args::Forecast;
+use crate::modules::args::Forecast;
 
 pub fn get(forecast_args: &[Forecast], forecast_cfg: Option<Vec<Forecast>>) -> Result<Vec<Forecast>> {
 	let forecast = if !forecast_args.is_empty() {
