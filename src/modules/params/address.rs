@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 
-use crate::{location::Geolocation, translation::translate};
+use crate::modules::{location::Geolocation, translation::translate};
 
 pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<String> {
 	let address = if address_arg == "auto" || (address_arg.is_empty() && address_cfg == "auto") {
@@ -37,7 +37,7 @@ pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<Str
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::config::Config;
+	use crate::modules::config::Config;
 
 	#[tokio::test]
 	async fn address_from_arg() -> Result<()> {

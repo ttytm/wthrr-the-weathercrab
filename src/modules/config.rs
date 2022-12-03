@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use serde::{Deserialize, Serialize};
 
-use crate::{
+use crate::modules::{
 	args::{Cli, Forecast},
 	display::{border::BorderVariant, graph::GraphVariant},
 	params::{units::Units, Params},

@@ -7,7 +7,7 @@ use colored::{
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, fmt::Write as _};
 
-use crate::{
+use crate::modules::{
 	config::ColorVariant,
 	params::units::{Precipitation, Temperature, Time, Units},
 	weather::{Hourly, Weather},

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::{config::ColorVariant, params::units::Time, params::units::Units, translation::translate};
+use crate::modules::{config::ColorVariant, params::units::Time, params::units::Units, translation::translate};
 
 use super::{
 	border::*,

@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 
-use crate::translation::translate;
+use crate::modules::translation::translate;
 
 pub struct WeatherCode {
 	pub interpretation: String,

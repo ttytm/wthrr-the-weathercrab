@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::{
+use crate::modules::{
 	args::{Cli, Forecast},
 	config::{Config, Gui},
 };
