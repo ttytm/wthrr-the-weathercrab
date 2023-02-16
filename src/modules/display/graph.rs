@@ -8,16 +8,14 @@ use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, fmt::Write as _};
 
 use crate::modules::{
-	config::ColorVariant,
-	params::units::{Precipitation, Temperature, Time, Units},
+	params::{
+		gui::{ColorOption, ColorVariant},
+		units::{Precipitation, Temperature, Time, Units},
+	},
 	weather::{Hourly, Weather},
 };
 
-use super::{
-	border::*,
-	utils::{style_number, ColorOption},
-	weathercode::WeatherCode,
-};
+use super::{border::*, utils::style_number, weathercode::WeatherCode};
 
 pub struct Graph {
 	temperatures: String,
@@ -49,11 +47,11 @@ impl Graph {
 		);
 
 		let temperature_unit = match units.temperature {
-			Some(Temperature::fahrenheit) => "宅",
+			Temperature::fahrenheit => "宅",
 			_ => "糖",
 		};
 		let precipitation_unit = match units.precipitation {
-			Some(Precipitation::inch) => "ᵢₙ",
+			Precipitation::inch => "ᵢₙ",
 			_ => "ₘₘ",
 		};
 
@@ -108,7 +106,7 @@ impl Graph {
 		);
 
 		let hours = match units.time {
-			Some(Time::am_pm) => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
+			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
 		print!(

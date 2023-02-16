@@ -1,12 +1,18 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::modules::{config::ColorVariant, params::units::Time, params::units::Units, translation::translate};
+use crate::modules::{
+	params::{
+		gui::{ColorOption, ColorVariant},
+		units::{Time, Units},
+	},
+	translation::translate,
+};
 
 use super::{
 	border::*,
 	graph::{Graph, GraphVariant},
-	utils::{adjust_lang_width, ColorOption},
+	utils::adjust_lang_width,
 	weathercode::WeatherCode,
 	wind::WindDirection,
 	Product, MIN_WIDTH,
@@ -184,11 +190,11 @@ impl Current {
 			weather.daily.sunset[0][11..13].parse::<usize>().unwrap_or_default(),
 		);
 		let sunrise_time = match units.time {
-			Some(Time::am_pm) => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
+			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
 			_ => weather.daily.sunrise[0][11..16].to_string(),
 		};
 		let sunset_time = match units.time {
-			Some(Time::am_pm) => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
+			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
 			_ => weather.daily.sunset[0][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;

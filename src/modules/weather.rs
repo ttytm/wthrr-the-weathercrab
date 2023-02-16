@@ -90,9 +90,9 @@ latitude={}
 &timezone=auto",
 			lat,
 			lon,
-			unit.temperature.unwrap().as_ref(),
-			unit.speed.unwrap().as_ref(),
-			unit.precipitation.unwrap().as_ref(),
+			unit.temperature.as_ref(),
+			unit.speed.as_ref(),
+			unit.precipitation.as_ref(),
 		);
 
 		let res = reqwest::get(url)

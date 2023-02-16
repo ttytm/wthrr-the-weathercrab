@@ -37,22 +37,17 @@ pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<Str
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::modules::config::Config;
+	use crate::modules::params::Params;
 
 	#[tokio::test]
 	async fn address_from_arg() -> Result<()> {
 		let address_arg = "new york";
-		let config = Config {
-			address: Some("Berlin, DE".to_string()),
+		let config = Params {
+			address: "Berlin, DE".to_string(),
 			..Default::default()
 		};
 
-		let res = get(
-			address_arg,
-			config.address.as_deref().unwrap_or_default(),
-			&config.language.unwrap(),
-		)
-		.await?;
+		let res = get(address_arg, &config.address, &config.language).await?;
 
 		assert!(res.contains("new york"));
 
@@ -62,17 +57,12 @@ mod tests {
 	#[tokio::test]
 	async fn address_from_cfg() -> Result<()> {
 		let address_arg = "";
-		let config = Config {
-			address: Some("Berlin, DE".to_string()),
+		let config = Params {
+			address: "Berlin, DE".to_string(),
 			..Default::default()
 		};
 
-		let res = get(
-			address_arg,
-			config.address.as_deref().unwrap_or_default(),
-			&config.language.unwrap(),
-		)
-		.await?;
+		let res = get(address_arg, &config.address, &config.language).await?;
 
 		assert!(res.contains("Berlin"));
 

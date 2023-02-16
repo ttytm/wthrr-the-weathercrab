@@ -1,58 +1,76 @@
 use anyhow::Result;
+use optional_struct::*;
+use serde::{Deserialize, Serialize};
 
 use crate::modules::{
 	args::{Cli, Forecast},
-	config::{Config, Gui},
+	translation::translate,
 };
 
-use self::units::Units;
+use self::{
+	gui::{ConfigFileGui, Gui},
+	units::{ConfigFileUnits, Units},
+};
 
 mod address;
-pub mod forecast;
-mod language;
+pub mod gui;
 pub mod units;
 
+#[optional_struct(ConfigFile)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Params {
 	pub address: String,
-	pub units: Units,
 	pub language: String,
 	pub forecast: Vec<Forecast>,
+	#[optional_rename(ConfigFileUnits)]
+	pub units: Units,
+	#[optional_rename(ConfigFileGui)]
 	pub gui: Gui,
+}
+
+impl Default for Params {
+	fn default() -> Self {
+		Self {
+			address: "".to_string(),
+			forecast: vec![],
+			language: "en_US".to_string(),
+			units: Units::default(),
+			gui: Gui::default(),
+		}
+	}
 }
 
 impl Params {
 	pub async fn get(args: &Cli) -> Result<Self> {
-		let config: Config = confy::load("weathercrab", "wthrr")?;
+		let mut params = Self::get_config_file();
 
-		let language = language::get(
-			args.language.as_deref().unwrap_or_default(),
-			config.language.as_deref().unwrap_or_default(),
-		)?;
-
-		let forecast = forecast::get(&args.forecast, config.forecast)?;
+		if let Some(language) = &args.language {
+			params.language = language.to_string()
+		}
 
 		if args.reset {
-			Config::reset(&language).await?;
+			Self::reset(&params.language).await?;
 			std::process::exit(1);
 		}
 
-		let address = address::get(
+		if !args.forecast.is_empty() {
+			params.forecast = args.forecast.to_vec()
+		}
+
+		if params.gui.greeting {
+			let greeting = translate(&params.language, "Hey friend. I'm glad you are asking.").await?;
+			println!("  🦀  {}", greeting);
+		}
+
+		params.address = address::get(
 			args.address.as_deref().unwrap_or_default(),
-			config.address.as_deref().unwrap_or_default(),
-			&language,
+			&params.address,
+			&params.language,
 		)
 		.await?;
 
-		let units = units::get(&args.units, &config.units.unwrap_or_default())?;
+		params.units = Units::get(&args.units, &params.units);
 
-		let gui = config.gui.unwrap_or_default();
-
-		Ok(Params {
-			address,
-			units,
-			language,
-			forecast,
-			gui,
-		})
+		Ok(params)
 	}
 }

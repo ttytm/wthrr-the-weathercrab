@@ -1,8 +1,5 @@
 use anyhow::Result;
-use colored::{Color, ColoredString, Colorize};
 use regex::Regex;
-
-use crate::modules::config::ColorVariant;
 
 pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
 	match lang {
@@ -59,17 +56,4 @@ pub fn style_number(mut num: i32, sub: bool) -> Result<String> {
 	}
 
 	Ok(result)
-}
-
-pub trait ColorOption {
-	fn color_option(self, color: Color, color_cfg: &ColorVariant) -> ColoredString;
-}
-
-impl<'a> ColorOption for &'a str {
-	fn color_option(self, color: Color, color_cfg: &ColorVariant) -> ColoredString {
-		match color_cfg {
-			&ColorVariant::plain => self.normal(),
-			_ => self.color(color),
-		}
-	}
 }
