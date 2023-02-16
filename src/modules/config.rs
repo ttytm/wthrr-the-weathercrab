@@ -44,9 +44,8 @@ impl Params {
 				Ok(contents) => contents,
 				Err(error) => {
 					let warning_sign = " Warning:".color(Yellow);
-					let delimiter = " ".repeat(warning_sign.chars().count());
 					println!(
-						"{warning_sign} {}\n{delimiter} {error}.\n{delimiter} Falling back to default values.\n",
+						"{warning_sign} {}\n{error}.\nFalling back to default values.\n",
 						path.display(),
 					);
 					return config;
