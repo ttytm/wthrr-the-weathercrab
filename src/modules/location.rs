@@ -40,8 +40,7 @@ impl Geolocation {
 
 	pub async fn search(address: &str, lang: &str) -> Result<Vec<Address>> {
 		let url = format!(
-			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=json",
-			address, lang
+			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=json"
 		);
 
 		let client = Client::new();

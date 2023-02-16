@@ -9,7 +9,7 @@ pub async fn render(greet: bool, lang: &str) -> Result<()> {
 
 	let greeting = translate(lang, "Hey friend. I'm glad you are asking.").await?;
 
-	println!("  🦀  {}", greeting);
+	println!("  🦀  {greeting}");
 
 	Ok(())
 }

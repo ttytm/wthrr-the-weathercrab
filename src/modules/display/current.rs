@@ -229,8 +229,8 @@ impl Current {
 			" {}{}",
 			weather.hourly.surface_pressure[current_hour], weather.hourly_units.surface_pressure
 		);
-		let sun_rise = format!(" {}", sunrise_time);
-		let sun_set = format!(" {}", sunset_time);
+		let sun_rise = format!(" {sunrise_time}");
+		let sun_set = format!(" {sunset_time}");
 
 		// Dimensions
 		let title_width = address.chars().count();

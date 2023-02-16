@@ -116,7 +116,7 @@ impl Graph {
 			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant)
 		);
 		for hour in hours {
-			print!("{: <9}", hour)
+			print!("{hour: <9}")
 		}
 		println!(
 			"{}",
@@ -193,7 +193,7 @@ impl Graph {
 			let prec = precipitation[hour].ceil() as i32;
 			let precipitation_sup = style_number(prec, true)?;
 			let length = if hour == 0 { 2 } else { 8 };
-			let _ = write!(result, "{: >length$} ", precipitation_sup);
+			let _ = write!(result, "{precipitation_sup: >length$} ");
 		}
 
 		Ok(result)
