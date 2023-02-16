@@ -2,14 +2,18 @@ use colored::{Color, ColoredString, Colorize};
 use optional_struct::*;
 use serde::{Deserialize, Serialize};
 
-use crate::modules::display::{border::BorderStyle, graph::GraphStyle};
+use crate::modules::display::{
+	border::BorderStyle,
+	graph::{ConfigFileGraphOpts, GraphOpts},
+};
 
 #[optional_struct(ConfigFileGui)]
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 pub struct Gui {
 	pub border: BorderStyle,
 	pub color: ColorVariant,
-	pub graph: GraphStyle,
+	#[optional_rename(ConfigFileGraphOpts)]
+	pub graph: GraphOpts,
 	pub greeting: bool,
 }
 
@@ -26,7 +30,7 @@ impl Default for Gui {
 		Self {
 			border: BorderStyle::default(),
 			color: ColorVariant::default,
-			graph: GraphStyle::default(),
+			graph: GraphOpts::default(),
 			greeting: true,
 		}
 	}
