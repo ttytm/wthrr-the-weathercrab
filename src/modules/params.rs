@@ -59,7 +59,7 @@ impl Params {
 
 		if params.gui.greeting {
 			let greeting = translate(&params.language, "Hey friend. I'm glad you are asking.").await?;
-			println!("  🦀  {}", greeting);
+			println!("  🦀  {greeting}");
 		}
 
 		params.address = address::get(
