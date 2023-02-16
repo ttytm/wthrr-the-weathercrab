@@ -4,15 +4,17 @@ use chrono::prelude::*;
 use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
-use crate::modules::{args::Forecast as ForecastParams, config::ColorVariant, params::units::Units};
+use crate::modules::{
+	args::Forecast as ForecastParams,
+	params::{
+		gui::{ColorOption, ColorVariant},
+		units::Units,
+	},
+};
 
 use super::{
-	border::*,
-	current::Current,
-	graph::GraphVariant,
-	utils::{adjust_lang_width, ColorOption},
-	weathercode::WeatherCode,
-	Product, MIN_WIDTH,
+	border::*, current::Current, graph::GraphVariant, utils::adjust_lang_width, weathercode::WeatherCode, Product,
+	MIN_WIDTH,
 };
 
 #[derive(Serialize, Deserialize, Debug)]

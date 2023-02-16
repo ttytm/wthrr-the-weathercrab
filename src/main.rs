@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 
-use modules::{args::Cli, config::Config, display::Product, location::Geolocation, params::Params, weather::Weather};
+use modules::{args::Cli, display::Product, location::Geolocation, params::Params, weather::Weather};
 
 mod modules;
 
@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
 		.render(&params.forecast, &params.units, &params.gui, &params.language)
 		.await?;
 
-	Config::handle_next(args, params).await?;
+	params.handle_next(args).await?;
 
 	Ok(())
 }

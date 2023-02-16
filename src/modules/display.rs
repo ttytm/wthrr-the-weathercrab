@@ -2,15 +2,21 @@ use anyhow::Result;
 use colored::Color::BrightBlack;
 use regex::Regex;
 
-use crate::modules::{args::Forecast as ForecastParams, config::Gui, params::units::Units, weather::Weather};
+use crate::modules::{
+	args::Forecast as ForecastParams,
+	params::{
+		gui::{ColorOption, Gui},
+		units::Units,
+	},
+	weather::Weather,
+};
 
-use self::{current::Current, forecast::Forecast, utils::ColorOption};
+use self::{current::Current, forecast::Forecast};
 
 pub mod border;
 mod current;
 mod forecast;
 pub mod graph;
-mod greeting;
 mod utils;
 mod weathercode;
 mod wind;
@@ -24,36 +30,16 @@ pub const MIN_WIDTH: usize = 34;
 
 impl Product {
 	pub async fn render(&self, forecast: &[ForecastParams], units: &Units, gui: &Gui, lang: &str) -> Result<()> {
-		greeting::render(gui.greeting.unwrap_or_else(|| Gui::default().greeting.unwrap()), lang).await?;
-
 		if !forecast.is_empty() {
-			Forecast::render(
-				self,
-				forecast,
-				units,
-				&gui.border.unwrap_or_default(),
-				&gui.graph.unwrap_or_default(),
-				&gui.color.unwrap_or_default(),
-				lang,
-			)
-			.await?;
+			Forecast::render(self, forecast, units, &gui.border, &gui.graph, &gui.color, lang).await?;
 		} else {
-			Current::render(
-				self,
-				false,
-				units,
-				&gui.border.unwrap_or_default(),
-				&gui.graph.unwrap_or_default(),
-				&gui.color.unwrap_or_default(),
-				lang,
-			)
-			.await?;
+			Current::render(self, false, units, &gui.border, &gui.graph, &gui.color, lang).await?;
 		}
 
 		// Disclaimer
 		println!(
 			" {}",
-			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &gui.color.unwrap_or_default())
+			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &gui.color)
 		);
 
 		Ok(())
