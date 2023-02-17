@@ -13,29 +13,58 @@ jobs:
   lint:
     uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@update-workflows
 
-  build:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Cargo cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: List
-        run: find ./
-      - name: Run build
-        run: cargo build --release --verbose
-
   test:
-    runs-on: ubuntu-latest
-    needs: build
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macOS-11, ubuntu-latest]
+        toolchain: [stable, nightly]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.rust == 'nightly' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: Show toolchain info
+        run: cargo --version --verbose
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@nextest
+      - name: Run test
+        env:
+          RUST_BACKTRACE: full
+        run: |
+          cargo nextest run --profile ci
+      - if: runner.os != 'Linux'
+        name: Publish test results for Windows and macOS
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        with:
+          junit_files: target/nextest/ci/results.xml
+      - if: runner.os == 'Linux'
+        name: Publish test results for Linux
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          junit_files: target/nextest/ci/results.xml
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macOS-11, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Cargo cache
@@ -47,8 +76,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: List
-        run: find ./
-      - name: Run tests
-        run: cargo test --verbose
+          key: ${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Build
+        run: cargo build --verbose
