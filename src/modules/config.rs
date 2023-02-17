@@ -71,9 +71,7 @@ impl Params {
 		file.write_all(output.as_bytes()).unwrap();
 	}
 
-	pub async fn handle_next(self, args: Cli) -> Result<()> {
-		let mut config = Self::get_config_file();
-
+	pub async fn handle_next(self, args: Cli, mut config: Self) -> Result<()> {
 		if !args.save && !config.address.is_empty() {
 			return Ok(());
 		}

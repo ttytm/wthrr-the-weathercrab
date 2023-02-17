@@ -14,9 +14,11 @@ use crate::modules::{
 use self::{current::Current, forecast::Forecast};
 
 pub mod border;
+pub mod graph;
+pub mod greeting;
+
 mod current;
 mod forecast;
-pub mod graph;
 mod utils;
 mod weathercode;
 mod wind;

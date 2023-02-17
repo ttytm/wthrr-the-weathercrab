@@ -8,14 +8,15 @@ mod modules;
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
-	let params = Params::get(&args).await?;
+	let config = Params::get_config_file();
+	let params = config.clone().merge(&args).await?;
 
 	let product = run(&params).await?;
 	product
 		.render(&params.forecast, &params.units, &params.gui, &params.language)
 		.await?;
 
-	params.handle_next(args).await?;
+	params.handle_next(args, config).await?;
 
 	Ok(())
 }

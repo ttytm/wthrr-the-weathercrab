@@ -2,10 +2,7 @@ use anyhow::Result;
 use optional_struct::*;
 use serde::{Deserialize, Serialize};
 
-use crate::modules::{
-	args::{Cli, Forecast},
-	translation::translate,
-};
+use crate::modules::args::{Cli, Forecast};
 
 use self::{
 	gui::{ConfigFileGui, Gui},
@@ -41,36 +38,25 @@ impl Default for Params {
 }
 
 impl Params {
-	pub async fn get(args: &Cli) -> Result<Self> {
-		let mut params = Self::get_config_file();
-
+	pub async fn merge(mut self, args: &Cli) -> Result<Self> {
 		if let Some(language) = &args.language {
-			params.language = language.to_string()
+			self.language = language.to_string()
 		}
 
 		if args.reset {
-			Self::reset(&params.language).await?;
+			Self::reset(&self.language).await?;
 			std::process::exit(1);
 		}
 
 		if !args.forecast.is_empty() {
-			params.forecast = args.forecast.to_vec()
+			self.forecast = args.forecast.to_vec()
 		}
 
-		if params.gui.greeting {
-			let greeting = translate(&params.language, "Hey friend. I'm glad you are asking.").await?;
-			println!("  🦀  {greeting}");
-		}
+		self.units = Units::get(&args.units, &self.units);
 
-		params.address = address::get(
-			args.address.as_deref().unwrap_or_default(),
-			&params.address,
-			&params.language,
-		)
-		.await?;
+		self.resolve_address(args.address.as_deref().unwrap_or_default())
+			.await?;
 
-		params.units = Units::get(&args.units, &params.units);
-
-		Ok(params)
+		Ok(self)
 	}
 }
