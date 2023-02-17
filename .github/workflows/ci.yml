@@ -43,12 +43,12 @@ jobs:
         name: Publish test results for Windows and macOS
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         with:
-          junit_files: target/nextest/ci/results.xml
+          junit_files: target/nextest/junit.xml
       - if: runner.os == 'Linux'
         name: Publish test results for Linux
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          junit_files: target/nextest/ci/results.xml
+          junit_files: target/nextest/junit.xml
 
   build:
     needs: test
