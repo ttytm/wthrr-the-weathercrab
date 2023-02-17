@@ -2,54 +2,56 @@ name: Release
 
 on:
   push:
-    tags:
-      - v*
+    tags: ["v*"]
 
 env:
   CARGO_TERM_COLOR: always
 
 defaults:
   run:
-    # necessary for windows
-    shell: bash
+    shell: bash # necessary for windows
 
 jobs:
+  lint:
+    uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@update-workflows
+
   build:
+    needs: lint
     strategy:
       fail-fast: false
       matrix:
         include:
-          - TARGET: x86_64-unknown-linux-gnu
-            OS: ubuntu-latest
-          # - TARGET: aarch64-unknown-linux-gnu
-          #   OS: ubuntu-latest
-          # - TARGET: armv7-unknown-linux-gnueabihf
-          #   OS: ubuntu-latest
-          - TARGET: x86_64-apple-darwin # not properly signed, so there are security warnings
-            OS: macos-latest
-          - TARGET: x86_64-pc-windows-gnu
-            OS: windows-latest
-    runs-on: ${{ matrix.OS }}
+          - target: x86_64-apple-darwin # not properly signed, so there are security warnings
+            os: macos-latest
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          # - target: aarch64-unknown-linux-gnu
+          #   os: ubuntu-latest
+          # - target: armv7-unknown-linux-gnueabihf
+          #   os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     env:
-      NAME: wthrr
-      TARGET: ${{ matrix.TARGET }}
-      OS: ${{ matrix.OS }}
+      APP_NAME: wthrr
+      TARGET: ${{ matrix.target }}
     steps:
       - uses: actions/checkout@v3
-      - name: Cargo cache
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
-            ~/.cargo/registry
-            ./target
-          key: build-cargo-registry-${{matrix.TARGET}}
-      - name: List
-        run: find ./
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install and configure dependencies
         # dependencies are only needed on ubuntu
         # as that's the only place where we build the AppImage and would make cross-compilation
-        if: ${{ matrix.OS == 'ubuntu-latest' }}
+        if: runner.os == 'Linux'
         run: |
+          sudo apt-get install libfuse2
           sudo wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
           sudo chmod +x /usr/local/bin/appimagetool
           cargo install cargo-appimage
@@ -65,36 +67,33 @@ jobs:
         run: rustup target add $TARGET
       - name: Run build
         run: |
-          if [[ $OS =~ ^ubuntu.*$ ]]; then
+          cargo build --release --verbose --target $TARGET
+          if [[ $RUNNER_OS == "Linux" ]]; then 
             cargo appimage 
           fi
-          cargo build --release --verbose --target $TARGET
-      - name: List target
-        run: find ./target
       - name: Prepare artifacts
         run: |
           mkdir -p ./artifacts
-          if [[ $OS =~ ^windows.*$ ]]; then
-            EXEC=$NAME.exe
+          if [[ $RUNNER_OS == "Windows" ]]; then
+            EXEC=$APP_NAME.exe
           else
-            EXEC=$NAME
+            EXEC=$APP_NAME
           fi
           if [[ $GITHUB_REF_TYPE =~ ^tag$ ]]; then
             TAG=$GITHUB_REF_NAME
           else
             TAG=$GITHUB_SHA
           fi
-          if [[ $OS =~ ^ubuntu.*$ ]]; then 
+          if [[ $RUNNER_OS == "Linux" ]]; then 
             mv ./wthrr-*-x86_64.AppImage ./artifacts/wthrr-$TAG-x86_64-linux.AppImage 
           fi
           # beautify release targets (remove '-unknown' / '-gnu' from filename)
-          TRUNC_TARGET=$(echo $TARGET | sed -e 's/-unknown//' -e 's/-gnu//')
-          DISPLAY_NAME=$NAME-$TAG-$TRUNC_TARGET
-          mkdir $DISPLAY_NAME
-          cp README.md LICENSE $DISPLAY_NAME/
-          mv ./target/$TARGET/release/$EXEC ./$DISPLAY_NAME/$EXEC
+          ARTIFACT_NAME=$APP_NAME-$TAG-$(echo $TARGET | sed -e 's/-unknown//' -e 's/-gnu//')
+          mkdir $ARTIFACT_NAME
+          cp README.md LICENSE $ARTIFACT_NAME/
+          mv ./target/$TARGET/release/$EXEC ./$ARTIFACT_NAME/$EXEC
           # compress
-          tar -czf ./artifacts/$DISPLAY_NAME.tar.gz $DISPLAY_NAME
+          tar -czf ./artifacts/$ARTIFACT_NAME.tar.gz $ARTIFACT_NAME
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
