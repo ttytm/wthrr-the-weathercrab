@@ -45,8 +45,10 @@ impl Params {
 				Err(error) => {
 					let warning_sign = " Warning:".color(Yellow);
 					println!(
-						"{warning_sign} {}\n{error}.\nFalling back to default values.\n",
+						"{warning_sign} {}\n{: >4}At: {error}.\n{: >4}Falling back to default values.\n",
 						path.display(),
+						"",
+						"",
 					);
 					return config;
 				}
