@@ -11,7 +11,7 @@ env:
 
 jobs:
   lint:
-    uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@update-workflows
+    uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@main
 
   test:
     needs: lint
