@@ -19,17 +19,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, macOS-11, ubuntu-latest]
-        toolchain: [stable, nightly]
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.rust == 'nightly' }}
     steps:
       - uses: actions/checkout@v3
-      - name: Setup toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ matrix.toolchain }}
-      - name: Show toolchain info
-        run: cargo --version --verbose
       - name: Cargo cache
         uses: actions/cache@v3
         with:
@@ -46,7 +38,7 @@ jobs:
         env:
           RUST_BACKTRACE: full
         run: |
-          cargo nextest run --profile ci
+          cargo nextest run
       - if: runner.os != 'Linux'
         name: Publish test results for Windows and macOS
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
