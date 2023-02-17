@@ -22,8 +22,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Cargo cache
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -39,16 +38,20 @@ jobs:
           RUST_BACKTRACE: full
         run: |
           cargo nextest run --verbose --profile ci
-      - if: runner.os != 'Linux'
-        name: Publish test results for Windows and macOS
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        with:
-          junit_files: target/nextest/ci/junit.xml
       - if: runner.os == 'Linux'
         name: Publish test results for Linux
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           junit_files: target/nextest/ci/junit.xml
+          check_name: test results (${{ matrix.os }})
+          comment_title: Test Results
+      - if: runner.os != 'Linux'
+        name: Publish test results for ${{ runner.os }}
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        with:
+          junit_files: target/nextest/ci/junit.xml
+          check_name: test results (${{ matrix.os }})
+          comment_mode: off
 
   build:
     needs: test
@@ -59,8 +62,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Cargo cache
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
