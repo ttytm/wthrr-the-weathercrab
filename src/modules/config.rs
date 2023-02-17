@@ -102,7 +102,7 @@ impl Params {
 			items.push(translate(&self.language, "Always check for a weather station").await?)
 		}
 
-		let selection = Select::new()
+		let selection = Select::with_theme(&ColorfulTheme::default())
 			.with_prompt(translate(&self.language, "Would you like to use this as your default?").await?)
 			.items(&items)
 			.default(0)
