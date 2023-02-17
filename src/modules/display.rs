@@ -16,6 +16,7 @@ use self::{current::Current, forecast::Forecast};
 pub mod border;
 pub mod graph;
 pub mod greeting;
+pub mod hourly;
 
 mod current;
 mod forecast;
@@ -33,9 +34,9 @@ pub const MIN_WIDTH: usize = 34;
 impl Product {
 	pub async fn render(&self, forecast: &[ForecastParams], units: &Units, gui: &Gui, lang: &str) -> Result<()> {
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, &gui.border, &gui.graph, &gui.color, lang).await?;
+			Forecast::render(self, forecast, units, gui, lang).await?;
 		} else {
-			Current::render(self, false, units, &gui.border, &gui.graph, &gui.color, lang).await?;
+			Current::render(self, false, units, gui, lang).await?;
 		}
 
 		// Disclaimer

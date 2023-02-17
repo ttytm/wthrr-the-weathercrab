@@ -3,19 +3,15 @@ use colored::{Color::BrightBlack, Colorize};
 
 use crate::modules::{
 	params::{
-		gui::{ColorOption, ColorVariant},
+		gui::{ColorOption, Gui},
 		units::{Time, Units},
 	},
 	translation::translate,
 };
 
 use super::{
-	border::*,
-	graph::{Graph, GraphStyle},
-	utils::adjust_lang_width,
-	weathercode::WeatherCode,
-	wind::WindDirection,
-	Product, MIN_WIDTH,
+	border::*, graph::GraphOpts, hourly::HourlyForecast, utils::adjust_lang_width, weathercode::WeatherCode,
+	wind::WindDirection, Product, MIN_WIDTH,
 };
 
 pub struct Current {
@@ -29,7 +25,7 @@ pub struct Current {
 	sun_rise: String,
 	sun_set: String,
 	wmo_code: WeatherCode,
-	hourly_forecast: Option<Graph>,
+	hourly_forecast: Option<HourlyForecast>,
 	dimensions: Dimensions,
 }
 
@@ -43,9 +39,7 @@ impl Current {
 		product: &Product,
 		add_hourly: bool,
 		units: &Units,
-		border_variant: &BorderStyle,
-		graph_variant: &GraphStyle,
-		color_variant: &ColorVariant,
+		gui: &Gui,
 		lang: &str,
 	) -> Result<Dimensions> {
 		let Current {
@@ -61,62 +55,57 @@ impl Current {
 			wmo_code,
 			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, add_hourly, lang, units, graph_variant).await?;
+		} = Self::prepare(product, add_hourly, lang, units, &gui.graph).await?;
 
 		let Dimensions { width, cell_width } = dimensions;
 
+		let (border, color) = (gui.border, gui.color);
+
 		// Border Top
-		println!(
-			"{}",
-			&Edge::Top
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
-		);
+		println!("{}", &Edge::Top.fmt(width, &border).color_option(BrightBlack, &color));
 
 		// Address / Title
 		println!(
 			"{} {: ^width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			address.bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - adjust_lang_width(&address, lang)
 		);
 
 		// Separator
 		println!(
 			"{}",
-			&match border_variant {
-				BorderStyle::double => Separator::Double.fmt(width, border_variant),
-				BorderStyle::solid => Separator::Solid.fmt(width, border_variant),
-				_ => Separator::Single.fmt(width, border_variant),
+			&match &border {
+				BorderStyle::double => Separator::Double.fmt(width, &border),
+				BorderStyle::solid => Separator::Solid.fmt(width, &border),
+				_ => Separator::Single.fmt(width, &border),
 			}
-			.color_option(BrightBlack, color_variant)
+			.color_option(BrightBlack, &color)
 		);
 
 		// Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			(temperature + " " + &wmo_code.interpretation).bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - adjust_lang_width(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			apparent_temperature,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - adjust_lang_width(&apparent_temperature, lang)
 		);
 
 		// Blank Line
 		println!(
 			"{}",
-			Separator::Blank
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+			Separator::Blank.fmt(width, &border).color_option(BrightBlack, &color)
 		);
 
 		// Humidity & Dewpoint
@@ -128,46 +117,39 @@ impl Current {
 		);
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			humidity_dewpoint_split,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
 		);
 
 		// Wind & Pressure
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			wind,
 			pressure,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - cell_width
 		);
 
 		// Sunrise & Sunset
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			sun_rise,
 			sun_set,
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&border).color_option(BrightBlack, &color),
 			width = width - 2 - cell_width
 		);
 
 		// Hourly Forecast
 		if hourly_forecast.is_some() {
-			hourly_forecast
-				.unwrap()
-				.render(width, units, border_variant, color_variant)
+			hourly_forecast.unwrap().render(width, units, &border, &color)
 		}
 
 		// Border Bottom
-		println!(
-			"{}",
-			Edge::Bottom
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
-		);
+		println!("{}", Edge::Bottom.fmt(width, &border).color_option(BrightBlack, &color));
 
 		Ok(dimensions)
 	}
@@ -177,7 +159,7 @@ impl Current {
 		add_hourly: bool,
 		lang: &str,
 		units: &Units,
-		graph_variant: &GraphStyle,
+		graph_opts: &GraphOpts,
 	) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;
@@ -262,7 +244,7 @@ impl Current {
 		};
 
 		let hourly_forecast = match add_hourly {
-			true => Some(Graph::prepare(weather, current_hour, night, graph_variant, lang).await?),
+			true => Some(HourlyForecast::prepare(weather, current_hour, night, graph_opts, lang).await?),
 			_ => None,
 		};
 

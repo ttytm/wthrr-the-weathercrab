@@ -7,15 +7,12 @@ use serde::{Deserialize, Serialize};
 use crate::modules::{
 	args::Forecast as ForecastParams,
 	params::{
-		gui::{ColorOption, ColorVariant},
+		gui::{ColorOption, Gui},
 		units::Units,
 	},
 };
 
-use super::{
-	border::*, current::Current, graph::GraphStyle, utils::adjust_lang_width, weathercode::WeatherCode, Product,
-	MIN_WIDTH,
-};
+use super::{border::*, current::Current, utils::adjust_lang_width, weathercode::WeatherCode, Product, MIN_WIDTH};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Forecast {
@@ -35,9 +32,7 @@ impl Forecast {
 		product: &Product,
 		forecast_params: &[ForecastParams],
 		units: &Units,
-		border_variant: &BorderStyle,
-		graph_variant: &GraphStyle,
-		color_variant: &ColorVariant,
+		gui: &Gui,
 		lang: &str,
 	) -> Result<()> {
 		let forecast = Self::prepare(product, lang).await?;
@@ -47,16 +42,7 @@ impl Forecast {
 		let (mut include_day, mut include_week) = (false, false);
 		for val in forecast_params {
 			if ForecastParams::disable == *val {
-				Current::render(
-					product,
-					false,
-					units,
-					border_variant,
-					graph_variant,
-					color_variant,
-					lang,
-				)
-				.await?;
+				Current::render(product, false, units, gui, lang).await?;
 				return Ok(());
 			}
 			if ForecastParams::day == *val {
@@ -68,8 +54,7 @@ impl Forecast {
 		}
 
 		if include_day {
-			let dimensions_current =
-				Current::render(product, true, units, border_variant, graph_variant, color_variant, lang).await?;
+			let dimensions_current = Current::render(product, true, units, gui, lang).await?;
 
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
@@ -83,12 +68,13 @@ impl Forecast {
 			return Ok(());
 		}
 
+		let cfg_border = gui.border;
+		let cfg_color = gui.color;
+
 		// Border Top
 		println!(
 			"{}",
-			&Edge::Top
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+			&Edge::Top.fmt(width, &cfg_border).color_option(BrightBlack, &cfg_color)
 		);
 
 		let mut chunks = forecast.days.chunks(1).peekable();
@@ -112,20 +98,20 @@ impl Forecast {
 			);
 			println!(
 				"{} {: <width$} {}",
-				&Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+				&Border::L.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
 				forecast_day,
-				&Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+				&Border::R.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
 				width = width - adjust_lang_width(&forecast.days[n].interpretation, lang) - 2,
 			);
 			if chunks.peek().is_some() {
 				println!(
 					"{}",
-					&match border_variant {
-						BorderStyle::double => Separator::Double.fmt(width, border_variant),
-						BorderStyle::solid => Separator::Solid.fmt(width, border_variant),
-						_ => Separator::Dashed.fmt(width, border_variant),
+					&match &cfg_border {
+						BorderStyle::double => Separator::Double.fmt(width, &cfg_border),
+						BorderStyle::solid => Separator::Solid.fmt(width, &cfg_border),
+						_ => Separator::Dashed.fmt(width, &cfg_border),
 					}
-					.color_option(BrightBlack, color_variant)
+					.color_option(BrightBlack, &cfg_color)
 				)
 			}
 
@@ -136,8 +122,8 @@ impl Forecast {
 		println!(
 			"{}",
 			Edge::Bottom
-				.fmt(width, border_variant)
-				.color_option(BrightBlack, color_variant)
+				.fmt(width, &cfg_border)
+				.color_option(BrightBlack, &cfg_color)
 		);
 
 		Ok(())
