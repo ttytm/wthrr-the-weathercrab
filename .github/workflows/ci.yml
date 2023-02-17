@@ -38,17 +38,17 @@ jobs:
         env:
           RUST_BACKTRACE: full
         run: |
-          cargo nextest run
+          cargo nextest run --verbose --profile ci
       - if: runner.os != 'Linux'
         name: Publish test results for Windows and macOS
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         with:
-          junit_files: target/nextest/junit.xml
+          junit_files: target/nextest/ci/junit.xml
       - if: runner.os == 'Linux'
         name: Publish test results for Linux
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          junit_files: target/nextest/junit.xml
+          junit_files: target/nextest/ci/junit.xml
 
   build:
     needs: test
