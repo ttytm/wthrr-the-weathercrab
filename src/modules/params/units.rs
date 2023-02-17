@@ -58,12 +58,12 @@ pub enum Precipitation {
 }
 
 impl Units {
-	pub fn get(unit_args: &[UnitArg], unit_cfg: &Units) -> Units {
-		unit_cfg.assign_unit_args(unit_args)
+	pub fn get(arg_units: &[UnitArg], cfg_units: &Units) -> Units {
+		cfg_units.assign_unit_args(arg_units)
 	}
 
-	pub fn assign_unit_args(mut self, unit_args: &[UnitArg]) -> Units {
-		for val in unit_args {
+	pub fn assign_unit_args(mut self, arg_units: &[UnitArg]) -> Units {
+		for val in arg_units {
 			if Temperature::VARIANTS.as_ref().contains(&val.as_ref()) {
 				self.temperature = Temperature::from_str(val.as_ref()).unwrap()
 			}
@@ -88,11 +88,11 @@ mod tests {
 
 	#[test]
 	fn units_from_args() {
-		let unit_args = [UnitArg::Fahrenheit, UnitArg::Mph, UnitArg::AmPm, UnitArg::Inch];
-		let unit_cfg = Units::default();
+		let arg_units = [UnitArg::Fahrenheit, UnitArg::Mph, UnitArg::AmPm, UnitArg::Inch];
+		let cfg_units = Units::default();
 
 		assert_eq!(
-			Units::get(&unit_args, &unit_cfg),
+			Units::get(&arg_units, &cfg_units),
 			Units {
 				temperature: Temperature::fahrenheit,
 				speed: Speed::mph,
@@ -104,21 +104,21 @@ mod tests {
 
 	#[test]
 	fn units_from_cfg() {
-		let unit_args = [];
-		let unit_cfg = Units {
+		let arg_units = [];
+		let cfg_units = Units {
 			temperature: Temperature::fahrenheit,
 			speed: Speed::knots,
 			time: Time::am_pm,
 			precipitation: Precipitation::inch,
 		};
 
-		assert_eq!(Units::get(&unit_args, &unit_cfg), unit_cfg);
+		assert_eq!(Units::get(&arg_units, &cfg_units), cfg_units);
 	}
 
 	#[test]
 	fn units_split_from_args_and_cfg() {
-		let unit_args = [UnitArg::Fahrenheit, UnitArg::AmPm];
-		let unit_cfg = Units {
+		let arg_units = [UnitArg::Fahrenheit, UnitArg::AmPm];
+		let cfg_units = Units {
 			temperature: Temperature::celsius,
 			speed: Speed::ms,
 			time: Time::military,
@@ -126,12 +126,12 @@ mod tests {
 		};
 
 		assert_eq!(
-			Units::get(&unit_args, &unit_cfg),
+			Units::get(&arg_units, &cfg_units),
 			Units {
 				temperature: Temperature::fahrenheit,
-				speed: unit_cfg.speed,
+				speed: cfg_units.speed,
 				time: Time::am_pm,
-				precipitation: unit_cfg.precipitation,
+				precipitation: cfg_units.precipitation,
 			}
 		);
 	}

@@ -91,14 +91,14 @@ impl Params {
 		Ok(())
 	}
 
-	async fn save_prompt(mut self, address_arg: String) -> Result<()> {
+	async fn save_prompt(mut self, arg_address: String) -> Result<()> {
 		let mut items = vec![
 			translate(&self.language, "Yes please").await?,
 			translate(&self.language, "No, ask me next time").await?,
 			translate(&self.language, "No, dont ask me again").await?,
 		];
 
-		if address_arg.is_empty() || address_arg == "auto" {
+		if arg_address.is_empty() || arg_address == "auto" {
 			items.push(translate(&self.language, "Always check for a weather station").await?)
 		}
 

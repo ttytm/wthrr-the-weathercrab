@@ -3,13 +3,13 @@ use dialoguer::{theme::ColorfulTheme, Confirm};
 
 use crate::modules::{location::Geolocation, translation::translate};
 
-pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<String> {
-	let address = if address_arg == "auto" || (address_arg.is_empty() && address_cfg == "auto") {
+pub async fn get(arg_address: &str, cfg_address: &str, lang: &str) -> Result<String> {
+	let address = if arg_address == "auto" || (arg_address.is_empty() && cfg_address == "auto") {
 		let auto_loc = Geolocation::get().await?;
 		format!("{},{}", auto_loc.city_name, auto_loc.country_code)
-	} else if address_arg.is_empty() && address_cfg == "arg_input" {
+	} else if arg_address.is_empty() && cfg_address == "arg_input" {
 		return Err(anyhow!("Please specify a city."));
-	} else if address_arg.is_empty() && address_cfg.is_empty() {
+	} else if arg_address.is_empty() && cfg_address.is_empty() {
 		if Confirm::with_theme(&ColorfulTheme::default())
 			.with_prompt(
 				translate(
@@ -25,10 +25,10 @@ pub async fn get(address_arg: &str, address_cfg: &str, lang: &str) -> Result<Str
 		} else {
 			std::process::exit(1)
 		}
-	} else if address_arg.is_empty() && !address_cfg.is_empty() {
-		address_cfg.to_string()
+	} else if arg_address.is_empty() && !cfg_address.is_empty() {
+		cfg_address.to_string()
 	} else {
-		address_arg.to_string()
+		arg_address.to_string()
 	};
 
 	Ok(address)
@@ -41,13 +41,13 @@ mod tests {
 
 	#[tokio::test]
 	async fn address_from_arg() -> Result<()> {
-		let address_arg = "new york";
+		let arg_address = "new york";
 		let config = Params {
 			address: "Berlin, DE".to_string(),
 			..Default::default()
 		};
 
-		let res = get(address_arg, &config.address, &config.language).await?;
+		let res = get(arg_address, &config.address, &config.language).await?;
 
 		assert!(res.contains("new york"));
 
@@ -56,13 +56,13 @@ mod tests {
 
 	#[tokio::test]
 	async fn address_from_cfg() -> Result<()> {
-		let address_arg = "";
+		let arg_address = "";
 		let config = Params {
 			address: "Berlin, DE".to_string(),
 			..Default::default()
 		};
 
-		let res = get(address_arg, &config.address, &config.language).await?;
+		let res = get(arg_address, &config.address, &config.language).await?;
 
 		assert!(res.contains("Berlin"));
 

@@ -26,7 +26,7 @@ pub struct Graph {
 
 #[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
-pub enum GraphVariant {
+pub enum GraphStyle {
 	#[default]
 	lines,
 	lines_shallow,
@@ -38,7 +38,7 @@ pub enum GraphVariant {
 const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
 
 impl Graph {
-	pub fn render(self, width: usize, units: &Units, border_variant: &BorderVariant, color_variant: &ColorVariant) {
+	pub fn render(self, width: usize, units: &Units, border_variant: &BorderStyle, color_variant: &ColorVariant) {
 		println!(
 			"{}",
 			&Separator::Blank
@@ -126,7 +126,7 @@ impl Graph {
 		weather: &Weather,
 		current_hour: usize,
 		night: bool,
-		graph_variant: &GraphVariant,
+		graph_variant: &GraphStyle,
 		lang: &str,
 	) -> Result<Self> {
 		let Hourly {
@@ -197,15 +197,15 @@ impl Graph {
 		Ok(result)
 	}
 
-	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphVariant) -> Result<String> {
+	fn prepare_graph(temperatures: &[f64], graph_variant: &GraphStyle) -> Result<String> {
 		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
 		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
 
 		let graph_levels = match graph_variant {
-			GraphVariant::lines => ['🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
-			GraphVariant::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
-			GraphVariant::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
-			GraphVariant::dots_double => ['⣀', '⠤', '⠒', '⠉'].to_vec(),
+			GraphStyle::lines => ['🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'].to_vec(),
+			GraphStyle::lines_shallow => ['⎽', '⎼', '⎻', '⎺'].to_vec(),
+			GraphStyle::dots => ['⡀', '⠄', '⠂', '⠁'].to_vec(),
+			GraphStyle::dots_double => ['⣀', '⠤', '⠒', '⠉'].to_vec(),
 			// somthing like this is better suited for a graph that spans more the one line
 			// GraphVariant::dots_fill => ['⣀', '⣤', '⣶', '⣿'].to_vec(),
 		};
@@ -246,17 +246,17 @@ impl Graph {
 		Ok(graph)
 	}
 
-	fn prepare_separator(&self, border_variant: &BorderVariant, width: usize, time_indicator_glyph: char) -> String {
+	fn prepare_separator(&self, border_variant: &BorderStyle, width: usize, time_indicator_glyph: char) -> String {
 		let time_indicator_col = self.time_indicator_col;
 
 		match border_variant {
-			BorderVariant::double => format!(
+			BorderStyle::double => format!(
 				"╟{:─>time_indicator_col$}{:─>width$}╢",
 				time_indicator_glyph,
 				"",
 				width = width - time_indicator_col
 			),
-			BorderVariant::solid => format!(
+			BorderStyle::solid => format!(
 				"┠{:─>time_indicator_col$}{:─>width$}┨",
 				time_indicator_glyph,
 				"",

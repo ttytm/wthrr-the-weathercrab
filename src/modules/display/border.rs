@@ -14,40 +14,40 @@ pub enum Border {
 }
 
 impl Border {
-	pub fn fmt<'a>(&self, variant: &BorderVariant) -> &'a str {
+	pub fn fmt<'a>(&self, variant: &BorderStyle) -> &'a str {
 		match self {
 			Border::TL => match variant {
-				BorderVariant::single => "┌",
-				BorderVariant::solid => "┏",
-				BorderVariant::double => "╔",
+				BorderStyle::single => "┌",
+				BorderStyle::solid => "┏",
+				BorderStyle::double => "╔",
 				_ => "╭",
 			},
 			Border::T | Border::B => match variant {
-				BorderVariant::double => "═",
-				BorderVariant::solid => "━",
+				BorderStyle::double => "═",
+				BorderStyle::solid => "━",
 				_ => "─",
 			},
 			Border::TR => match variant {
-				BorderVariant::single => "┐",
-				BorderVariant::solid => "┓",
-				BorderVariant::double => "╗",
+				BorderStyle::single => "┐",
+				BorderStyle::solid => "┓",
+				BorderStyle::double => "╗",
 				_ => "╮",
 			},
 			Border::R | Border::L => match variant {
-				BorderVariant::double => "║",
-				BorderVariant::solid => "┃",
+				BorderStyle::double => "║",
+				BorderStyle::solid => "┃",
 				_ => "│",
 			},
 			Border::BR => match variant {
-				BorderVariant::single => "┘",
-				BorderVariant::solid => "┛",
-				BorderVariant::double => "╝",
+				BorderStyle::single => "┘",
+				BorderStyle::solid => "┛",
+				BorderStyle::double => "╝",
 				_ => "╯",
 			},
 			Border::BL => match variant {
-				BorderVariant::single => "└",
-				BorderVariant::solid => "┗",
-				BorderVariant::double => "╚",
+				BorderStyle::single => "└",
+				BorderStyle::solid => "┗",
+				BorderStyle::double => "╚",
 				_ => "╰",
 			},
 		}
@@ -56,7 +56,7 @@ impl Border {
 
 #[derive(Default, Serialize, Deserialize, PartialEq, Eq, Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
-pub enum BorderVariant {
+pub enum BorderStyle {
 	#[default]
 	rounded,
 	single,
@@ -70,7 +70,7 @@ pub enum Edge {
 }
 
 impl Edge {
-	pub fn fmt(self, width: usize, variant: &BorderVariant) -> String {
+	pub fn fmt(self, width: usize, variant: &BorderStyle) -> String {
 		match self {
 			Self::Top => format!(
 				"{}{: >width$}{}",
@@ -97,7 +97,7 @@ pub enum Separator {
 }
 
 impl Separator {
-	pub fn fmt(self, width: usize, border_variant: &BorderVariant) -> String {
+	pub fn fmt(self, width: usize, border_variant: &BorderStyle) -> String {
 		match self {
 			Self::Blank => format!(
 				"{}{: >width$}{}",

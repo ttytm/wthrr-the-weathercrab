@@ -11,7 +11,7 @@ use crate::modules::{
 
 use super::{
 	border::*,
-	graph::{Graph, GraphVariant},
+	graph::{Graph, GraphStyle},
 	utils::adjust_lang_width,
 	weathercode::WeatherCode,
 	wind::WindDirection,
@@ -43,8 +43,8 @@ impl Current {
 		product: &Product,
 		add_hourly: bool,
 		units: &Units,
-		border_variant: &BorderVariant,
-		graph_variant: &GraphVariant,
+		border_variant: &BorderStyle,
+		graph_variant: &GraphStyle,
 		color_variant: &ColorVariant,
 		lang: &str,
 	) -> Result<Dimensions> {
@@ -86,8 +86,8 @@ impl Current {
 		println!(
 			"{}",
 			&match border_variant {
-				BorderVariant::double => Separator::Double.fmt(width, border_variant),
-				BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
+				BorderStyle::double => Separator::Double.fmt(width, border_variant),
+				BorderStyle::solid => Separator::Solid.fmt(width, border_variant),
 				_ => Separator::Single.fmt(width, border_variant),
 			}
 			.color_option(BrightBlack, color_variant)
@@ -177,7 +177,7 @@ impl Current {
 		add_hourly: bool,
 		lang: &str,
 		units: &Units,
-		graph_variant: &GraphVariant,
+		graph_variant: &GraphStyle,
 	) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60)?;

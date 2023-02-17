@@ -13,7 +13,7 @@ use crate::modules::{
 };
 
 use super::{
-	border::*, current::Current, graph::GraphVariant, utils::adjust_lang_width, weathercode::WeatherCode, Product,
+	border::*, current::Current, graph::GraphStyle, utils::adjust_lang_width, weathercode::WeatherCode, Product,
 	MIN_WIDTH,
 };
 
@@ -35,8 +35,8 @@ impl Forecast {
 		product: &Product,
 		forecast_params: &[ForecastParams],
 		units: &Units,
-		border_variant: &BorderVariant,
-		graph_variant: &GraphVariant,
+		border_variant: &BorderStyle,
+		graph_variant: &GraphStyle,
 		color_variant: &ColorVariant,
 		lang: &str,
 	) -> Result<()> {
@@ -121,8 +121,8 @@ impl Forecast {
 				println!(
 					"{}",
 					&match border_variant {
-						BorderVariant::double => Separator::Double.fmt(width, border_variant),
-						BorderVariant::solid => Separator::Solid.fmt(width, border_variant),
+						BorderStyle::double => Separator::Double.fmt(width, border_variant),
+						BorderStyle::solid => Separator::Solid.fmt(width, border_variant),
 						_ => Separator::Dashed.fmt(width, border_variant),
 					}
 					.color_option(BrightBlack, color_variant)
