@@ -83,13 +83,13 @@ Options:
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/first-run.png" target="_blank">
-        <img alt="" width="400" src="preview/first-run.png" />
+      <a href="https://user-images.githubusercontent.com/34311583/219735581-8036590f-8354-47fb-a31f-055be79c9229.png" target="_blank">
+        <img alt="" width="400" src="https://user-images.githubusercontent.com/34311583/219735581-8036590f-8354-47fb-a31f-055be79c9229.png" />
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/hourly.png" target="_blank">
-        <img alt="" width="400" src="preview/hourly.png" />
+      <a href="https://user-images.githubusercontent.com/34311583/219735474-d8e2899d-c209-46d3-a5cd-bea4ed41ac3c.png" target="_blank">
+        <img alt="" width="400" src="https://user-images.githubusercontent.com/34311583/219735474-d8e2899d-c209-46d3-a5cd-bea4ed41ac3c.png" />
       </a>
     </td>
   </tr>
@@ -99,13 +99,13 @@ Options:
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/week.png" target="_blank">
-        <img alt="" width="400" src="preview/week.png" />
+      <a href="https://user-images.githubusercontent.com/34311583/219735452-9766d692-a79b-4a5a-a903-30a3339cc684.png" target="_blank">
+        <img alt="" width="400" src="https://user-images.githubusercontent.com/34311583/219735452-9766d692-a79b-4a5a-a903-30a3339cc684.png" />
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/tobealive/wthrr-the-weathercrab/blob/main/preview/yakuake.png" target="_blank">
-        <img alt="" width="400" src="preview/yakuake.png" />
+      <a href="https://user-images.githubusercontent.com/34311583/219735417-6376c599-4b90-4066-8808-d9bd8649ae64.png" target="_blank">
+        <img alt="" width="400" src="https://user-images.githubusercontent.com/34311583/219735417-6376c599-4b90-4066-8808-d9bd8649ae64.png" />
       </a>
     </td>
   </tr>
