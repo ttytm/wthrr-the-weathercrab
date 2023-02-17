@@ -1,9 +1,6 @@
 name: Lint
 
 on:
-  push:
-    branches: [main, "**-dev"]
-  pull_request:
   workflow_call:
 
 env:
