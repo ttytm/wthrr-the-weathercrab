@@ -11,18 +11,7 @@ use crate::modules::{
 	weather::Weather,
 };
 
-use self::{current::Current, forecast::Forecast};
-
-pub mod border;
-pub mod graph;
-pub mod greeting;
-pub mod hourly;
-
-mod current;
-mod forecast;
-mod utils;
-mod weathercode;
-mod wind;
+use super::{current::Current, forecast::Forecast};
 
 pub struct Product {
 	pub address: String,
@@ -48,7 +37,7 @@ impl Product {
 		Ok(())
 	}
 
-	pub fn trunc_address(mut address: String, max_width: usize) -> Result<String> {
+	pub fn trunc_address(mut address: String, max_width: usize) -> String {
 		let address_len = address.chars().count();
 
 		address = if address_len > max_width {
@@ -64,9 +53,9 @@ impl Product {
 		};
 
 		if address_len > max_width {
-			address = Self::trunc_address(address, max_width)?;
+			address = Self::trunc_address(address, max_width);
 		}
 
-		Ok(address)
+		address
 	}
 }

@@ -1,9 +1,9 @@
+mod modules;
+
 use anyhow::Result;
 use clap::Parser;
 
-use modules::{args::Cli, display::Product, location::Geolocation, params::Params, weather::Weather};
-
-mod modules;
+use modules::{args::Cli, display::product::Product, location::Geolocation, params::Params, weather::Weather};
 
 #[tokio::main]
 async fn main() -> Result<()> {

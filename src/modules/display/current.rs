@@ -10,8 +10,13 @@ use crate::modules::{
 };
 
 use super::{
-	border::*, graph::GraphOpts, hourly::HourlyForecast, utils::adjust_lang_width, weathercode::WeatherCode,
-	wind::WindDirection, Product, MIN_WIDTH,
+	border::*,
+	graph::GraphOpts,
+	hourly::HourlyForecast,
+	product::{Product, MIN_WIDTH},
+	utils::adjust_lang_width,
+	weathercode::WeatherCode,
+	wind::WindDirection,
 };
 
 pub struct Current {
@@ -162,7 +167,7 @@ impl Current {
 		graph_opts: &GraphOpts,
 	) -> Result<Self> {
 		let weather = &product.weather;
-		let address = Product::trunc_address(product.address.clone(), 60)?;
+		let address = Product::trunc_address(product.address.clone(), 60);
 
 		let (current_hour, sunrise_hour, sunset_hour) = (
 			weather.current_weather.time[11..13]

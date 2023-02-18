@@ -1,3 +1,8 @@
+pub mod gui;
+pub mod units;
+
+mod address;
+
 use anyhow::Result;
 use optional_struct::*;
 use serde::{Deserialize, Serialize};
@@ -8,10 +13,6 @@ use self::{
 	gui::{ConfigFileGui, Gui},
 	units::{ConfigFileUnits, Units},
 };
-
-mod address;
-pub mod gui;
-pub mod units;
 
 #[optional_struct(ConfigFile)]
 #[derive(Serialize, Deserialize, Debug, Clone)]

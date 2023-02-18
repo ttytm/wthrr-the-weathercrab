@@ -12,7 +12,13 @@ use crate::modules::{
 	},
 };
 
-use super::{border::*, current::Current, utils::adjust_lang_width, weathercode::WeatherCode, Product, MIN_WIDTH};
+use super::{
+	border::*,
+	current::Current,
+	product::{Product, MIN_WIDTH},
+	utils::adjust_lang_width,
+	weathercode::WeatherCode,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Forecast {
