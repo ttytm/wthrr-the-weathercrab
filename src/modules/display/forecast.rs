@@ -35,11 +35,8 @@ impl Forecast {
 		gui: &Gui,
 		lang: &str,
 	) -> Result<()> {
-		let forecast = Self::prepare(product, lang).await?;
-		let mut width = forecast.width + 10;
-		let mut cell_width = MIN_WIDTH / 2;
-
 		let (mut include_day, mut include_week) = (false, false);
+
 		for val in forecast_params {
 			if ForecastParams::disable == *val {
 				Current::render(product, false, units, gui, lang).await?;
@@ -53,9 +50,18 @@ impl Forecast {
 			}
 		}
 
+		// hourly forecast only
+		if include_day && !include_week {
+			Current::render(product, true, units, gui, lang).await?;
+			return Ok(());
+		}
+
+		// weekly forecast - potentially including hourly forecast
+		let forecast = Self::prepare(product, lang).await?;
+		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
+
 		if include_day {
 			let dimensions_current = Current::render(product, true, units, gui, lang).await?;
-
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
 			}
@@ -64,12 +70,7 @@ impl Forecast {
 			}
 		}
 
-		if !include_week {
-			return Ok(());
-		}
-
-		let cfg_border = gui.border;
-		let cfg_color = gui.color;
+		let (cfg_border, cfg_color) = (gui.border, gui.color);
 
 		// Border Top
 		println!(
