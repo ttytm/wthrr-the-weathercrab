@@ -1,3 +1,9 @@
+/* Configuration for wthrr the weathercrab, your weather companion for the terminal 
+Lin: /home/<user>/.config
+Win: C:\Users\<user>\AppData\Roaming
+Mac: /Users/<user>/Library/Application Support
+*/
+
 (
     address: "Berlin,DE", // Address to check the weather for
     language: "en_US", // Language code of the output language
