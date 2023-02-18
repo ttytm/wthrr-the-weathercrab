@@ -162,6 +162,8 @@ The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section 
 
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
 
+A simple changelog can be found on the [releases page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
+
 ## Disclaimer
 
 Until a stable version 1.0 is available, new features will be introduced, existing ones may change, or breaking changes may occur in minor(`0.<minor>.*`) versions.
