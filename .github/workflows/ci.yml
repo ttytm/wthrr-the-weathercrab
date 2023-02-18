@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main, "**-dev"]
+    paths: ["**/*.rs", "**/*.yml", "**/*.toml"]
   pull_request:
   workflow_dispatch:
 
@@ -51,6 +52,7 @@ jobs:
         with:
           junit_files: target/nextest/ci/junit.xml
           check_name: test results (${{ matrix.os }})
+          comment_title: Test Results
           comment_mode: off
 
   build:
