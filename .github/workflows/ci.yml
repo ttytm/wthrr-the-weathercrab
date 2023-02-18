@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [main, "**-dev"]
-    paths: ["**/*.rs", "**/*.yml", "**/*.toml"]
+    paths: ["**/*.rs", "**/*.yml", "**/*.toml", "**/*.lock"]
   pull_request:
   workflow_dispatch:
 
