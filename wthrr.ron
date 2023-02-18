@@ -1,0 +1,23 @@
+(
+    address: "Berlin,DE", // Address to check the weather for
+    language: "en_US", // Language code of the output language
+    forecast: [], // Forecast to display without adding the `-f` option: `[day]` | `[week]` | `[day, week]`
+    units: (
+        temperature: celsius, // Temperature units: `celsius` | `fahrenheit`
+        speed: kmh, // (Wind)speed units: `kmh` | `mph` | `knots` | `ms`
+        time: military, // Time Format: `military` | `ap_pm`
+        precipitation: mm, // Precipitation units: `mm` | `inch`
+    ),
+    gui: (
+        border: rounded, // Border style: `rounded` | `single` | `solid` | `double`
+        color: default, // Color: `default` | `plain`
+        graph: (
+            // Graph style: lines(solid) | lines(slim) | lines(dotted) | dotted | custom((char; 8))
+            // `custom` takes exactly 8 chars. E.g. using a set of 4 chars: `custom(('⡀','⡀','⠄','⠄','⠂','⠂','⠁','⠁'))`,
+            style: lines(solid), 
+            rowspan: double, // Graph height: `double` | `single`
+            time_indicator: true, // Indication of the current time in the graph: `true` | `false`
+        ),
+        greeting: true, // Display greeting message: `true` | `false`
+    ),
+)
