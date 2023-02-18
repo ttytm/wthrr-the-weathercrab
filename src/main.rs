@@ -23,9 +23,9 @@ async fn main() -> Result<()> {
 
 pub async fn run(params: &Params) -> Result<Product> {
 	let loc = Geolocation::search(&params.address, &params.language).await?;
-	let (lat, lon) = (loc[0].lat.parse::<f64>().unwrap(), loc[0].lon.parse::<f64>().unwrap());
+	let (lat, lon) = (loc.lat.parse::<f64>().unwrap(), loc.lon.parse::<f64>().unwrap());
 
-	let address = loc[0].display_name.to_string();
+	let address = loc.display_name.to_string();
 	let weather = Weather::get(lat, lon, &params.units).await?;
 
 	Ok(Product { address, weather })

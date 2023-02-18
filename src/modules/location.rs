@@ -13,7 +13,7 @@ pub struct Geolocation {
 }
 
 // Open street map(OSM) json
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Address {
 	place_id: u64,
 	licence: String,
@@ -38,13 +38,12 @@ impl Geolocation {
 		Ok(res)
 	}
 
-	pub async fn search(address: &str, lang: &str) -> Result<Vec<Address>> {
+	pub async fn search(address: &str, lang: &str) -> Result<Address> {
 		let url = format!(
 			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=json"
 		);
 
-		let client = Client::new();
-		let res = client
+		let res = Client::new()
 			.get(&url)
 			.header(USER_AGENT, "wthrr-the-weathercrab")
 			.send()
@@ -56,7 +55,7 @@ impl Geolocation {
 			return Err(anyhow!("Location request failed."));
 		}
 
-		Ok(res)
+		Ok(res[0].clone())
 	}
 }
 
@@ -71,8 +70,8 @@ mod tests {
 		let loc_de = Geolocation::search(address, lang_de).await?;
 		let loc_pl = Geolocation::search(address, lang_pl).await?;
 
-		assert!(loc_de[0].display_name.contains("Deutschland"));
-		assert!(loc_pl[0].display_name.contains("Niemcy"));
+		assert!(loc_de.display_name.contains("Deutschland"));
+		assert!(loc_pl.display_name.contains("Niemcy"));
 
 		Ok(())
 	}
