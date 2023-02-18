@@ -118,24 +118,32 @@ E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using ki
 
 The address, units and default forecast can be saved as default values in wthrr's config file by adding the `-s` flag to a run.
 
-If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.toml`
+If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.ron`
 
-```toml
-# address = 'berlin,de' # Address to check the weather for
-language = 'en_US' # Country code of the output language, e.g.,: 'de_DE'
-# forecast = ['day'] # Forecasts displayed without adding the `-f` option: ['day'] | ['week'] | ['day', 'week']
-
-[units]
-temperature = 'celsius' # Temperature units: 'celsius' | 'fahrenheit'
-speed = 'kmh' # (Wind)speed units: 'kmh' | 'mph' | 'knots' | 'ms'
-time = 'military' # Time Format: 'military' | 'ap_pm'
-precipitation = 'mm' # Precipitation units 'mm' | 'inch'
-
-[gui]
-border = 'rounded' # Border style: 'rounded' | 'single' | 'solid' | 'double'
-color = 'default' # Color: 'default' | 'plain'
-graph = 'lines' # Graph style: 'lines' | 'lines_shallow' | 'dots' | 'dots_double'
-greeting = true # Display greeting message: true | false
+```rust
+(
+    address: "Berlin,DE", // Address to check the weather for
+    language: "en_US", // Language code of the output language
+    forecast: [], // Forecast to display without adding the `-f` option: `[day]` | `[week]` | `[day, week]`
+    units: (
+        temperature: celsius, // Temperature units: `celsius` | `fahrenheit`
+        speed: kmh, // (Wind)speed units: `kmh` | `mph` | `knots` | `ms`
+        time: military, // Time Format: `military` | `ap_pm`
+        precipitation: mm, // Precipitation units: `mm` | `inch`
+    ),
+    gui: (
+        border: rounded, // Border style: `rounded` | `single` | `solid` | `double`
+        color: default, // Color: `default` | `plain`
+        graph: (
+            // Graph style: lines(solid) | lines(slim) | lines(dotted) | dotted | custom((char; 8))
+            // `custom` takes exactly 8 chars. E.g. using a set of 4 chars: `custom(('⡀','⡀','⠄','⠄','⠂','⠂','⠁','⠁'))`,
+            style: lines(solid),
+            rowspan: double, // Graph height: `double` | `single`
+            time_indicator: true, // Indication of the current time in the graph: `true` | `false`
+        ),
+        greeting: true, // Display greeting message: `true` | `false`
+    ),
+)
 ```
 
 ## Installation
