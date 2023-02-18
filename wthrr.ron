@@ -5,7 +5,7 @@ Mac: /Users/<user>/Library/Application Support
 */
 
 (
-    address: "Berlin,DE", // Address to check the weather for
+    address: "", // Address to check the weather, e.g.: "Berlin,DE"
     language: "en_US", // Language code of the output language
     forecast: [], // Forecast to display without adding the `-f` option: `[day]` | `[week]` | `[day, week]`
     units: (

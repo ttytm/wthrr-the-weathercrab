@@ -122,7 +122,7 @@ If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.
 
 ```rust
 (
-    address: "Berlin,DE", // Address to check the weather for
+    address: "", // Address to check the weather, e.g.: "Berlin,DE"
     language: "en_US", // Language code of the output language
     forecast: [], // Forecast to display without adding the `-f` option: `[day]` | `[week]` | `[day, week]`
     units: (
