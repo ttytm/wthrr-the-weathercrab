@@ -14,7 +14,7 @@ use super::{
 	graph::GraphOpts,
 	hourly::HourlyForecast,
 	product::{Product, MIN_WIDTH},
-	utils::adjust_lang_width,
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 	wind::WindDirection,
 };
@@ -75,7 +75,7 @@ impl Current {
 			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			address.bold(),
 			Border::R.fmt(&border).color_option(BrightBlack, &color),
-			width = width - 2 - adjust_lang_width(&address, lang)
+			width = width - 2 - lang_len_diff(&address, lang)
 		);
 
 		// Separator
@@ -95,7 +95,7 @@ impl Current {
 			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			(temperature + " " + &wmo_code.interpretation).bold(),
 			Border::R.fmt(&border).color_option(BrightBlack, &color),
-			width = width - 2 - adjust_lang_width(&wmo_code.interpretation, lang)
+			width = width - 2 - lang_len_diff(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
@@ -104,7 +104,7 @@ impl Current {
 			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			apparent_temperature,
 			Border::R.fmt(&border).color_option(BrightBlack, &color),
-			width = width - 2 - adjust_lang_width(&apparent_temperature, lang)
+			width = width - 2 - lang_len_diff(&apparent_temperature, lang)
 		);
 
 		// Blank Line
@@ -118,14 +118,14 @@ impl Current {
 			"{: <cell_width$}{}",
 			humidity,
 			dewpoint,
-			cell_width = cell_width - adjust_lang_width(&humidity, lang)
+			cell_width = cell_width - lang_len_diff(&humidity, lang)
 		);
 		println!(
 			"{} {: <width$} {}",
 			Border::L.fmt(&border).color_option(BrightBlack, &color),
 			humidity_dewpoint_split,
 			Border::R.fmt(&border).color_option(BrightBlack, &color),
-			width = width - 2 - adjust_lang_width(&humidity, lang) - adjust_lang_width(&dewpoint, lang)
+			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
 		);
 
 		// Wind & Pressure
