@@ -1,3 +1,8 @@
+use std::{
+	fs::File,
+	io::{BufRead, BufReader},
+};
+
 use anyhow::Result;
 use chrono::offset::TimeZone;
 use chrono::prelude::*;
@@ -87,6 +92,7 @@ impl Forecast {
 		let mut chunks = forecast.days.chunks(1).peekable();
 
 		let mut n = 0;
+		let date_len = forecast.days[n].date.len();
 		while let Some(_) = chunks.next() {
 			let forecast_day = format!(
 				"{: <cell_width$}{}{: >width$}",
@@ -94,7 +100,7 @@ impl Forecast {
 				forecast.days[n].weather,
 				forecast.days[n].interpretation,
 				width = width
-					- forecast.days[n].date.len()
+					- if date_len < 11 { 11 } else { date_len }
 					- forecast.days[n].weather.len()
 					- lang_len_diff(&forecast.days[n].interpretation, lang)
 					- if cell_width == MIN_WIDTH / 2 {
@@ -110,6 +116,7 @@ impl Forecast {
 				&Border::R.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
 				width = width
 					- lang_len_diff(&forecast.days[n].interpretation, lang)
+					- lang_len_diff(&forecast.days[n].date, lang)
 					- 2,
 			);
 			if chunks.peek().is_some() {
@@ -144,7 +151,7 @@ impl Forecast {
 
 		for (i, _) in product.weather.daily.time.iter().enumerate() {
 			let time = &product.weather.daily.time[i];
-			let date = Utc
+			let dt = Utc
 				.with_ymd_and_hms(
 					time[0..4].parse::<i32>().unwrap_or_default(),
 					time[5..7].parse::<u32>().unwrap_or_default(),
@@ -155,8 +162,11 @@ impl Forecast {
 				)
 				.unwrap();
 
-			// let date = date.format("%a, %b %e").to_string();
-			let date = &date.to_rfc2822()[..11];
+			let date = if lang != "en_US" || lang != "en" {
+				Self::localize_date(dt, lang)?
+			} else {
+				dt.format("%a, %e %b").to_string()
+			};
 
 			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None, lang).await?;
 			let weather = format!(
@@ -184,5 +194,30 @@ impl Forecast {
 		}
 
 		Ok(Forecast { width, days })
+	}
+
+	fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
+		let file = File::open("./locales/pure-rust-locales.txt")?;
+		let reader = BufReader::new(file);
+
+		let mut date = String::new();
+
+		for line in reader.lines().skip(1).flatten() {
+			let parts: Vec<&str> = line.split('_').collect();
+			let short_lang_code = parts[0];
+
+			if short_lang_code == lang {
+				date = dt
+					.format_localized("%a, %e %b", line.as_str().try_into().unwrap())
+					.to_string();
+				break;
+			}
+		}
+
+		if date.is_empty() {
+			date = dt.format("%a, %e %b").to_string()
+		}
+
+		Ok(date)
 	}
 }
