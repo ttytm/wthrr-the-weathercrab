@@ -180,9 +180,6 @@ id_ID
 ig_NG
 ik_CA
 is_IS
-iso14651_t1
-iso14651_t1_common
-iso14651_t1_pinyin
 it_CH
 it_IT
 it_IT_euro
