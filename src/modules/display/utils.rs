@@ -1,21 +1,21 @@
 use anyhow::Result;
 use regex::Regex;
 
-pub fn adjust_lang_width(string: &str, lang: &str) -> usize {
-	match lang {
+pub fn lang_len_diff(input: &str, lang: &str) -> usize {
+	match &lang[..2] {
 		"zh" => {
 			let re = Regex::new(r"\p{han}").unwrap();
-			re.find_iter(string).count()
+			re.find_iter(input).count() + 1
 		}
 		"ko" => {
 			let re = Regex::new(r"[\u3131-\uD79D\w]").unwrap();
 			let nu = Regex::new(r"[0-9\.]").unwrap();
-			re.find_iter(string).count() - nu.find_iter(string).count()
+			re.find_iter(input).count() - nu.find_iter(input).count()
 		}
 		"ja" => {
 			let re = Regex::new(r"[ぁ-んァ-ン\w]").unwrap();
 			let nu = Regex::new(r"[0-9\.]").unwrap();
-			re.find_iter(string).count() - nu.find_iter(string).count()
+			re.find_iter(input).count() - nu.find_iter(input).count()
 		}
 		_ => 0,
 	}

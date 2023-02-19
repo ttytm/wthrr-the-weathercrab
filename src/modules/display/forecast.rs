@@ -16,7 +16,7 @@ use super::{
 	border::*,
 	current::Current,
 	product::{Product, MIN_WIDTH},
-	utils::adjust_lang_width,
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
@@ -96,7 +96,7 @@ impl Forecast {
 				width = width
 					- forecast.days[n].date.len()
 					- forecast.days[n].weather.len()
-					- adjust_lang_width(&forecast.days[n].interpretation, lang)
+					- lang_len_diff(&forecast.days[n].interpretation, lang)
 					- if cell_width == MIN_WIDTH / 2 {
 						4
 					} else {
@@ -108,7 +108,9 @@ impl Forecast {
 				&Border::L.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
 				forecast_day,
 				&Border::R.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
-				width = width - adjust_lang_width(&forecast.days[n].interpretation, lang) - 2,
+				width = width
+					- lang_len_diff(&forecast.days[n].interpretation, lang)
+					- 2,
 			);
 			if chunks.peek().is_some() {
 				println!(
