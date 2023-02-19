@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use reqwest::{Client, Url};
+use reqwest::Client;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -66,13 +66,16 @@ struct OpenMeteoGeoObj {
 
 impl GeoIpLocation {
 	pub async fn get() -> Result<GeoIpLocation> {
-		let url = Url::parse("https://api.geoip.rs")?;
-
-		let res = reqwest::get(url).await?.json::<GeoIpLocation>().await?;
+		let res = reqwest::get("https://api.geoip.rs")
+			.await?
+			.json::<GeoIpLocation>()
+			.await?;
 
 		Ok(res)
 	}
+}
 
+impl Address {
 	async fn search_osm(client: &Client, address: &str, lang: &str) -> Result<Address> {
 		let url = format!(
 			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=jsonv2",
@@ -121,8 +124,8 @@ mod tests {
 	async fn geolocation_response() -> Result<()> {
 		let (address, lang_de, lang_pl) = ("berlin", "de", "pl");
 
-		let loc_de = GeoIpLocation::search(address, lang_de).await?;
-		let loc_pl = GeoIpLocation::search(address, lang_pl).await?;
+		let loc_de = Address::search(address, lang_de).await?;
+		let loc_pl = Address::search(address, lang_pl).await?;
 
 		assert!(loc_de.name.contains("Deutschland"));
 		assert!(loc_pl.name.contains("Niemcy"));
