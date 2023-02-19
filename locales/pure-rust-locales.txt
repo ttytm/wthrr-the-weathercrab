@@ -1,4 +1,4 @@
-# This this file was auto generated from the localedata found in pure-rust-locales.git
+# This file was auto generated from the available localedata in pure-rust-locales.git.
 
 POSIX
 aa_DJ
