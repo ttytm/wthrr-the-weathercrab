@@ -29,7 +29,7 @@ pub struct Params {
 impl Default for Params {
 	fn default() -> Self {
 		Self {
-			address: "".to_string(),
+			address: String::new(),
 			forecast: vec![],
 			language: "en_US".to_string(),
 			units: Units::default(),
