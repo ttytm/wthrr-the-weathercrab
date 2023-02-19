@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 
-use crate::modules::{display::greeting, location::Geolocation, translation::translate};
+use crate::modules::{display::greeting, location::GeoIpLocation, translation::translate};
 
 use super::Params;
 
@@ -25,7 +25,7 @@ impl Params {
 				)
 				.interact()?
 			{
-				let auto_loc = Geolocation::get().await?;
+				let auto_loc = GeoIpLocation::get().await?;
 				self.address = format!("{},{}", auto_loc.city_name, auto_loc.country_code);
 				return Ok(());
 			} else {
@@ -37,7 +37,7 @@ impl Params {
 		// greeting with indentation to match overall style
 		greeting::handle_greeting(self.gui.greeting, &self.language, true).await?;
 		if arg_address == "auto" || (arg_address.is_empty() && self.address == "auto") {
-			let auto_loc = Geolocation::get().await?;
+			let auto_loc = GeoIpLocation::get().await?;
 			self.address = format!("{},{}", auto_loc.city_name, auto_loc.country_code);
 		} else if !arg_address.is_empty() {
 			self.address = arg_address.to_string()

@@ -3,7 +3,7 @@ mod modules;
 use anyhow::Result;
 use clap::Parser;
 
-use modules::{args::Cli, display::product::Product, location::Geolocation, params::Params, weather::Weather};
+use modules::{args::Cli, display::product::Product, location::GeoIpLocation, params::Params, weather::Weather};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -22,10 +22,10 @@ async fn main() -> Result<()> {
 }
 
 pub async fn run(params: &Params) -> Result<Product> {
-	let loc = Geolocation::search(&params.address, &params.language).await?;
+	let loc = GeoIpLocation::search(&params.address, &params.language).await?;
 	let (lat, lon) = (loc.lat.parse::<f64>().unwrap(), loc.lon.parse::<f64>().unwrap());
 
-	let address = loc.display_name.to_string();
+	let address = loc.name.to_string();
 	let weather = Weather::get(lat, lon, &params.units).await?;
 
 	Ok(Product { address, weather })

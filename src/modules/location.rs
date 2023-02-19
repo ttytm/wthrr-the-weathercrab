@@ -1,61 +1,116 @@
 use anyhow::{anyhow, Result};
-use reqwest::{header::USER_AGENT, Client, Url};
+use reqwest::{Client, Url};
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-// Geoip json
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Geolocation {
+#[derive(Deserialize)]
+pub struct Address {
+	pub name: String,
+	pub lat: String,
+	pub lon: String,
+}
+
+#[derive(Deserialize)]
+pub struct GeoIpLocation {
 	pub latitude: f64,
 	pub longitude: f64,
 	pub city_name: String,
 	pub country_code: String,
 }
 
-// Open street map(OSM) json
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Address {
-	place_id: u64,
-	licence: String,
-	osm_type: String,
-	osm_id: u64,
-	boundingbox: Vec<String>,
-	pub lat: String,
-	pub lon: String,
-	pub display_name: String,
-	class: String,
-	#[serde(rename(deserialize = "type"))]
-	kind: String,
-	importance: f64,
+#[derive(Deserialize)]
+struct OpenStreetMapGeoObj {
+	// place_id: u64,
+	// licence: String,
+	// osm_type: String,
+	// osm_id: u64,
+	// boundingbox: Vec<String>,
+	lat: String,
+	lon: String,
+	display_name: String,
+	// place_rank: i32,
+	// category: String,
+	// #[serde(rename(deserialize = "type"))]
+	// kind: String,
+	// importance: f64,
+	// icon: String,
 }
 
-impl Geolocation {
-	pub async fn get() -> Result<Geolocation> {
+#[derive(Deserialize)]
+struct OpenMeteoResults {
+	results: Vec<OpenMeteoGeoObj>,
+}
+
+#[derive(Deserialize)]
+struct OpenMeteoGeoObj {
+	// id: i32,
+	name: String,
+	latitude: f64,
+	longitude: f64,
+	// elevation: f64,
+	// timezone: String,
+	// feature_code: String,
+	// country_code: String,
+	// country: String,
+	// country_id: i32,
+	// population: i32,
+	// admin1: String,
+	// admin2: String,
+	// admin3: String,
+	// admin4: String,
+	// admin1_id: i32,
+	// admin2_id: i32,
+	// admin3_id: i32,
+	// admin4_id: i32,
+	// postcodes: Vec<String>,
+}
+
+impl GeoIpLocation {
+	pub async fn get() -> Result<GeoIpLocation> {
 		let url = Url::parse("https://api.geoip.rs")?;
 
-		let res = reqwest::get(url).await?.json::<Geolocation>().await?;
+		let res = reqwest::get(url).await?.json::<GeoIpLocation>().await?;
 
 		Ok(res)
 	}
 
-	pub async fn search(address: &str, lang: &str) -> Result<Address> {
+	async fn search_osm(client: &Client, address: &str, lang: &str) -> Result<Address> {
 		let url = format!(
-			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=json"
+			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=jsonv2",
 		);
+		let results: Vec<OpenStreetMapGeoObj> = client.get(&url).send().await?.json().await?;
+		let result = results.first().ok_or_else(|| anyhow!("Location request failed."))?;
 
-		let res = Client::new()
-			.get(&url)
-			.header(USER_AGENT, "wthrr-the-weathercrab")
-			.send()
-			.await?
-			.json::<Vec<Address>>()
-			.await?;
+		Ok(Address {
+			name: result.display_name.clone(),
+			lon: result.lon.to_string(),
+			lat: result.lat.to_string(),
+		})
+	}
 
-		if res.is_empty() {
-			return Err(anyhow!("Location request failed."));
+	async fn search_open_meteo(client: &Client) -> Result<Address> {
+		let url = "https://geocoding-api.open-meteo.com/v1/search?name=Berlin&language=fr";
+		let results: OpenMeteoResults = client.get(url).send().await?.json().await?;
+		let result = results
+			.results
+			.first()
+			.ok_or_else(|| anyhow!("Location request failed."))?;
+
+		Ok(Address {
+			name: result.name.clone(),
+			lon: result.longitude.to_string(),
+			lat: result.latitude.to_string(),
+		})
+	}
+
+	pub async fn search(address: &str, lang: &str) -> Result<Address> {
+		let client = Client::builder().user_agent("wthrr-the-weathercrab").build()?;
+		let results = Self::search_osm(&client, address, lang).await;
+
+		match results {
+			Ok(address) => Ok(address),
+			Err(_) => Self::search_open_meteo(&client).await,
 		}
-
-		Ok(res[0].clone())
 	}
 }
 
@@ -67,11 +122,11 @@ mod tests {
 	async fn geolocation_response() -> Result<()> {
 		let (address, lang_de, lang_pl) = ("berlin", "de", "pl");
 
-		let loc_de = Geolocation::search(address, lang_de).await?;
-		let loc_pl = Geolocation::search(address, lang_pl).await?;
+		let loc_de = GeoIpLocation::search(address, lang_de).await?;
+		let loc_pl = GeoIpLocation::search(address, lang_pl).await?;
 
-		assert!(loc_de.display_name.contains("Deutschland"));
-		assert!(loc_pl.display_name.contains("Niemcy"));
+		assert!(loc_de.name.contains("Deutschland"));
+		assert!(loc_pl.name.contains("Niemcy"));
 
 		Ok(())
 	}
