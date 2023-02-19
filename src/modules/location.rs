@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Result};
 use reqwest::{Client, Url};
-
 use serde::Deserialize;
 
 #[derive(Deserialize)]
