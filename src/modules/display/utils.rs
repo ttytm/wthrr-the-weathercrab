@@ -5,7 +5,7 @@ pub fn lang_len_diff(input: &str, lang: &str) -> usize {
 	match &lang[..2] {
 		"zh" => {
 			let re = Regex::new(r"\p{han}").unwrap();
-			re.find_iter(input).count() + 1
+			re.find_iter(input).count()
 		}
 		"ko" => {
 			let re = Regex::new(r"[\u3131-\uD79D\w]").unwrap();

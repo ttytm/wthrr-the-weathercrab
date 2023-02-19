@@ -1,6 +1,6 @@
 use std::{
 	fs::File,
-	io::{BufRead, BufReader},
+	io::{BufReader, Read},
 };
 
 use anyhow::Result;
@@ -103,6 +103,7 @@ impl Forecast {
 					- if date_len < 11 { 11 } else { date_len }
 					- forecast.days[n].weather.len()
 					- lang_len_diff(&forecast.days[n].interpretation, lang)
+					- if lang.contains("zh") { 1 } else { 0 }
 					- if cell_width == MIN_WIDTH / 2 {
 						4
 					} else {
@@ -198,25 +199,35 @@ impl Forecast {
 
 	fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
 		let file = File::open("./locales/pure-rust-locales.txt")?;
-		let reader = BufReader::new(file);
+		let mut reader = BufReader::new(file);
+		let mut contents = String::new();
+		reader.read_to_string(&mut contents)?;
 
-		let mut date = String::new();
+		let mut matching_locale: Option<&str> = None;
 
-		for line in reader.lines().skip(1).flatten() {
-			let parts: Vec<&str> = line.split('_').collect();
-			let short_lang_code = parts[0];
-
-			if short_lang_code == lang {
-				date = dt
-					.format_localized("%a, %e %b", line.as_str().try_into().unwrap())
-					.to_string();
+		for line in contents.lines().skip(1) {
+			if line == lang {
+				matching_locale = Some(line);
 				break;
 			}
 		}
 
-		if date.is_empty() {
-			date = dt.format("%a, %e %b").to_string()
+		if matching_locale.is_none() {
+			for line in contents.lines().skip(1) {
+				let short_lang_code: Vec<&str> = line.split('_').collect();
+
+				if short_lang_code[0] == lang {
+					matching_locale = Some(line);
+					break;
+				}
+			}
 		}
+
+		let date = if let Some(locale) = matching_locale {
+			dt.format_localized("%a, %e %b", locale.try_into().unwrap()).to_string()
+		} else {
+			dt.format("%a, %e %b").to_string()
+		};
 
 		Ok(date)
 	}
