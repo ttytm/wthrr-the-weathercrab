@@ -62,19 +62,27 @@ impl Locales {
 		let mut texts = Locales::default();
 		let path = Self::get_path(lang);
 
-		if let Ok(file) = fs::read_to_string(path) {
-			let locales_from_file: LocalesFile = match serde_json::from_str(&file) {
-				Ok(contents) => contents,
-				Err(_) => {
-					if lang == "en_US" || lang == "en" {
+		match fs::read_to_string(path) {
+			Ok(file) => {
+				let locales_from_file: LocalesFile = match serde_json::from_str(&file) {
+					Ok(contents) => contents,
+					Err(_) => {
+						if lang == "en_US" || lang == "en" {
+							return Ok(texts);
+						}
+						texts.translate_all(lang).await?;
 						return Ok(texts);
 					}
-					texts.translate_all(lang).await?;
+				};
+
+				locales_from_file.apply_to(&mut texts);
+			}
+			Err(_) => {
+				if lang == "en_US" || lang == "en" {
 					return Ok(texts);
 				}
-			};
-
-			locales_from_file.apply_to(&mut texts);
+				texts.translate_all(lang).await?;
+			}
 		};
 
 		Ok(texts)
