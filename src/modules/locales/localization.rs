@@ -19,8 +19,8 @@ impl Locales {
 
 		match fs::read_to_string(path) {
 			Ok(file) => {
-				let locales_from_file: LocalesFile = match serde_json::from_str(&file) {
-					Ok(contents) => contents,
+				match serde_json::from_str::<LocalesFile>(&file) {
+					Ok(contents) => contents.apply_to(&mut texts),
 					Err(_) => {
 						if lang != "en_US" || lang != "en" {
 							texts.translate_all(lang).await?;
@@ -28,8 +28,6 @@ impl Locales {
 						return Ok(texts);
 					}
 				};
-
-				locales_from_file.apply_to(&mut texts);
 			}
 			Err(_) => {
 				if lang != "en_US" || lang != "en" {
