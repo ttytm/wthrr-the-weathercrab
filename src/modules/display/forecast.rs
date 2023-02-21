@@ -40,7 +40,7 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub async fn render(
+	pub fn render(
 		product: &Product,
 		forecast_params: &[ForecastParams],
 		units: &Units,

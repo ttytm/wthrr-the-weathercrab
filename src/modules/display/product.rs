@@ -31,7 +31,7 @@ impl Product {
 		t: &WeatherLocales,
 	) -> Result<()> {
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, gui, lang, t).await?;
+			Forecast::render(self, forecast, units, gui, lang, t)?;
 		} else {
 			Current::render(self, false, units, gui, lang, t)?;
 		}
