@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 
-use crate::modules::translation::translate;
+use crate::modules::locales::WeatherCodeLocales;
 
 pub struct WeatherCode {
 	pub interpretation: String,
@@ -8,122 +8,122 @@ pub struct WeatherCode {
 }
 
 impl WeatherCode {
-	pub async fn resolve(weather_code: &f64, night: Option<bool>, lang: &str) -> Result<Self> {
+	pub fn resolve(weather_code: &f64, night: Option<bool>, t: &WeatherCodeLocales) -> Result<Self> {
 		let is_night = night.unwrap_or_default();
 		let c = *weather_code as u8;
 		let (interpretation, icon);
 
 		match c {
 			0 => {
-				interpretation = translate(lang, "Clear sky").await?;
+				interpretation = t.clear_sky.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			1 => {
-				interpretation = translate(lang, "Mostly Clear").await?;
+				interpretation = t.mostly_clear.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			2 => {
-				interpretation = translate(lang, "Partly Cloudy").await?;
+				interpretation = t.partly_cloudy.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			3 => {
-				interpretation = translate(lang, "Overcast").await?;
+				interpretation = t.overcast.clone();
 				icon = '';
 			}
 			45 => {
-				interpretation = translate(lang, "Fog").await?;
+				interpretation = t.fog.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			48 => {
-				interpretation = translate(lang, "Depositing Rime Fog").await?;
+				interpretation = t.depositing_rime_fog.clone();
 				icon = '';
 			}
 			51 => {
-				interpretation = translate(lang, "Light Drizzle").await?;
+				interpretation = t.light_drizzle.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			53 => {
-				interpretation = translate(lang, "Moderate Drizzle").await?;
+				interpretation = t.moderate_drizzle.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			55 => {
-				interpretation = translate(lang, "Dense Drizzle").await?;
+				interpretation = t.dense_drizzle.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			56 => {
-				interpretation = translate(lang, "Light Freezing Drizzle").await?;
+				interpretation = t.light_freezing_drizzle.clone();
 				icon = if is_night { '' } else { 'ﭽ' };
 			}
 			57 => {
-				interpretation = translate(lang, "Dense Freezing Drizzle").await?;
+				interpretation = t.dense_freezing_drizzle.clone();
 				icon = if is_night { '' } else { 'ﭽ' };
 			}
 			61 => {
-				interpretation = translate(lang, "Slight Rain").await?;
+				interpretation = t.slight_rain.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			63 => {
-				interpretation = translate(lang, "Moderate Rain").await?;
+				interpretation = t.moderate_rain.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			65 => {
-				interpretation = translate(lang, "Heavy Rain").await?;
+				interpretation = t.heavy_rain.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			66 => {
-				interpretation = translate(lang, "Light Freezing Rain").await?;
+				interpretation = t.light_freezing_rain.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			67 => {
-				interpretation = translate(lang, "Heavy Freezing Rain").await?;
+				interpretation = t.heavy_freezing_rain.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			71 => {
-				interpretation = translate(lang, "Slight Snow Fall").await?;
+				interpretation = t.slight_snow_fall.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			73 => {
-				interpretation = translate(lang, "Moderate Snow Fall").await?;
+				interpretation = t.moderate_snow_fall.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			75 => {
-				interpretation = translate(lang, "Heavy Snow Fall").await?;
+				interpretation = t.heavy_snow_fall.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			77 => {
-				interpretation = translate(lang, "Snow Grains").await?;
+				interpretation = t.snow_grains.clone();
 				icon = '';
 			}
 			80 => {
-				interpretation = translate(lang, "Slight Rain Showers").await?;
+				interpretation = t.slight_rain_showers.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			81 => {
-				interpretation = translate(lang, "Moderate Rain Showers").await?;
+				interpretation = t.moderate_rain_showers.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			82 => {
-				interpretation = translate(lang, "Violent Rain Showers").await?;
+				interpretation = t.violent_rain_showers.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			85 => {
-				interpretation = translate(lang, "Slight Snow Showers").await?;
+				interpretation = t.slight_snow_showers.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			86 => {
-				interpretation = translate(lang, "Heavy Snow Showers").await?;
+				interpretation = t.heavy_snow_showers.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			95 => {
-				interpretation = translate(lang, "Thunderstorm").await?;
+				interpretation = t.thunderstorm.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			96 => {
-				interpretation = translate(lang, "Thunderstorm, Slight Hail").await?;
+				interpretation = t.thunderstorm_slight_hail.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			99 => {
-				interpretation = translate(lang, "Thunderstorm, Heavy Hail").await?;
+				interpretation = t.thunderstorm_heavy_hail.clone();
 				icon = if is_night { '' } else { '' };
 			}
 			_ => return Err(anyhow!("Unknown weather code")),

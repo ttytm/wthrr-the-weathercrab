@@ -1,6 +1,5 @@
 pub mod border;
 pub mod graph;
-pub mod greeting;
 pub mod hourly;
 pub mod product;
 

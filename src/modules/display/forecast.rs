@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::modules::{
 	args::Forecast as ForecastParams,
+	locales::WeatherLocales,
 	params::{
 		gui::{ColorOption, Gui},
 		units::Units,
@@ -45,12 +46,13 @@ impl Forecast {
 		units: &Units,
 		gui: &Gui,
 		lang: &str,
+		t: &WeatherLocales,
 	) -> Result<()> {
 		let (mut include_day, mut include_week) = (false, false);
 
 		for val in forecast_params {
 			if ForecastParams::disable == *val {
-				Current::render(product, false, units, gui, lang).await?;
+				Current::render(product, false, units, gui, lang, t)?;
 				return Ok(());
 			}
 			if ForecastParams::day == *val {
@@ -63,16 +65,16 @@ impl Forecast {
 
 		// hourly forecast only
 		if include_day && !include_week {
-			Current::render(product, true, units, gui, lang).await?;
+			Current::render(product, true, units, gui, lang, t)?;
 			return Ok(());
 		}
 
 		// weekly forecast - potentially including hourly forecast
-		let forecast = Self::prepare(product, lang).await?;
+		let forecast = Self::prepare(product, lang, t)?;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
 
 		if include_day {
-			let dimensions_current = Current::render(product, true, units, gui, lang).await?;
+			let dimensions_current = Current::render(product, true, units, gui, lang, t)?;
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
 			}
@@ -146,7 +148,7 @@ impl Forecast {
 		Ok(())
 	}
 
-	async fn prepare(product: &Product, lang: &str) -> Result<Self> {
+	fn prepare(product: &Product, lang: &str, t: &WeatherLocales) -> Result<Self> {
 		let mut days = Vec::new();
 		let mut width: usize = 0;
 
@@ -169,7 +171,7 @@ impl Forecast {
 				dt.format("%a, %e %b").to_string()
 			};
 
-			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None, lang).await?;
+			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], None, &t.weather_code)?;
 			let weather = format!(
 				"{} {}{}/{}{}",
 				weather_code.icon,

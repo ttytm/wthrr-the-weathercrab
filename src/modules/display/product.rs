@@ -4,6 +4,7 @@ use regex::Regex;
 
 use crate::modules::{
 	args::Forecast as ForecastParams,
+	locales::WeatherLocales,
 	params::{
 		gui::{ColorOption, Gui},
 		units::Units,
@@ -21,11 +22,18 @@ pub struct Product {
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
-	pub async fn render(&self, forecast: &[ForecastParams], units: &Units, gui: &Gui, lang: &str) -> Result<()> {
+	pub async fn render(
+		&self,
+		forecast: &[ForecastParams],
+		units: &Units,
+		gui: &Gui,
+		lang: &str,
+		t: &WeatherLocales,
+	) -> Result<()> {
 		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, gui, lang).await?;
+			Forecast::render(self, forecast, units, gui, lang, t).await?;
 		} else {
-			Current::render(self, false, units, gui, lang).await?;
+			Current::render(self, false, units, gui, lang, t)?;
 		}
 
 		// Disclaimer

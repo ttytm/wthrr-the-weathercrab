@@ -1,39 +1,56 @@
 use colored::{Color::Yellow, Colorize};
 use directories::ProjectDirs;
-use optional_struct::Applyable;
+use optional_struct::*;
 use ron::{
 	extensions::Extensions,
 	ser::{to_string_pretty, PrettyConfig},
 	Options,
 };
+use serde::{Deserialize, Serialize};
 use std::{
 	fs::{self, File},
 	io::Write,
 	path::PathBuf,
 };
 
-use anyhow::{Context, Result};
-use dialoguer::{theme::ColorfulTheme, Confirm, Select};
-
 use crate::modules::{
-	args::Cli,
-	params::{ConfigFile, Params},
-	translation::translate,
+	args::Forecast,
+	params::{
+		gui::{ConfigFileGui, Gui},
+		units::{ConfigFileUnits, Units},
+	},
 };
 
-const CONFIG_DIR_NAME: &str = "weathercrab";
+#[optional_struct(ConfigFile)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Config {
+	pub address: String,
+	pub language: String,
+	pub forecast: Vec<Forecast>,
+	#[optional_rename(ConfigFileUnits)]
+	pub units: Units,
+	#[optional_rename(ConfigFileGui)]
+	pub gui: Gui,
+}
+
+impl Default for Config {
+	fn default() -> Self {
+		Self {
+			address: String::new(),
+			forecast: vec![],
+			language: "en_US".to_string(),
+			units: Units::default(),
+			gui: Gui::default(),
+		}
+	}
+}
+
+pub const CONFIG_DIR_NAME: &str = "weathercrab";
 const CONFIG_FILE_NAME: &str = "wthrr.ron";
 
-impl Params {
-	fn get_path() -> PathBuf {
-		ProjectDirs::from("", "", CONFIG_DIR_NAME)
-			.unwrap()
-			.config_dir()
-			.join(CONFIG_FILE_NAME)
-	}
-
-	pub fn get_config_file() -> Params {
-		let mut config = Params::default();
+impl Config {
+	pub fn get_config_file() -> Self {
+		let mut config = Self::default();
 		let path = Self::get_path();
 
 		if let Ok(file) = fs::read_to_string(&path) {
@@ -44,7 +61,7 @@ impl Params {
 				Ok(contents) => contents,
 				Err(error) => {
 					let warning_sign = " Warning:".color(Yellow);
-					println!(
+					eprintln!(
 						"{warning_sign} {}\n{: >4}At: {error}.\n{: >4}Falling back to default values.\n",
 						path.display(),
 						"",
@@ -60,7 +77,7 @@ impl Params {
 		config
 	}
 
-	fn store(&self) {
+	pub fn store(&self) {
 		let path = Self::get_path();
 
 		let cfg_dir = path.parent().unwrap();
@@ -73,65 +90,10 @@ impl Params {
 		file.write_all(output.as_bytes()).unwrap();
 	}
 
-	pub async fn handle_next(self, args: Cli, mut config: Self) -> Result<()> {
-		if !args.save && !config.address.is_empty() {
-			return Ok(());
-		}
-
-		if config.address.is_empty() {
-			self.apply_to(&mut config);
-			config
-				.save_prompt(args.address.as_deref().unwrap_or_default().to_string())
-				.await?;
-		} else {
-			self.apply_to(&mut config);
-			Self::store(&config);
-		}
-
-		Ok(())
-	}
-
-	async fn save_prompt(mut self, arg_address: String) -> Result<()> {
-		let mut items = vec![
-			translate(&self.language, "Yes please").await?,
-			translate(&self.language, "No, ask me next time").await?,
-			translate(&self.language, "No, dont ask me again").await?,
-		];
-
-		if arg_address.is_empty() || arg_address == "auto" {
-			items.push(translate(&self.language, "Always check for a weather station").await?)
-		}
-
-		let selection = Select::with_theme(&ColorfulTheme::default())
-			.with_prompt(translate(&self.language, "Would you like to use this as your default?").await?)
-			.items(&items)
-			.default(0)
-			.interact()?;
-
-		match selection {
-			0 => {}
-			1 => return Ok(()),
-			2 => self.address = "arg_input".to_string(),
-			3 => self.address = "auto".to_string(),
-			_ => println!("User did not select anything or exited using Esc or q"),
-		}
-
-		Self::store(&self);
-
-		Ok(())
-	}
-
-	pub async fn reset(lang: &str) -> Result<()> {
-		let confirmation = Confirm::with_theme(&ColorfulTheme::default())
-			.with_prompt(translate(lang, "This will wipe wthrr's configuration. Continue?").await?)
-			.interact()?;
-
-		if confirmation {
-			let path = Self::get_path();
-
-			std::fs::remove_dir_all(path.parent().unwrap()).with_context(|| "Error resetting config file.")?;
-		}
-
-		Ok(())
+	pub fn get_path() -> PathBuf {
+		ProjectDirs::from("", "", CONFIG_DIR_NAME)
+			.unwrap()
+			.config_dir()
+			.join(CONFIG_FILE_NAME)
 	}
 }
