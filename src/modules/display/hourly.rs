@@ -7,6 +7,7 @@ use colored::{
 use std::fmt::Write as _;
 
 use crate::modules::{
+	locales::{WeatherCodeLocales, WeatherLocales},
 	params::{
 		gui::{ColorOption, ColorVariant},
 		units::{Precipitation, Temperature, Time, Units},
@@ -31,7 +32,14 @@ pub struct HourlyForecast {
 }
 
 impl HourlyForecast {
-	pub fn render(self, width: usize, units: &Units, border_variant: &BorderStyle, color_variant: &ColorVariant) {
+	pub fn render(
+		self,
+		width: usize,
+		units: &Units,
+		border_variant: &BorderStyle,
+		color_variant: &ColorVariant,
+		t: &WeatherLocales,
+	) {
 		println!(
 			"{}",
 			&Separator::Blank
@@ -51,7 +59,7 @@ impl HourlyForecast {
 		println!(
 			"{} {: <width$} {}",
 			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
-			"Hourly Forecast".bold(),
+			t.hourly_forecast.bold(),
 			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
 			width = width - 2
 		);
@@ -124,12 +132,12 @@ impl HourlyForecast {
 		);
 	}
 
-	pub async fn prepare(
+	pub fn prepare(
 		weather: &Weather,
 		current_hour: usize,
 		night: bool,
 		graph_opts: &GraphOpts,
-		lang: &str,
+		t: &WeatherCodeLocales,
 	) -> Result<Self> {
 		let Hourly {
 			temperature_2m,
@@ -161,25 +169,25 @@ impl HourlyForecast {
 			if current_hour != 23 { (current_hour * 3) + 3 } else { 0 } + (Timelike::minute(&Utc::now()) / 20) as usize;
 
 		Ok(HourlyForecast {
-			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, lang).await?,
+			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, t)?,
 			precipitation: Self::prepare_precipitation(precipitation)?,
 			graph: Graph::prepare_graph(temperatures, graph_opts)?,
 			time_indicator_col,
 		})
 	}
 
-	async fn prepare_temperatures(
+	fn prepare_temperatures(
 		temperatures: &[f64],
 		weather_codes: &[f64],
 		night: bool,
-		lang: &str,
+		t: &WeatherCodeLocales,
 	) -> Result<String> {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {
 			let temp = temperatures[hour].round() as i32;
 			let temp_sub = style_number(temp, true)?;
-			let wmo_code = WeatherCode::resolve(&weather_codes[hour], Some(night), lang).await?;
+			let wmo_code = WeatherCode::resolve(&weather_codes[hour], Some(night), t)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);
 		}
