@@ -1,12 +1,12 @@
 use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::modules::params::units::Units;
 
 // Open meteo json
 // E.g., London:
 // https://api.open-meteo.com/v1/forecast?latitude=51.5002&longitude=-0.1262&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,windspeed_10m,precipitation,weathercode&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct Weather {
 	pub latitude: f64,
 	pub longitude: f64,
@@ -20,7 +20,7 @@ pub struct Weather {
 	pub daily: Daily,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct CurrentWeather {
 	pub temperature: f64,
 	pub windspeed: f64,
@@ -29,7 +29,7 @@ pub struct CurrentWeather {
 	pub time: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct HourlyUnits {
 	pub temperature_2m: String,
 	pub relativehumidity_2m: String,
@@ -40,7 +40,7 @@ pub struct HourlyUnits {
 	pub precipitation: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct Hourly {
 	pub time: Vec<String>,
 	pub temperature_2m: Vec<f64>,
@@ -53,7 +53,7 @@ pub struct Hourly {
 	pub weathercode: Vec<f64>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct DailyUnits {
 	pub time: String,
 	pub weathercode: String,
@@ -64,7 +64,7 @@ pub struct DailyUnits {
 	pub temperature_2m_min: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct Daily {
 	pub time: Vec<String>,
 	pub weathercode: Vec<f64>,
