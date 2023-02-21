@@ -187,7 +187,7 @@ impl HourlyForecast {
 		for hour in DISPLAY_HOURS {
 			let temp = temperatures[hour].round() as i32;
 			let temp_sub = style_number(temp, true)?;
-			let wmo_code = WeatherCode::resolve(&weather_codes[hour], Some(night), t)?;
+			let wmo_code = WeatherCode::resolve(&weather_codes[hour], night, t)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);
 		}

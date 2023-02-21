@@ -187,7 +187,7 @@ impl Current {
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
-		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, Some(night), &t.weather_code)?;
+		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, night, &t.weather_code)?;
 
 		let temperature = format!(
 			"{} {}{}",
