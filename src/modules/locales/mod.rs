@@ -1,4 +1,4 @@
-pub mod translation;
+pub mod localization;
 
 use optional_struct::*;
 use serde::{Deserialize, Serialize};

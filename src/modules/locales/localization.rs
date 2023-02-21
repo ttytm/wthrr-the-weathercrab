@@ -1,11 +1,12 @@
 use anyhow::{Context, Result};
+use chrono::prelude::*;
 use directories::ProjectDirs;
 use optional_struct::Applyable;
 use reqwest::Url;
 use serde_json::Value;
 use std::{
 	fs::{self, File},
-	io::Write,
+	io::{BufReader, Read, Write},
 	path::PathBuf,
 };
 
@@ -13,7 +14,29 @@ use super::{Locales, LocalesFile};
 
 impl Locales {
 	pub async fn get(lang: &str) -> Result<Self> {
-		let texts = Locales::get_translations_file(lang).await?;
+		let mut texts = Locales::default();
+		let path = Self::get_path(lang);
+
+		match fs::read_to_string(path) {
+			Ok(file) => {
+				let locales_from_file: LocalesFile = match serde_json::from_str(&file) {
+					Ok(contents) => contents,
+					Err(_) => {
+						if lang != "en_US" || lang != "en" {
+							texts.translate_all(lang).await?;
+						}
+						return Ok(texts);
+					}
+				};
+
+				locales_from_file.apply_to(&mut texts);
+			}
+			Err(_) => {
+				if lang != "en_US" || lang != "en" {
+					texts.translate_all(lang).await?;
+				}
+			}
+		};
 
 		Ok(texts)
 	}
@@ -58,36 +81,6 @@ impl Locales {
 		Ok(output)
 	}
 
-	async fn get_translations_file(lang: &str) -> Result<Locales> {
-		let mut texts = Locales::default();
-		let path = Self::get_path(lang);
-
-		match fs::read_to_string(path) {
-			Ok(file) => {
-				let locales_from_file: LocalesFile = match serde_json::from_str(&file) {
-					Ok(contents) => contents,
-					Err(_) => {
-						if lang == "en_US" || lang == "en" {
-							return Ok(texts);
-						}
-						texts.translate_all(lang).await?;
-						return Ok(texts);
-					}
-				};
-
-				locales_from_file.apply_to(&mut texts);
-			}
-			Err(_) => {
-				if lang == "en_US" || lang == "en" {
-					return Ok(texts);
-				}
-				texts.translate_all(lang).await?;
-			}
-		};
-
-		Ok(texts)
-	}
-
 	pub fn store(&self, lang: &str) {
 		let path = Self::get_path(lang);
 		let dir = path.parent().unwrap();
@@ -106,6 +99,41 @@ impl Locales {
 			.config_dir()
 			.join("locales")
 			.join(format!("{lang}.json"))
+	}
+
+	pub fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
+		let file = File::open("./locales/pure-rust-locales.txt")?;
+		let mut reader = BufReader::new(file);
+		let mut contents = String::new();
+		reader.read_to_string(&mut contents)?;
+
+		let mut matching_locale: Option<&str> = None;
+
+		for line in contents.lines().skip(1) {
+			if line == lang {
+				matching_locale = Some(line);
+				break;
+			}
+		}
+
+		if matching_locale.is_none() {
+			for line in contents.lines().skip(1) {
+				let short_lang_code: Vec<&str> = line.split('_').collect();
+
+				if short_lang_code[0] == lang {
+					matching_locale = Some(line);
+					break;
+				}
+			}
+		}
+
+		let date = if let Some(locale) = matching_locale {
+			dt.format_localized("%a, %e %b", locale.try_into().unwrap()).to_string()
+		} else {
+			dt.format("%a, %e %b").to_string()
+		};
+
+		Ok(date)
 	}
 }
 

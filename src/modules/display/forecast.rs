@@ -1,8 +1,3 @@
-use std::{
-	fs::File,
-	io::{BufReader, Read},
-};
-
 use anyhow::Result;
 use chrono::offset::TimeZone;
 use chrono::prelude::*;
@@ -11,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::modules::{
 	args::Forecast as ForecastParams,
-	locales::WeatherLocales,
+	locales::{Locales, WeatherLocales},
 	params::{
 		gui::{ColorOption, Gui},
 		units::Units,
@@ -166,7 +161,7 @@ impl Forecast {
 				.unwrap();
 
 			let date = if lang != "en_US" || lang != "en" {
-				Self::localize_date(dt, lang)?
+				Locales::localize_date(dt, lang)?
 			} else {
 				dt.format("%a, %e %b").to_string()
 			};
@@ -197,40 +192,5 @@ impl Forecast {
 		}
 
 		Ok(Forecast { width, days })
-	}
-
-	fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
-		let file = File::open("./locales/pure-rust-locales.txt")?;
-		let mut reader = BufReader::new(file);
-		let mut contents = String::new();
-		reader.read_to_string(&mut contents)?;
-
-		let mut matching_locale: Option<&str> = None;
-
-		for line in contents.lines().skip(1) {
-			if line == lang {
-				matching_locale = Some(line);
-				break;
-			}
-		}
-
-		if matching_locale.is_none() {
-			for line in contents.lines().skip(1) {
-				let short_lang_code: Vec<&str> = line.split('_').collect();
-
-				if short_lang_code[0] == lang {
-					matching_locale = Some(line);
-					break;
-				}
-			}
-		}
-
-		let date = if let Some(locale) = matching_locale {
-			dt.format_localized("%a, %e %b", locale.try_into().unwrap()).to_string()
-		} else {
-			dt.format("%a, %e %b").to_string()
-		};
-
-		Ok(date)
 	}
 }

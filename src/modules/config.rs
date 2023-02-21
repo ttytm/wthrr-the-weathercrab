@@ -49,7 +49,7 @@ pub const CONFIG_DIR_NAME: &str = "weathercrab";
 const CONFIG_FILE_NAME: &str = "wthrr.ron";
 
 impl Config {
-	pub fn get_config_file() -> Self {
+	pub fn get() -> Self {
 		let mut config = Self::default();
 		let path = Self::get_path();
 

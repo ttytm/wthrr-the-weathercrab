@@ -10,7 +10,7 @@ use modules::{
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
-	let config = Config::get_config_file();
+	let config = Config::get();
 	let params = Params::merge(config.clone(), &args).await?;
 
 	let product = run(&params).await?;
