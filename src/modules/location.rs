@@ -5,8 +5,8 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Address {
 	pub name: String,
-	pub lat: String,
-	pub lon: String,
+	pub lat: f64,
+	pub lon: f64,
 }
 
 #[derive(Deserialize)]
@@ -85,8 +85,8 @@ impl Address {
 
 		Ok(Address {
 			name: result.display_name.clone(),
-			lon: result.lon.to_string(),
-			lat: result.lat.to_string(),
+			lon: result.lon.parse::<f64>().unwrap(),
+			lat: result.lat.parse::<f64>().unwrap(),
 		})
 	}
 
@@ -100,8 +100,8 @@ impl Address {
 
 		Ok(Address {
 			name: result.name.clone(),
-			lon: result.longitude.to_string(),
-			lat: result.latitude.to_string(),
+			lon: result.longitude,
+			lat: result.latitude,
 		})
 	}
 

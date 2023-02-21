@@ -31,10 +31,8 @@ async fn main() -> Result<()> {
 
 pub async fn run(params: &Params) -> Result<Product> {
 	let loc = Address::search(&params.config.address, &params.config.language).await?;
-	let (lat, lon) = (loc.lat.parse::<f64>().unwrap(), loc.lon.parse::<f64>().unwrap());
-
 	let address = loc.name.to_string();
-	let weather = Weather::get(lat, lon, &params.config.units).await?;
+	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
 
 	Ok(Product { address, weather })
 }
