@@ -28,7 +28,7 @@ pub struct HourlyForecast {
 	temperatures: String,
 	precipitation: String,
 	graph: Graph,
-	time_indicator_col: usize,
+	time_indicator_col: Option<usize>,
 }
 
 impl HourlyForecast {
@@ -64,11 +64,23 @@ impl HourlyForecast {
 			width = width - 2
 		);
 
-		println!(
-			"{}",
-			self.prepare_separator(border_style, width, '╤')
-				.color_option(BrightBlack, color_variant),
-		);
+		match self.time_indicator_col {
+			Some(_) => {
+				println!(
+					"{}",
+					self.prepare_separator(border_style, width, '╤')
+						.color_option(BrightBlack, color_variant),
+				);
+			}
+			_ => {
+				println!(
+					"{}",
+					Separator::Dashed
+						.fmt(width, border_style)
+						.color_option(BrightBlack, color_variant)
+				);
+			}
+		}
 
 		println!(
 			"{} {: <width$}{}{}",
@@ -109,11 +121,23 @@ impl HourlyForecast {
 			width = width - 4
 		);
 
-		println!(
-			"{}",
-			self.prepare_separator(border_style, width, '╧')
-				.color_option(BrightBlack, color_variant),
-		);
+		match self.time_indicator_col {
+			Some(_) => {
+				println!(
+					"{}",
+					self.prepare_separator(border_style, width, '╧')
+						.color_option(BrightBlack, color_variant),
+				);
+			}
+			_ => {
+				println!(
+					"{}",
+					Separator::Dashed
+						.fmt(width, border_style)
+						.color_option(BrightBlack, color_variant)
+				);
+			}
+		}
 
 		let hours = match units.time {
 			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
@@ -164,9 +188,14 @@ impl HourlyForecast {
 			&precipitation[25..=49]
 		};
 
-		// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
-		let time_indicator_col =
-			if current_hour != 23 { (current_hour * 3) + 3 } else { 0 } + (Timelike::minute(&Utc::now()) / 20) as usize;
+		let time_indicator_col = match graph_opts.time_indicator {
+			true => Some(
+				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
+				if current_hour != 23 { (current_hour * 3) + 3 } else { 0 }
+					+ (Timelike::minute(&Utc::now()) / 20) as usize,
+			),
+			_ => None,
+		};
 
 		Ok(HourlyForecast {
 			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, t)?,
@@ -209,7 +238,7 @@ impl HourlyForecast {
 	}
 
 	fn prepare_separator(&self, border_variant: &BorderStyle, width: usize, time_indicator_glyph: char) -> String {
-		let time_indicator_col = self.time_indicator_col;
+		let time_indicator_col = self.time_indicator_col.unwrap();
 
 		match border_variant {
 			BorderStyle::double => format!(
