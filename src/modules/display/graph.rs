@@ -279,8 +279,8 @@ impl Graph {
 }
 
 impl GraphLvls {
-	fn get_glyphs(graph_variant: &GraphStyle, graph_rows: &GraphRows) -> Vec<char> {
-		let mut glyphs = match graph_variant {
+	fn get_glyphs(graph_style: &GraphStyle, graph_rows: &GraphRows) -> Vec<char> {
+		let mut glyphs = match graph_style {
 			GraphStyle::lines(style) => match style {
 				LineVariant::solid => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
 				LineVariant::slim => ['⎽', '⎼', '⎻', '⎺'].to_vec(),

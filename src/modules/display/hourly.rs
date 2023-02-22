@@ -36,14 +36,14 @@ impl HourlyForecast {
 		self,
 		width: usize,
 		units: &Units,
-		border_variant: &BorderStyle,
+		border_style: &BorderStyle,
 		color_variant: &ColorVariant,
 		t: &WeatherLocales,
 	) {
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, border_variant)
+				.fmt(width, border_style)
 				.color_option(BrightBlack, color_variant)
 		);
 
@@ -58,60 +58,60 @@ impl HourlyForecast {
 
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			t.hourly_forecast.bold(),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
 			width = width - 2
 		);
 
 		println!(
 			"{}",
-			self.prepare_separator(border_variant, width, '╤')
+			self.prepare_separator(border_style, width, '╤')
 				.color_option(BrightBlack, color_variant),
 		);
 
 		println!(
 			"{} {: <width$}{}{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			self.temperatures.color_option(Yellow, color_variant).bold(),
 			temperature_unit.color_option(Yellow, color_variant),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
 			width = width - 3
 		);
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, border_variant)
+				.fmt(width, border_style)
 				.color_option(BrightBlack, color_variant)
 		);
 
 		if self.graph.1.chars().count() > 0 {
 			println!(
 				"{}{}{}",
-				Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+				Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 				self.graph.1.color_option(Yellow, color_variant),
-				Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+				Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
 			);
 		}
 		println!(
 			"{}{}{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			self.graph.0.color_option(Yellow, color_variant),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
 		);
 
 		println!(
 			"{} {: <width$}{}{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			self.precipitation.color_option(Blue, color_variant).bold(),
 			precipitation_unit.color_option(Blue, color_variant),
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant),
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
 			width = width - 4
 		);
 
 		println!(
 			"{}",
-			self.prepare_separator(border_variant, width, '╧')
+			self.prepare_separator(border_style, width, '╧')
 				.color_option(BrightBlack, color_variant),
 		);
 
@@ -121,14 +121,14 @@ impl HourlyForecast {
 		};
 		print!(
 			"{}",
-			Border::L.fmt(border_variant).color_option(BrightBlack, color_variant)
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant)
 		);
 		for hour in hours {
 			print!("{hour: <9}")
 		}
 		println!(
 			"{}",
-			Border::R.fmt(border_variant).color_option(BrightBlack, color_variant)
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
 		);
 	}
 

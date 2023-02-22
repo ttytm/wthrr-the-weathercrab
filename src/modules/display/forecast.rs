@@ -78,12 +78,10 @@ impl Forecast {
 			}
 		}
 
-		let (cfg_border, cfg_color) = (gui.border, gui.color);
-
 		// Border Top
 		println!(
 			"{}",
-			&Edge::Top.fmt(width, &cfg_border).color_option(BrightBlack, &cfg_color)
+			&Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		let mut chunks = forecast.days.chunks(1).peekable();
@@ -109,9 +107,9 @@ impl Forecast {
 			);
 			println!(
 				"{} {: <width$} {}",
-				&Border::L.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
+				&Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 				forecast_day,
-				&Border::R.fmt(&cfg_border).color_option(BrightBlack, &cfg_color),
+				&Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 				width = width
 					- lang_len_diff(&forecast.days[n].interpretation, lang)
 					- lang_len_diff(&forecast.days[n].date, lang)
@@ -120,12 +118,12 @@ impl Forecast {
 			if chunks.peek().is_some() {
 				println!(
 					"{}",
-					&match &cfg_border {
-						BorderStyle::double => Separator::Double.fmt(width, &cfg_border),
-						BorderStyle::solid => Separator::Solid.fmt(width, &cfg_border),
-						_ => Separator::Dashed.fmt(width, &cfg_border),
+					&match &gui.border {
+						BorderStyle::double => Separator::Double.fmt(width, &gui.border),
+						BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
+						_ => Separator::Dashed.fmt(width, &gui.border),
 					}
-					.color_option(BrightBlack, &cfg_color)
+					.color_option(BrightBlack, &gui.color)
 				)
 			}
 
@@ -136,8 +134,8 @@ impl Forecast {
 		println!(
 			"{}",
 			Edge::Bottom
-				.fmt(width, &cfg_border)
-				.color_option(BrightBlack, &cfg_color)
+				.fmt(width, &gui.border)
+				.color_option(BrightBlack, &gui.color)
 		);
 
 		Ok(())

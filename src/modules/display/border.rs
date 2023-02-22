@@ -14,37 +14,37 @@ pub enum Border {
 }
 
 impl Border {
-	pub fn fmt<'a>(&self, variant: &BorderStyle) -> &'a str {
+	pub fn fmt<'a>(&self, style: &BorderStyle) -> &'a str {
 		match self {
-			Border::TL => match variant {
+			Border::TL => match style {
 				BorderStyle::single => "┌",
 				BorderStyle::solid => "┏",
 				BorderStyle::double => "╔",
 				_ => "╭",
 			},
-			Border::T | Border::B => match variant {
+			Border::T | Border::B => match style {
 				BorderStyle::double => "═",
 				BorderStyle::solid => "━",
 				_ => "─",
 			},
-			Border::TR => match variant {
+			Border::TR => match style {
 				BorderStyle::single => "┐",
 				BorderStyle::solid => "┓",
 				BorderStyle::double => "╗",
 				_ => "╮",
 			},
-			Border::R | Border::L => match variant {
+			Border::R | Border::L => match style {
 				BorderStyle::double => "║",
 				BorderStyle::solid => "┃",
 				_ => "│",
 			},
-			Border::BR => match variant {
+			Border::BR => match style {
 				BorderStyle::single => "┘",
 				BorderStyle::solid => "┛",
 				BorderStyle::double => "╝",
 				_ => "╯",
 			},
-			Border::BL => match variant {
+			Border::BL => match style {
 				BorderStyle::single => "└",
 				BorderStyle::solid => "┗",
 				BorderStyle::double => "╚",
@@ -70,19 +70,19 @@ pub enum Edge {
 }
 
 impl Edge {
-	pub fn fmt(self, width: usize, variant: &BorderStyle) -> String {
+	pub fn fmt(self, width: usize, style: &BorderStyle) -> String {
 		match self {
 			Self::Top => format!(
 				"{}{: >width$}{}",
-				Border::TL.fmt(variant),
-				Border::T.fmt(variant).repeat(width),
-				Border::TR.fmt(variant),
+				Border::TL.fmt(style),
+				Border::T.fmt(style).repeat(width),
+				Border::TR.fmt(style),
 			),
 			Self::Bottom => format!(
 				"{}{: >width$}{}",
-				Border::BL.fmt(variant),
-				Border::B.fmt(variant).repeat(width),
-				Border::BR.fmt(variant),
+				Border::BL.fmt(style),
+				Border::B.fmt(style).repeat(width),
+				Border::BR.fmt(style),
 			),
 		}
 	}
@@ -97,14 +97,9 @@ pub enum Separator {
 }
 
 impl Separator {
-	pub fn fmt(self, width: usize, border_variant: &BorderStyle) -> String {
+	pub fn fmt(self, width: usize, style: &BorderStyle) -> String {
 		match self {
-			Self::Blank => format!(
-				"{}{: >width$}{}",
-				Border::L.fmt(border_variant),
-				"",
-				Border::R.fmt(border_variant)
-			),
+			Self::Blank => format!("{}{: >width$}{}", Border::L.fmt(style), "", Border::R.fmt(style)),
 			Self::Dashed => format!("├{:┈>width$}┤", ""),
 			Self::Single => format!("├{:─>width$}┤", ""),
 			Self::Solid => format!("┠{:─>width$}┨", ""),
