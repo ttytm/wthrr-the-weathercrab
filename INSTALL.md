@@ -11,7 +11,7 @@ https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>-->
 #### For ubuntu based distros:
 
 - ```
-  sudo apt install fonts-noto-core libssl-dev
+  sudo apt install fonts-noto-core libssl-dev pkg-config
   ```
 
 - When using the binaries, you may need to add libssl manually
