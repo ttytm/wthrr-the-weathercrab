@@ -9,7 +9,7 @@ use optional_struct::Applyable;
 use serde::{Deserialize, Serialize};
 
 use crate::modules::{
-	args::Cli,
+	args::{Cli, Forecast},
 	config::Config,
 	locales::{ConfigLocales, Locales},
 };
@@ -54,6 +54,8 @@ impl Params {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
+
+		self.config.forecast.retain(|forecast| *forecast != Forecast::disable);
 
 		if config_file.address.is_empty() {
 			// offer to save
