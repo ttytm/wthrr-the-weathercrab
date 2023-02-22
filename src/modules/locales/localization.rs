@@ -6,11 +6,13 @@ use reqwest::Url;
 use serde_json::Value;
 use std::{
 	fs::{self, File},
-	io::{BufReader, Read, Write},
+	io::Write,
 	path::PathBuf,
 };
 
 use super::{Locales, LocalesFile};
+
+const DATETIME_LOCALES: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/locales/pure-rust-locales.txt"));
 
 impl Locales {
 	pub async fn get(lang: &str) -> Result<Self> {
@@ -100,14 +102,9 @@ impl Locales {
 	}
 
 	pub fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
-		let file = File::open("./locales/pure-rust-locales.txt")?;
-		let mut reader = BufReader::new(file);
-		let mut contents = String::new();
-		reader.read_to_string(&mut contents)?;
-
 		let mut matching_locale: Option<&str> = None;
 
-		for line in contents.lines().skip(1) {
+		for line in DATETIME_LOCALES.lines().skip(1) {
 			if line == lang {
 				matching_locale = Some(line);
 				break;
@@ -115,7 +112,7 @@ impl Locales {
 		}
 
 		if matching_locale.is_none() {
-			for line in contents.lines().skip(1) {
+			for line in DATETIME_LOCALES.lines().skip(1) {
 				let short_lang_code: Vec<&str> = line.split('_').collect();
 
 				if short_lang_code[0] == lang {
