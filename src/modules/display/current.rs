@@ -65,53 +65,56 @@ impl Current {
 
 		let Dimensions { width, cell_width } = dimensions;
 
-		let (border, color) = (gui.border, gui.color);
-
 		// Border Top
-		println!("{}", &Edge::Top.fmt(width, &border).color_option(BrightBlack, &color));
+		println!(
+			"{}",
+			&Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
+		);
 
 		// Address / Title
 		println!(
 			"{} {: ^width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			address.bold(),
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&address, lang)
 		);
 
 		// Separator
 		println!(
 			"{}",
-			&match &border {
-				BorderStyle::double => Separator::Double.fmt(width, &border),
-				BorderStyle::solid => Separator::Solid.fmt(width, &border),
-				_ => Separator::Single.fmt(width, &border),
+			&match &gui.border {
+				BorderStyle::double => Separator::Double.fmt(width, &gui.border),
+				BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
+				_ => Separator::Single.fmt(width, &gui.border),
 			}
-			.color_option(BrightBlack, &color)
+			.color_option(BrightBlack, &gui.color)
 		);
 
 		// Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			(temperature + " " + &wmo_code.interpretation).bold(),
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			apparent_temperature,
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&apparent_temperature, lang)
 		);
 
 		// Blank Line
 		println!(
 			"{}",
-			Separator::Blank.fmt(width, &border).color_option(BrightBlack, &color)
+			Separator::Blank
+				.fmt(width, &gui.border)
+				.color_option(BrightBlack, &gui.color)
 		);
 
 		// Humidity & Dewpoint
@@ -123,39 +126,44 @@ impl Current {
 		);
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			humidity_dewpoint_split,
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
 		);
 
 		// Wind & Pressure
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			wind,
 			pressure,
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - cell_width
 		);
 
 		// Sunrise & Sunset
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(&border).color_option(BrightBlack, &color),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			sun_rise,
 			sun_set,
-			Border::R.fmt(&border).color_option(BrightBlack, &color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - cell_width
 		);
 
 		// Hourly Forecast
 		if let Some(hourly_forecast) = hourly_forecast {
-			hourly_forecast.render(width, units, &border, &color, t)
+			hourly_forecast.render(width, units, &gui.border, &gui.color, t)
 		}
 
 		// Border Bottom
-		println!("{}", Edge::Bottom.fmt(width, &border).color_option(BrightBlack, &color));
+		println!(
+			"{}",
+			Edge::Bottom
+				.fmt(width, &gui.border)
+				.color_option(BrightBlack, &gui.color)
+		);
 
 		Ok(dimensions)
 	}
