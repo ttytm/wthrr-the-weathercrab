@@ -160,7 +160,7 @@ impl Forecast {
 				)
 				.unwrap();
 
-			let date = if lang != "en_US" || lang != "en" {
+			let date = if !(lang == "en_US" || lang == "en") {
 				Locales::localize_date(dt, lang)?
 			} else {
 				dt.format("%a, %e %b").to_string()

@@ -24,7 +24,7 @@ impl Locales {
 				match serde_json::from_str::<LocalesFile>(&file) {
 					Ok(contents) => contents.apply_to(&mut texts),
 					Err(_) => {
-						if lang != "en_US" || lang != "en" {
+						if !(lang == "en_US" || lang == "en") {
 							texts.translate_all(lang).await?;
 						}
 						return Ok(texts);
@@ -32,7 +32,7 @@ impl Locales {
 				};
 			}
 			Err(_) => {
-				if lang != "en_US" || lang != "en" {
+				if !(lang == "en_US" || lang == "en") {
 					texts.translate_all(lang).await?;
 				}
 			}
