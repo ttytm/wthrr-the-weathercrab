@@ -11,15 +11,15 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  lint:
+  Lint:
     uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@main
 
-  test:
-    needs: lint
+  Test:
+    needs: Lint
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macOS-11, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -39,23 +39,25 @@ jobs:
           RUST_BACKTRACE: full
         run: |
           cargo nextest run --verbose --profile ci
-      - if: runner.os == 'Linux'
-        name: Publish test results for Linux
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
-          junit_files: target/nextest/ci/junit.xml
-          check_name: test results (${{ matrix.os }})
-          comment_title: Test Results
-      - if: runner.os != 'Linux'
-        name: Publish test results for ${{ runner.os }}
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        with:
-          junit_files: target/nextest/ci/junit.xml
-          check_name: test results (${{ matrix.os }})
-          comment_title: Test Results
-          comment_mode: off
+          name: test-results-${{ matrix.os }}
+          path: |
+            target/nextest/ci/junit.xml
 
-  build:
+  Event:
+    needs: test
+    name: Upload Event
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@v3
+        with:
+          name: event-artifact
+          path: ${{ github.event_path }}
+
+  Build:
     needs: test
     strategy:
       fail-fast: false
