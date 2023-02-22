@@ -54,11 +54,11 @@ impl Config {
 		let path = Self::get_path();
 
 		if let Ok(file) = fs::read_to_string(&path) {
-			let cfg_form_file: ConfigFile = match Options::default()
+			match Options::default()
 				.with_default_extension(Extensions::IMPLICIT_SOME)
-				.from_str(&file)
+				.from_str::<ConfigFile>(&file)
 			{
-				Ok(contents) => contents,
+				Ok(contents) => contents.apply_to(&mut config),
 				Err(error) => {
 					let warning_sign = " Warning:".color(Yellow);
 					eprintln!(
@@ -70,8 +70,6 @@ impl Config {
 					return config;
 				}
 			};
-
-			cfg_form_file.apply_to(&mut config);
 		}
 
 		config
