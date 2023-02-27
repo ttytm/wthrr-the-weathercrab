@@ -129,7 +129,7 @@ If you are using GNU/Linux the location usually is `~/.config/weathercrab/wthrr.
         temperature: celsius, // Temperature units: `celsius` | `fahrenheit`
         speed: kmh, // (Wind)speed units: `kmh` | `mph` | `knots` | `ms`
         time: military, // Time Format: `military` | `ap_pm`
-        precipitation: mm, // Precipitation units: `mm` | `inch`
+        precipitation: probability, // Precipitation units: `probability` | `mm` | `inch`
     ),
     gui: (
         border: rounded, // Border style: `rounded` | `single` | `solid` | `double`
