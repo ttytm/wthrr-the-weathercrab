@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
 
-use crate::modules::params::units::Units;
+use crate::modules::params::units::{Precipitation, Units};
 
 // Open meteo json
 // E.g., London:
@@ -50,6 +50,7 @@ pub struct Hourly {
 	pub dewpoint_2m: Vec<f64>,
 	pub windspeed_10m: Vec<f64>,
 	pub precipitation: Vec<f64>,
+	pub precipitation_probability: Vec<u8>,
 	pub weathercode: Vec<f64>,
 }
 
@@ -76,12 +77,13 @@ pub struct Daily {
 }
 
 impl Weather {
-	pub async fn get(lat: f64, lon: f64, unit: &Units) -> Result<Weather> {
+	pub async fn get(lat: f64, lon: f64, units: &Units) -> Result<Weather> {
+		// TODO: conditionally extend api instead of always including everything
 		let url = format!(
 			"https://api.open-meteo.com/v1/forecast?
 latitude={}
 &longitude={}
-&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m,precipitation,weathercode
+&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m,weathercode,precipitation,precipitation_probability
 &daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min
 &current_weather=true
 &temperature_unit={}
@@ -90,9 +92,9 @@ latitude={}
 &timezone=auto",
 			lat,
 			lon,
-			unit.temperature.as_ref(),
-			unit.speed.as_ref(),
-			unit.precipitation.as_ref(),
+			units.temperature.as_ref(),
+			units.speed.as_ref(),
+			if units.precipitation == Precipitation::percent { "mm" } else {units.precipitation.as_ref()},
 		);
 
 		let res = reqwest::get(url)

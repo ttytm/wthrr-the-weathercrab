@@ -12,7 +12,7 @@ pub struct Cli {
 	#[arg(long, short, use_value_delimiter = true, value_name = "FORECAST,...")]
 	pub forecast: Vec<Forecast>,
 
-	/// [e.g.: -u f,12h]
+	/// [e.g.: -u f,12h,in]
 	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
 	pub units: Vec<UnitArg>,
 
@@ -73,6 +73,8 @@ pub enum UnitArg {
 	AmPm,
 	#[value(name = "24h", alias = "military")]
 	Military,
+	#[value(name = "%", alias = "percent")]
+	Percent,
 	Mm,
 	#[value(name = "(in)ch", alias = "in")]
 	Inch,

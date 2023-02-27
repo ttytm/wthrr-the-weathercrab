@@ -12,7 +12,7 @@ use crate::modules::{
 		gui::{ColorOption, ColorVariant},
 		units::{Precipitation, Temperature, Time, Units},
 	},
-	weather::{Hourly, Weather},
+	weather::Weather,
 };
 
 use super::{
@@ -52,8 +52,9 @@ impl HourlyForecast {
 			_ => "糖",
 		};
 		let precipitation_unit = match units.precipitation {
+			Precipitation::mm => "ₘₘ",
 			Precipitation::inch => "ᵢₙ",
-			_ => "ₘₘ",
+			_ => " 揄",
 		};
 
 		println!(
@@ -161,31 +162,32 @@ impl HourlyForecast {
 		current_hour: usize,
 		night: bool,
 		graph_opts: &GraphOpts,
+		units: &Units,
 		t: &WeatherCodeLocales,
 	) -> Result<Self> {
-		let Hourly {
-			temperature_2m,
-			weathercode,
-			precipitation,
-			..
-		} = &weather.hourly;
+		let (temperatures, weather_codes, precipitation);
 
-		// slice 25 items to use the 25th in the last "next_level" of a graph
-		// show weather of the next day if it is the last hour of the current day
-		let temperatures = if current_hour != 23 {
-			&temperature_2m[..=24]
+		// The graph splits one hour into three "levels": last, current and next.
+		// We slice 25 items to use the 25th in the last "next"-level of a graph.
+		// If it's the end of one day we show the weather of the next day
+		if current_hour != 23 {
+			temperatures = &weather.hourly.temperature_2m[..=24];
+			weather_codes = &weather.hourly.weathercode[..=24];
+			precipitation = match units.precipitation {
+				Precipitation::percent => {
+					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
+				}
+				_ => Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?,
+			};
 		} else {
-			&temperature_2m[25..=49]
-		};
-		let weather_codes = if current_hour != 23 {
-			&weathercode[..=24]
-		} else {
-			&weathercode[25..=49]
-		};
-		let precipitation = if current_hour != 23 {
-			&precipitation[..=24]
-		} else {
-			&precipitation[25..=49]
+			temperatures = &weather.hourly.temperature_2m[25..=49];
+			weather_codes = &weather.hourly.weathercode[25..=49];
+			precipitation = match units.precipitation {
+				Precipitation::percent => {
+					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
+				}
+				_ => Self::prepare_precipitation(&weather.hourly.precipitation[25..=49])?,
+			};
 		};
 
 		let time_indicator_col = match graph_opts.time_indicator {
@@ -199,7 +201,7 @@ impl HourlyForecast {
 
 		Ok(HourlyForecast {
 			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, t)?,
-			precipitation: Self::prepare_precipitation(precipitation)?,
+			precipitation,
 			graph: Graph::prepare_graph(temperatures, graph_opts)?,
 			time_indicator_col,
 		})
@@ -224,12 +226,24 @@ impl HourlyForecast {
 		Ok(result)
 	}
 
+	// TODO: make precipitation fns generic by chance
 	fn prepare_precipitation(precipitation: &[f64]) -> Result<String> {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {
-			let prec = precipitation[hour].ceil() as i32;
-			let precipitation_sup = style_number(prec, true)?;
+			let precipitation_sup = style_number(precipitation[hour].ceil() as i32, true)?;
+			let colspan = if hour == 0 { 2 } else { 8 };
+			let _ = write!(result, "{precipitation_sup: >colspan$} ");
+		}
+
+		Ok(result)
+	}
+
+	fn prepare_precipitation_probability(precipitation: &[u8]) -> Result<String> {
+		let mut result = String::new();
+
+		for hour in DISPLAY_HOURS {
+			let precipitation_sup = style_number(precipitation[hour].into(), true)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{precipitation_sup: >colspan$} ");
 		}
