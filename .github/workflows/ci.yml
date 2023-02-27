@@ -39,22 +39,26 @@ jobs:
           RUST_BACKTRACE: full
         run: |
           cargo nextest run --verbose --profile ci
+          mv target/nextest/ci/junit.xml target/nextest/ci/junit-${{ matrix.os }}.xml
+      - name: Prepare test-results
+        run: |
+          mkdir -p test-results
+          mv target/nextest/ci/junit-*.xml test-results/
       - name: Upload test results
-        if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results
           path: |
-            target/nextest/ci/junit.xml
+            test-results
 
   Event:
     needs: test
-    name: Upload Event
+    name: Upload Test Event
     runs-on: ubuntu-latest
     steps:
       - uses: actions/upload-artifact@v3
         with:
-          name: event-artifact
+          name: test-event
           path: ${{ github.event_path }}
 
   Build:
