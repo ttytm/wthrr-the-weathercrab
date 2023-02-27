@@ -257,6 +257,7 @@ impl Current {
 				current_hour,
 				night,
 				graph_opts,
+				units,
 				&t.weather_code,
 			)?),
 			_ => None,
