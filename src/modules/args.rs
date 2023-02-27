@@ -73,8 +73,8 @@ pub enum UnitArg {
 	AmPm,
 	#[value(name = "24h", alias = "military")]
 	Military,
-	#[value(name = "%", alias = "percent")]
-	Percent,
+	#[value(name = "%", alias = "probability")]
+	Probability,
 	Mm,
 	#[value(name = "(in)ch", alias = "in")]
 	Inch,

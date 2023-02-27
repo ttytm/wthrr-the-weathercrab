@@ -174,7 +174,7 @@ impl HourlyForecast {
 			temperatures = &weather.hourly.temperature_2m[..=24];
 			weather_codes = &weather.hourly.weathercode[..=24];
 			precipitation = match units.precipitation {
-				Precipitation::percent => {
+				Precipitation::probability => {
 					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
 				}
 				_ => Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?,
@@ -183,7 +183,7 @@ impl HourlyForecast {
 			temperatures = &weather.hourly.temperature_2m[25..=49];
 			weather_codes = &weather.hourly.weathercode[25..=49];
 			precipitation = match units.precipitation {
-				Precipitation::percent => {
+				Precipitation::probability => {
 					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
 				}
 				_ => Self::prepare_precipitation(&weather.hourly.precipitation[25..=49])?,

@@ -53,7 +53,7 @@ pub enum Time {
 #[allow(non_camel_case_types)]
 pub enum Precipitation {
 	#[default]
-	percent,
+	probability,
 	mm,
 	inch,
 }
