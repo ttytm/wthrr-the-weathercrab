@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use chrono::prelude::*;
 use directories::ProjectDirs;
+use futures::{stream::FuturesOrdered, StreamExt};
 use optional_struct::Applyable;
 use reqwest::Url;
 use serde_json::Value;
@@ -45,11 +46,30 @@ impl Locales {
 		let size = std::mem::size_of_val(self);
 		let ptr = self as *mut Self as *mut u8;
 
+		let mut translated_values = Vec::new();
+		let mut futures = FuturesOrdered::new();
+
+		// Iterate over each field in the struct, create a future to translate the current field's value
 		for offset in (0..size).step_by(std::mem::size_of::<String>()) {
 			let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
 			let field_value = unsafe { &*field_ptr };
-			let new_value = Self::translate_str(lang, field_value).await?;
-			unsafe { *field_ptr = new_value };
+			let future = Self::translate_str(lang, field_value);
+			futures.push_back(future);
+		}
+
+		// Wait for each future in the stream to complete and store the translated values in a vector
+		while let Some(result) = futures.next().await {
+			let translated_value = result?;
+			translated_values.push(translated_value);
+		}
+
+		// Iterate over each field in the struct again, update current field value with the translated value
+		for (offset, translated_value) in (0..size)
+			.step_by(std::mem::size_of::<String>())
+			.zip(translated_values.into_iter())
+		{
+			let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
+			unsafe { *field_ptr = translated_value };
 		}
 
 		Ok(())
