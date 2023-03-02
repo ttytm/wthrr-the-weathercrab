@@ -82,9 +82,8 @@ pub enum UnitArg {
 }
 
 fn has_min_length(s: &str) -> Result<String> {
-	if s.len() >= 2 {
-		Ok(s.to_string())
-	} else {
-		Err(anyhow!("\n  The language code must be at least two characters long."))
+	match s.len() < 2 {
+		true => Err(anyhow!("\n  The language code must be at least two characters long.")),
+		_ => Ok(s.to_string()),
 	}
 }
