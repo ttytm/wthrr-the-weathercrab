@@ -18,7 +18,7 @@ impl Params {
 				println!(" 🦀  {}", self.texts.greeting);
 			}
 			if Confirm::with_theme(&ColorfulTheme::default())
-				.with_prompt(self.texts.search_station.clone())
+				.with_prompt(&self.texts.search_station)
 				.interact()?
 			{
 				let auto_loc = GeoIpLocation::get().await?;

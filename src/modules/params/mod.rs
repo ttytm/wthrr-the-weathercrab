@@ -74,13 +74,13 @@ impl Params {
 
 	async fn save_prompt(mut self, arg_address: &str) -> Result<()> {
 		let mut items = vec![
-			self.texts.config.confirm.clone(),
-			self.texts.config.next_time.clone(),
-			self.texts.config.deny.clone(),
+			&self.texts.config.confirm,
+			&self.texts.config.next_time,
+			&self.texts.config.deny,
 		];
 
 		if arg_address.is_empty() || arg_address == "auto" {
-			items.push(self.texts.config.always_auto.clone());
+			items.push(&self.texts.config.always_auto);
 		}
 
 		let selection = Select::with_theme(&ColorfulTheme::default())
@@ -105,7 +105,7 @@ impl Params {
 
 	pub async fn reset(t: &ConfigLocales) -> Result<()> {
 		let confirmation = Confirm::with_theme(&ColorfulTheme::default())
-			.with_prompt(t.reset_config.clone())
+			.with_prompt(&t.reset_config)
 			.interact()?;
 
 		if confirmation {
