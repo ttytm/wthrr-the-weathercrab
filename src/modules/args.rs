@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Result};
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
@@ -17,7 +18,7 @@ pub struct Cli {
 	pub units: Vec<UnitArg>,
 
 	/// Output language [e.g.: en_US]
-	#[arg(short, long, global = true)]
+	#[arg(short, long, value_parser = has_min_length)]
 	pub language: Option<String>,
 
 	/// Save the supplied values as default
@@ -78,4 +79,12 @@ pub enum UnitArg {
 	Mm,
 	#[value(name = "(in)ch", alias = "in")]
 	Inch,
+}
+
+fn has_min_length(s: &str) -> Result<String> {
+	if s.len() >= 2 {
+		Ok(s.to_string())
+	} else {
+		Err(anyhow!("\n  The language code must be at least two characters long."))
+	}
 }
