@@ -11,32 +11,27 @@ impl Params {
 			return Err(anyhow!("Your configuration requires you to specify a city."));
 		};
 
-		// Handle auto address via confirmation prompt
-		if arg_address.is_empty() && self.config.address.is_empty() {
-			if self.config.gui.greeting {
-				// greeting without indentation to match dialoger prompt
-				println!(" 🦀  {}", self.texts.greeting);
-			}
-			if Confirm::with_theme(&ColorfulTheme::default())
+		let prompt_user = arg_address.is_empty() && self.config.address.is_empty();
+		if self.config.gui.greeting {
+			println!("{} 🦀  {}", if prompt_user { "" } else { " " }, self.texts.greeting);
+		}
+
+		if prompt_user {
+			if !Confirm::with_theme(&ColorfulTheme::default())
 				.with_prompt(&self.texts.search_station)
 				.interact()?
 			{
-				let auto_loc = GeoIpLocation::get().await?;
-				self.config.address = format!("{},{}", auto_loc.city_name, auto_loc.country_code);
-				return Ok(());
-			} else {
 				std::process::exit(1)
-			};
-		};
-
-		// Handle address from args or config
-		if self.config.gui.greeting {
-			// greeting with indentation to match overall style
-			println!("  🦀  {}", self.texts.greeting);
-		}
-		if arg_address == "auto" || (arg_address.is_empty() && self.config.address == "auto") {
+			}
 			let auto_loc = GeoIpLocation::get().await?;
 			self.config.address = format!("{},{}", auto_loc.city_name, auto_loc.country_code);
+			return Ok(());
+		}
+
+		// Handle address from args or config
+		if arg_address == "auto" || (arg_address.is_empty() && self.config.address == "auto") {
+			let auto_loc = GeoIpLocation::get().await?;
+			self.config.address = format!("{},{}", auto_loc.city_name, auto_loc.country_code)
 		} else if !arg_address.is_empty() {
 			self.config.address = arg_address.to_string()
 		};
