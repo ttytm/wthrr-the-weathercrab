@@ -1,8 +1,9 @@
-use crate::modules::{config::Config, localization::Locales};
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 use reqwest::Client;
 use serde::Deserialize;
+
+use super::{config::Config, localization::Locales};
 
 #[derive(Deserialize)]
 pub struct Location {

@@ -13,7 +13,7 @@ use std::{
 	path::PathBuf,
 };
 
-use crate::modules::{
+use super::{
 	args::Forecast,
 	display::gui_config::{ConfigFileGui, Gui},
 	units::{ConfigFileUnits, Units},

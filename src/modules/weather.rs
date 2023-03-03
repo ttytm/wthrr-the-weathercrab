@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
 
-use crate::modules::units::{Precipitation, Units};
+use super::units::{Precipitation, Units};
 
 // Open meteo json
 // E.g., London:

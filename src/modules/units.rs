@@ -4,7 +4,7 @@ use std::str::FromStr;
 use strum::VariantNames;
 use strum_macros::{AsRefStr, EnumString, EnumVariantNames};
 
-use crate::modules::args::UnitArg;
+use super::args::UnitArg;
 
 #[optional_struct(ConfigFileUnits)]
 #[derive(Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]

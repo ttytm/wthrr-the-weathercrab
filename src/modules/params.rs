@@ -3,7 +3,7 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
 use serde::{Deserialize, Serialize};
 
-use crate::modules::{
+use super::{
 	args::{Cli, Forecast},
 	config::Config,
 	localization::{ConfigLocales, Locales},
