@@ -211,8 +211,8 @@ impl HourlyForecast {
 	}
 
 	fn prepare_temperatures(
-		temperatures: &[f64],
-		weather_codes: &[f64],
+		temperatures: &[f32],
+		weather_codes: &[u8],
 		night: bool,
 		t: &WeatherCodeLocales,
 	) -> Result<String> {
@@ -221,7 +221,7 @@ impl HourlyForecast {
 		for hour in DISPLAY_HOURS {
 			let temp = temperatures[hour].round() as i32;
 			let temp_sub = style_number(temp, true)?;
-			let wmo_code = WeatherCode::resolve(&weather_codes[hour], night, t)?;
+			let wmo_code = WeatherCode::resolve(weather_codes[hour], night, t)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);
 		}
@@ -230,7 +230,7 @@ impl HourlyForecast {
 	}
 
 	// TODO: make precipitation fns generic by chance
-	fn prepare_precipitation(precipitation: &[f64]) -> Result<String> {
+	fn prepare_precipitation(precipitation: &[f32]) -> Result<String> {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {

@@ -14,7 +14,7 @@ pub enum WindDirection {
 }
 
 impl WindDirection {
-	pub fn get_direction(wd: f64) -> Result<Self> {
+	pub fn get_direction(wd: f32) -> Result<Self> {
 		let direction = match wd % 360.0 {
 			wd if (337.5..=360.0).contains(&wd) || (0.0..22.5).contains(&wd) => WindDirection::N,
 			wd if (22.5..67.5).contains(&wd) => WindDirection::NE,
