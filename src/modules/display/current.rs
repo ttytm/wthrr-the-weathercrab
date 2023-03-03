@@ -89,7 +89,7 @@ impl Current {
 			.color_option(BrightBlack, &gui.color)
 		);
 
-		// Temperature
+		// Temperature & Weathercode
 		println!(
 			"{} {: <width$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -116,16 +116,15 @@ impl Current {
 		);
 
 		// Humidity & Dewpoint
-		let humidity_dewpoint_split = format!(
-			"{: <cell_width$}{}",
-			humidity,
-			dewpoint,
-			cell_width = cell_width - lang_len_diff(&humidity, lang)
-		);
 		println!(
 			"{} {: <width$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			humidity_dewpoint_split,
+			format!(
+				"{: <cell_width$}{}",
+				humidity,
+				dewpoint,
+				cell_width = cell_width - lang_len_diff(&humidity, lang)
+			),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
 		);
