@@ -46,13 +46,13 @@ impl HourlyForecast {
 		);
 
 		let temperature_unit = match units.temperature {
-			Temperature::fahrenheit => "宅",
-			_ => "糖",
+			Temperature::fahrenheit => "",
+			_ => "",
 		};
 		let precipitation_unit = match units.precipitation {
 			Precipitation::mm => "ₘₘ",
 			Precipitation::inch => "ᵢₙ",
-			_ => " 揄",
+			_ => "󰖎",
 		};
 
 		println!(
@@ -82,10 +82,10 @@ impl HourlyForecast {
 		}
 
 		println!(
-			"{} {: <width$}{}{}",
+			"{} {: <width$}{} {}",
 			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			self.temperatures.color_option(Yellow, color_variant).bold(),
-			temperature_unit.color_option(Yellow, color_variant),
+			temperature_unit.color_option(Yellow, color_variant).bold(),
 			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
 			width = width - 3
 		);
@@ -112,12 +112,17 @@ impl HourlyForecast {
 		);
 
 		println!(
-			"{} {: <width$}{}{}",
+			"{} {: <width$}{} {}",
 			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
 			self.precipitation.color_option(Blue, color_variant).bold(),
-			precipitation_unit.color_option(Blue, color_variant),
+			if units.precipitation == Precipitation::probability {
+				// to enlarge the water percent icon we use bold as a hack
+				precipitation_unit.color_option(Blue, color_variant).bold()
+			} else {
+				precipitation_unit.color_option(Blue, color_variant)
+			},
 			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
-			width = width - 4
+			width = width - 3
 		);
 
 		match self.time_indicator_col {
