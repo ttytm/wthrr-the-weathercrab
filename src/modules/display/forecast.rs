@@ -6,16 +6,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::modules::{
 	args::Forecast as ForecastParams,
-	locales::{Locales, WeatherLocales},
-	params::{
-		gui::{ColorOption, Gui},
-		units::Units,
-	},
+	localization::{Locales, WeatherLocales},
+	units::Units,
 };
 
 use super::{
 	border::*,
 	current::Current,
+	gui_config::{ColorOption, Gui},
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,
 	weathercode::WeatherCode,

@@ -2,16 +2,14 @@ use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
 use crate::modules::{
-	locales::WeatherLocales,
-	params::{
-		gui::{ColorOption, Gui},
-		units::{Time, Units},
-	},
+	localization::WeatherLocales,
+	units::{Time, Units},
 };
 
 use super::{
 	border::*,
 	graph::GraphOpts,
+	gui_config::{ColorOption, Gui},
 	hourly::HourlyForecast,
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,

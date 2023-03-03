@@ -2,17 +2,13 @@ use anyhow::Result;
 use colored::Color::BrightBlack;
 use regex::Regex;
 
-use crate::modules::{
-	args::Forecast as ForecastParams,
-	locales::WeatherLocales,
-	params::{
-		gui::{ColorOption, Gui},
-		units::Units,
-	},
-	weather::Weather,
-};
+use crate::modules::{args::Forecast as ForecastParams, localization::WeatherLocales, units::Units, weather::Weather};
 
-use super::{current::Current, forecast::Forecast};
+use super::{
+	current::Current,
+	forecast::Forecast,
+	gui_config::{ColorOption, Gui},
+};
 
 pub struct Product {
 	pub address: String,

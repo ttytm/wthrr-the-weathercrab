@@ -7,17 +7,15 @@ use colored::{
 use std::fmt::Write as _;
 
 use crate::modules::{
-	locales::{WeatherCodeLocales, WeatherLocales},
-	params::{
-		gui::{ColorOption, ColorVariant},
-		units::{Precipitation, Temperature, Time, Units},
-	},
+	localization::{WeatherCodeLocales, WeatherLocales},
+	units::{Precipitation, Temperature, Time, Units},
 	weather::Weather,
 };
 
 use super::{
 	border::*,
 	graph::{Graph, GraphOpts},
+	gui_config::{ColorOption, ColorVariant},
 	utils::style_number,
 	weathercode::WeatherCode,
 };

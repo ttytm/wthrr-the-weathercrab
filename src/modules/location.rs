@@ -1,4 +1,4 @@
-use crate::modules::{config::Config, locales::Locales};
+use crate::modules::{config::Config, localization::Locales};
 use anyhow::{anyhow, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 use reqwest::Client;

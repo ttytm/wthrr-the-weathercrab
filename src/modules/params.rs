@@ -1,6 +1,3 @@
-pub mod gui;
-pub mod units;
-
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
@@ -9,11 +6,10 @@ use serde::{Deserialize, Serialize};
 use crate::modules::{
 	args::{Cli, Forecast},
 	config::Config,
-	locales::{ConfigLocales, Locales},
+	localization::{ConfigLocales, Locales},
 	location::Location,
+	units::Units,
 };
-
-use self::units::Units;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Params {
