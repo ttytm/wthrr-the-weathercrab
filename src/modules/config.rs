@@ -13,12 +13,10 @@ use std::{
 	path::PathBuf,
 };
 
-use crate::modules::{
+use super::{
 	args::Forecast,
-	params::{
-		gui::{ConfigFileGui, Gui},
-		units::{ConfigFileUnits, Units},
-	},
+	display::gui_config::{ConfigFileGui, Gui},
+	units::{ConfigFileUnits, Units},
 };
 
 #[optional_struct(ConfigFile)]

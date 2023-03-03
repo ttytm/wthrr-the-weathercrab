@@ -4,14 +4,14 @@ use anyhow::Result;
 use clap::Parser;
 
 use modules::{
-	args::Cli, config::Config, display::product::Product, location::Address, params::Params, weather::Weather,
+	args::Cli, config::Config, display::product::Product, location::Location, params::Params, weather::Weather,
 };
 
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
 	let config = Config::get();
-	let params = Params::merge(config.clone(), &args).await?;
+	let params = Params::merge(&config, &args).await?;
 
 	let product = run(&params).await?;
 	product
@@ -30,9 +30,11 @@ async fn main() -> Result<()> {
 }
 
 pub async fn run(params: &Params) -> Result<Product> {
-	let loc = Address::search(&params.config.address, &params.config.language).await?;
-	let address = loc.name.to_string();
+	let loc = Location::get(&params.config.address, &params.config.language).await?;
 	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
 
-	Ok(Product { address, weather })
+	Ok(Product {
+		address: loc.name.to_string(),
+		weather,
+	})
 }
