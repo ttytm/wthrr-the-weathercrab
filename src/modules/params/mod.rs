@@ -1,8 +1,6 @@
 pub mod gui;
 pub mod units;
 
-mod address;
-
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
@@ -12,6 +10,7 @@ use crate::modules::{
 	args::{Cli, Forecast},
 	config::Config,
 	locales::{ConfigLocales, Locales},
+	location::Location,
 };
 
 use self::units::Units;
@@ -23,31 +22,38 @@ pub struct Params {
 }
 
 impl Params {
-	pub async fn merge(mut config: Config, args: &Cli) -> Result<Self> {
-		if let Some(language) = &args.language {
-			config.language = language.to_string()
-		}
+	pub async fn merge(config: &Config, args: &Cli) -> Result<Self> {
+		let language = match &args.language {
+			Some(lang) => lang.to_string(),
+			_ => config.language.to_string(),
+		};
 
-		let texts = Locales::get(&config.language).await?;
+		let texts = Locales::get(&language).await?;
 
 		if args.reset {
 			Self::reset(&texts.config).await?;
 			std::process::exit(1);
 		}
 
-		if !args.forecast.is_empty() {
-			config.forecast = args.forecast.to_vec();
-		}
+		let forecast = match !args.forecast.is_empty() {
+			true => args.forecast.to_vec(),
+			_ => config.forecast.to_vec(),
+		};
 
-		config.units = Units::get(&args.units, &config.units);
+		let units = Units::merge(&args.units, &config.units);
 
-		let mut params = Self { config, texts };
+		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
 
-		params
-			.resolve_address(args.address.as_deref().unwrap_or_default())
-			.await?;
-
-		Ok(params)
+		Ok(Self {
+			config: Config {
+				language,
+				forecast,
+				units,
+				address,
+				gui: config.gui.clone(),
+			},
+			texts,
+		})
 	}
 
 	pub async fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
