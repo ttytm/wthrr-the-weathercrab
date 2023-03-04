@@ -208,7 +208,7 @@ impl HourlyForecast {
 		let time_indicator_col = match graph_opts.time_indicator {
 			true => Some(
 				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
-				if current_hour != 23 { (current_hour * 3) + 3 } else { 0 }
+				if current_hour != 23 { (current_hour * 3) + 3 } else { 1 }
 					+ (Timelike::minute(&Utc::now()) / 20) as usize,
 			),
 			_ => None,
