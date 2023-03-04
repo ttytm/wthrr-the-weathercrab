@@ -162,7 +162,7 @@ impl Forecast {
 				dt.format("%a, %e %b").to_string()
 			};
 
-			let weather_code = WeatherCode::resolve(&product.weather.daily.weathercode[i], false, &t.weather_code)?;
+			let weather_code = WeatherCode::resolve(product.weather.daily.weathercode[i], false, &t.weather_code)?;
 			let weather = format!(
 				"{} {}{}/{}{}",
 				weather_code.icon,

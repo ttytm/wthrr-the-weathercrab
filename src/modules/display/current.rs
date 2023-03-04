@@ -224,7 +224,7 @@ impl Current {
 		);
 		let sun_rise = format!(" {sunrise_time}");
 		let sun_set = format!(" {sunset_time}");
-		let wmo_code = WeatherCode::resolve(&weather.current_weather.weathercode, night, &t.weather_code)?;
+		let wmo_code = WeatherCode::resolve(weather.current_weather.weathercode, night, &t.weather_code)?;
 		let hourly_forecast = match add_hourly {
 			true => Some(HourlyForecast::prepare(
 				weather,

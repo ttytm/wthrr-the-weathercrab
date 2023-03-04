@@ -12,7 +12,7 @@ pub struct Weather {
 	pub longitude: f64,
 	pub generationtime_ms: f64,
 	pub utc_offset_seconds: i32,
-	pub elevation: f64,
+	pub elevation: f32,
 	pub current_weather: CurrentWeather,
 	pub hourly_units: HourlyUnits,
 	pub hourly: Hourly,
@@ -22,10 +22,10 @@ pub struct Weather {
 
 #[derive(Deserialize, Debug)]
 pub struct CurrentWeather {
-	pub temperature: f64,
-	pub windspeed: f64,
-	pub winddirection: f64,
-	pub weathercode: f64,
+	pub temperature: f32,
+	pub windspeed: f32,
+	pub winddirection: f32,
+	pub weathercode: u8,
 	pub time: String,
 }
 
@@ -43,15 +43,15 @@ pub struct HourlyUnits {
 #[derive(Deserialize, Debug)]
 pub struct Hourly {
 	pub time: Vec<String>,
-	pub temperature_2m: Vec<f64>,
-	pub relativehumidity_2m: Vec<f64>,
-	pub apparent_temperature: Vec<f64>,
-	pub surface_pressure: Vec<f64>,
-	pub dewpoint_2m: Vec<f64>,
-	pub windspeed_10m: Vec<f64>,
-	pub precipitation: Vec<f64>,
+	pub temperature_2m: Vec<f32>,
+	pub relativehumidity_2m: Vec<f32>,
+	pub apparent_temperature: Vec<f32>,
+	pub surface_pressure: Vec<f32>,
+	pub dewpoint_2m: Vec<f32>,
+	pub windspeed_10m: Vec<f32>,
+	pub precipitation: Vec<f32>,
 	pub precipitation_probability: Vec<u8>,
-	pub weathercode: Vec<f64>,
+	pub weathercode: Vec<u8>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -68,12 +68,13 @@ pub struct DailyUnits {
 #[derive(Deserialize, Debug)]
 pub struct Daily {
 	pub time: Vec<String>,
-	pub weathercode: Vec<f64>,
+	pub weathercode: Vec<u8>,
 	pub sunrise: Vec<String>,
 	pub sunset: Vec<String>,
-	pub winddirection_10m_dominant: Vec<f64>,
-	pub temperature_2m_max: Vec<f64>,
-	pub temperature_2m_min: Vec<f64>,
+	pub winddirection_10m_dominant: Vec<u16>,
+	pub temperature_2m_max: Vec<f32>,
+	pub temperature_2m_min: Vec<f32>,
+	pub precipitation_probability_max: Vec<u8>,
 }
 
 impl Weather {
@@ -84,7 +85,7 @@ impl Weather {
 latitude={}
 &longitude={}
 &hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m,weathercode,precipitation,precipitation_probability
-&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min
+&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min,precipitation_probability_max
 &current_weather=true
 &temperature_unit={}
 &windspeed_unit={}

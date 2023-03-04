@@ -56,20 +56,20 @@ pub struct Graph(pub String, pub String);
 
 struct GraphLvls {
 	glyphs: Vec<char>,
-	margin: f64,
+	margin: f32,
 	current: usize,
 	next: usize,
 	last: Option<usize>,
 }
 
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f64], graph_opts: &GraphOpts) -> Result<Graph> {
+	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Result<Graph> {
 		let mut graph = Graph(String::new(), String::new());
 		let style = graph_opts.style;
 		let rowspan = graph_opts.rowspan;
 
-		let min_temp = temperatures.iter().fold(f64::INFINITY, |a, &b| a.min(b));
-		let max_temp = temperatures.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+		let min_temp = temperatures.iter().fold(f32::INFINITY, |a, &b| a.min(b));
+		let max_temp = temperatures.iter().copied().fold(f32::NEG_INFINITY, f32::max);
 
 		let mut graph_lvls = GraphLvls {
 			glyphs: vec![' '],
@@ -79,7 +79,7 @@ impl Graph {
 			last: None,
 		};
 		graph_lvls.glyphs = GraphLvls::get_glyphs(&style, &rowspan);
-		graph_lvls.margin = (max_temp - min_temp) / (graph_lvls.glyphs.len() - 1) as f64;
+		graph_lvls.margin = (max_temp - min_temp) / (graph_lvls.glyphs.len() - 1) as f32;
 
 		// Create Graph - calculate and push three characters per iteration to graph strings
 		// Single Line Graph

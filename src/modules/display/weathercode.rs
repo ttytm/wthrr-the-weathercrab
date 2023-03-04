@@ -8,8 +8,8 @@ pub struct WeatherCode {
 }
 
 impl WeatherCode {
-	pub fn resolve(weather_code: &f64, is_night: bool, t: &WeatherCodeLocales) -> Result<Self> {
-		let res = match *weather_code as u8 {
+	pub fn resolve(weather_code: u8, is_night: bool, t: &WeatherCodeLocales) -> Result<Self> {
+		let res = match weather_code {
 			0 => (&t.clear_sky, if is_night { '' } else { '' }),
 			1 => (&t.mostly_clear, if is_night { '' } else { '' }),
 			2 => (&t.partly_cloudy, if is_night { '' } else { '' }),
