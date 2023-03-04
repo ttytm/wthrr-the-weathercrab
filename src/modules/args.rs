@@ -6,7 +6,7 @@ use strum_macros::AsRefStr;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None, next_line_help = true)]
 pub struct Cli {
-	/// Address to check the weather for
+	/// Address to check the weather
 	pub address: Option<String>,
 
 	/// [e.g.: -f w,d]
