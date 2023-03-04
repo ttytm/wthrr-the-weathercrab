@@ -25,6 +25,8 @@ const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
 pub struct HourlyForecast {
 	temperatures: String,
 	precipitation: String,
+	temp_max_min: String,
+	precipitation_probability_max: u8,
 	graph: Graph,
 	time_indicator_col: Option<usize>,
 }
@@ -61,6 +63,16 @@ impl HourlyForecast {
 			t.hourly_forecast.bold(),
 			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
 			width = width - 2
+		);
+		println!(
+			"{} {} ❲{}{}❳{: <width$} {}",
+			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
+			self.temp_max_min,
+			self.precipitation_probability_max,
+			"󰖎".bold(),
+			"",
+			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
+			width = width - 5 - self.temp_max_min.len() - self.precipitation_probability_max.to_string().len()
 		);
 
 		match self.time_indicator_col {
@@ -202,9 +214,20 @@ impl HourlyForecast {
 			_ => None,
 		};
 
+		let temp_max_min = format!(
+			"{}/{}{}",
+			weather.daily.temperature_2m_max[0],
+			weather.daily.temperature_2m_min[0],
+			weather.hourly_units.temperature_2m,
+		);
+
+		let precipitation_probability_max = weather.daily.precipitation_probability_max[0];
+
 		Ok(HourlyForecast {
 			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, t)?,
 			precipitation,
+			temp_max_min,
+			precipitation_probability_max,
 			graph: Graph::prepare_graph(temperatures, graph_opts)?,
 			time_indicator_col,
 		})
