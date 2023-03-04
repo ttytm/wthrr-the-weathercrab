@@ -7,13 +7,13 @@ use serde::{Deserialize, Serialize};
 use crate::modules::{
 	args::Forecast as ForecastParams,
 	localization::{Locales, WeatherLocales},
-	units::Units,
+	params::Params,
 };
 
 use super::{
 	border::*,
 	current::Current,
-	gui_config::{ColorOption, Gui},
+	gui_config::ColorOption,
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,
 	weathercode::WeatherCode,
@@ -33,19 +33,12 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub fn render(
-		product: &Product,
-		forecast_params: &[ForecastParams],
-		units: &Units,
-		gui: &Gui,
-		lang: &str,
-		t: &WeatherLocales,
-	) -> Result<()> {
+	pub fn render(product: &Product, params: &Params) -> Result<()> {
 		let (mut include_day, mut include_week) = (false, false);
 
-		for val in forecast_params {
+		for val in &params.config.forecast {
 			if ForecastParams::disable == *val {
-				Current::render(product, false, units, gui, lang, t)?;
+				Current::render(product, params, false)?;
 				return Ok(());
 			}
 			if ForecastParams::day == *val {
@@ -56,18 +49,19 @@ impl Forecast {
 			}
 		}
 
-		// hourly forecast only
+		// Hourly forecast only
 		if include_day && !include_week {
-			Current::render(product, true, units, gui, lang, t)?;
+			Current::render(product, params, true)?;
 			return Ok(());
 		}
 
-		// weekly forecast - potentially including hourly forecast
-		let forecast = Self::prepare(product, lang, t)?;
+		// Weekly forecast - potentially including hourly forecast
+		let forecast = Self::prepare(product, &params.config.language, &params.texts.weather)?;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
+		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		if include_day {
-			let dimensions_current = Current::render(product, true, units, gui, lang, t)?;
+			let dimensions_current = Current::render(product, params, true)?;
 			if dimensions_current.cell_width > cell_width {
 				cell_width = dimensions_current.cell_width
 			}

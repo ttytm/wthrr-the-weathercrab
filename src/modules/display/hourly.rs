@@ -7,18 +7,13 @@ use colored::{
 use std::fmt::Write as _;
 
 use crate::modules::{
-	localization::{WeatherCodeLocales, WeatherLocales},
-	units::{Precipitation, Temperature, Time, Units},
+	localization::WeatherCodeLocales,
+	params::Params,
+	units::{Precipitation, Temperature, Time},
 	weather::Weather,
 };
 
-use super::{
-	border::*,
-	graph::{Graph, GraphOpts},
-	gui_config::{ColorOption, ColorVariant},
-	utils::style_number,
-	weathercode::WeatherCode,
-};
+use super::{border::*, graph::Graph, gui_config::ColorOption, utils::style_number, weathercode::WeatherCode};
 
 const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
 
@@ -32,19 +27,14 @@ pub struct HourlyForecast {
 }
 
 impl HourlyForecast {
-	pub fn render(
-		self,
-		width: usize,
-		units: &Units,
-		border_style: &BorderStyle,
-		color_variant: &ColorVariant,
-		t: &WeatherLocales,
-	) {
+	pub fn render(self, width: usize, params: &Params) {
+		let (units, gui, t) = (&params.config.units, &params.config.gui, &params.texts.weather);
+
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, border_style)
-				.color_option(BrightBlack, color_variant)
+				.fmt(width, &gui.border)
+				.color_option(BrightBlack, &gui.color)
 		);
 
 		let temperature_unit = match units.temperature {
@@ -59,19 +49,19 @@ impl HourlyForecast {
 
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			t.hourly_forecast.bold(),
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2
 		);
 		println!(
 			"{} {} ❲{}{}❳{: <width$} {}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			self.temp_max_min,
 			self.precipitation_probability_max,
 			"󰖎".bold(),
 			"",
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 5 - self.temp_max_min.len() - self.precipitation_probability_max.to_string().len()
 		);
 
@@ -79,61 +69,61 @@ impl HourlyForecast {
 			Some(_) => {
 				println!(
 					"{}",
-					self.prepare_separator(border_style, width, '╤')
-						.color_option(BrightBlack, color_variant),
+					self.prepare_separator(&gui.border, width, '╤')
+						.color_option(BrightBlack, &gui.color),
 				);
 			}
 			_ => {
 				println!(
 					"{}",
 					Separator::Dashed
-						.fmt(width, border_style)
-						.color_option(BrightBlack, color_variant)
+						.fmt(width, &gui.border)
+						.color_option(BrightBlack, &gui.color)
 				);
 			}
 		}
 
 		println!(
 			"{} {: <width$}{} {}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
-			self.temperatures.color_option(Yellow, color_variant).bold(),
-			temperature_unit.color_option(Yellow, color_variant).bold(),
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			self.temperatures.color_option(Yellow, &gui.color).bold(),
+			temperature_unit.color_option(Yellow, &gui.color).bold(),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 3
 		);
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, border_style)
-				.color_option(BrightBlack, color_variant)
+				.fmt(width, &gui.border)
+				.color_option(BrightBlack, &gui.color)
 		);
 
 		if self.graph.1.chars().count() > 0 {
 			println!(
 				"{}{}{}",
-				Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
-				self.graph.1.color_option(Yellow, color_variant),
-				Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
+				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				self.graph.1.color_option(Yellow, &gui.color),
+				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 			);
 		}
 		println!(
 			"{}{}{}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
-			self.graph.0.color_option(Yellow, color_variant),
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			self.graph.0.color_option(Yellow, &gui.color),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		println!(
 			"{} {: <width$}{} {}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant),
-			self.precipitation.color_option(Blue, color_variant).bold(),
+			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			self.precipitation.color_option(Blue, &gui.color).bold(),
 			if units.precipitation == Precipitation::probability {
 				// to enlarge the water percent icon we use bold as a hack
-				precipitation_unit.color_option(Blue, color_variant).bold()
+				precipitation_unit.color_option(Blue, &gui.color).bold()
 			} else {
-				precipitation_unit.color_option(Blue, color_variant)
+				precipitation_unit.color_option(Blue, &gui.color)
 			},
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant),
+			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 3
 		);
 
@@ -141,16 +131,16 @@ impl HourlyForecast {
 			Some(_) => {
 				println!(
 					"{}",
-					self.prepare_separator(border_style, width, '╧')
-						.color_option(BrightBlack, color_variant),
+					self.prepare_separator(&gui.border, width, '╧')
+						.color_option(BrightBlack, &gui.color),
 				);
 			}
 			_ => {
 				println!(
 					"{}",
 					Separator::Dashed
-						.fmt(width, border_style)
-						.color_option(BrightBlack, color_variant)
+						.fmt(width, &gui.border)
+						.color_option(BrightBlack, &gui.color)
 				);
 			}
 		}
@@ -159,27 +149,14 @@ impl HourlyForecast {
 			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!(
-			"{}",
-			Border::L.fmt(border_style).color_option(BrightBlack, color_variant)
-		);
+		print!("{}", Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 		for hour in hours {
 			print!("{hour: <9}")
 		}
-		println!(
-			"{}",
-			Border::R.fmt(border_style).color_option(BrightBlack, color_variant)
-		);
+		println!("{}", Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 	}
 
-	pub fn prepare(
-		weather: &Weather,
-		current_hour: usize,
-		night: bool,
-		graph_opts: &GraphOpts,
-		units: &Units,
-		t: &WeatherCodeLocales,
-	) -> Result<Self> {
+	pub fn prepare(weather: &Weather, current_hour: usize, night: bool, params: &Params) -> Result<Self> {
 		let (temperatures, weather_codes, precipitation);
 
 		// The graph splits one hour into three "levels": last, current and next.
@@ -188,7 +165,7 @@ impl HourlyForecast {
 		if current_hour != 23 {
 			temperatures = &weather.hourly.temperature_2m[..=24];
 			weather_codes = &weather.hourly.weathercode[..=24];
-			precipitation = match units.precipitation {
+			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
 					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
 				}
@@ -197,7 +174,7 @@ impl HourlyForecast {
 		} else {
 			temperatures = &weather.hourly.temperature_2m[25..=49];
 			weather_codes = &weather.hourly.weathercode[25..=49];
-			precipitation = match units.precipitation {
+			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
 					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
 				}
@@ -205,7 +182,7 @@ impl HourlyForecast {
 			};
 		};
 
-		let time_indicator_col = match graph_opts.time_indicator {
+		let time_indicator_col = match params.config.gui.graph.time_indicator {
 			true => Some(
 				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
 				if current_hour != 23 { (current_hour * 3) + 3 } else { 1 }
@@ -224,11 +201,16 @@ impl HourlyForecast {
 		let precipitation_probability_max = weather.daily.precipitation_probability_max[0];
 
 		Ok(HourlyForecast {
-			temperatures: Self::prepare_temperatures(temperatures, weather_codes, night, t)?,
+			temperatures: Self::prepare_temperatures(
+				temperatures,
+				weather_codes,
+				night,
+				&params.texts.weather.weather_code,
+			)?,
 			precipitation,
 			temp_max_min,
 			precipitation_probability_max,
-			graph: Graph::prepare_graph(temperatures, graph_opts)?,
+			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph)?,
 			time_indicator_col,
 		})
 	}

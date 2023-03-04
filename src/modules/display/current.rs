@@ -1,15 +1,11 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::modules::{
-	localization::WeatherLocales,
-	units::{Time, Units},
-};
+use crate::modules::{params::Params, units::Time};
 
 use super::{
 	border::*,
-	graph::GraphOpts,
-	gui_config::{ColorOption, Gui},
+	gui_config::ColorOption,
 	hourly::HourlyForecast,
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,
@@ -38,14 +34,7 @@ pub struct Dimensions {
 }
 
 impl Current {
-	pub fn render(
-		product: &Product,
-		add_hourly: bool,
-		units: &Units,
-		gui: &Gui,
-		lang: &str,
-		t: &WeatherLocales,
-	) -> Result<Dimensions> {
+	pub fn render(product: &Product, params: &Params, add_hourly: bool) -> Result<Dimensions> {
 		let Current {
 			address,
 			temperature,
@@ -59,9 +48,10 @@ impl Current {
 			wmo_code,
 			hourly_forecast,
 			dimensions,
-		} = Self::prepare(product, add_hourly, units, &gui.graph, t)?;
+		} = Self::prepare(product, params, add_hourly)?;
 
 		let Dimensions { width, cell_width } = dimensions;
+		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		// Border Top
 		println!(
@@ -151,7 +141,7 @@ impl Current {
 
 		// Hourly Forecast
 		if let Some(hourly_forecast) = hourly_forecast {
-			hourly_forecast.render(width, units, &gui.border, &gui.color, t)
+			hourly_forecast.render(width, params)
 		}
 
 		// Border Bottom
@@ -165,13 +155,7 @@ impl Current {
 		Ok(dimensions)
 	}
 
-	fn prepare(
-		product: &Product,
-		add_hourly: bool,
-		units: &Units,
-		graph_opts: &GraphOpts,
-		t: &WeatherLocales,
-	) -> Result<Self> {
+	fn prepare(product: &Product, params: &Params, add_hourly: bool) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60);
 
@@ -183,15 +167,16 @@ impl Current {
 			weather.daily.sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
 			weather.daily.sunset[0][11..13].parse::<usize>().unwrap_or_default(),
 		);
-		let sunrise_time = match units.time {
+		let sunrise_time = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
 			_ => weather.daily.sunrise[0][11..16].to_string(),
 		};
-		let sunset_time = match units.time {
+		let sunset_time = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
 			_ => weather.daily.sunset[0][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
+		let t = &params.texts.weather;
 
 		// Display Items
 		let temperature = format!(
@@ -226,14 +211,7 @@ impl Current {
 		let sun_set = format!(" {sunset_time}");
 		let wmo_code = WeatherCode::resolve(weather.current_weather.weathercode, night, &t.weather_code)?;
 		let hourly_forecast = match add_hourly {
-			true => Some(HourlyForecast::prepare(
-				weather,
-				current_hour,
-				night,
-				graph_opts,
-				units,
-				&t.weather_code,
-			)?),
+			true => Some(HourlyForecast::prepare(weather, current_hour, night, params)?),
 			_ => None,
 		};
 

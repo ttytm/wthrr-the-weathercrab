@@ -14,15 +14,7 @@ async fn main() -> Result<()> {
 	let params = Params::merge(&config, &args).await?;
 
 	let product = run(&params).await?;
-	product
-		.render(
-			&params.config.forecast,
-			&params.config.units,
-			&params.config.gui,
-			&params.config.language,
-			&params.texts.weather,
-		)
-		.await?;
+	product.render(&params).await?;
 
 	params.handle_next(args, config).await?;
 
