@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use crate::modules::{units::Time, weather::Weather};
+use crate::modules::{display::product::Product, units::Time, weather::Weather};
 
 pub struct Times {
 	pub current_hour: usize,
@@ -27,6 +27,30 @@ impl Weather {
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
 		Times { current_hour, sunrise, sunset, night }
+	}
+}
+
+impl Product {
+	pub fn trunc_address(mut address: String, max_width: usize) -> String {
+		let address_len = address.chars().count();
+
+		address = if address_len > max_width {
+			// For most locations with overly long addresses, the results seem to be better if
+			// truncated between the first and second comma instead the penultimate and last comma.
+			// let last_comma = title.matches(',').count();
+			let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
+			let re = Regex::new(&prep_re).unwrap();
+
+			re.replace(&address, "$1$2").to_string()
+		} else {
+			address
+		};
+
+		if address_len > max_width {
+			address = Self::trunc_address(address, max_width);
+		}
+
+		address
 	}
 }
 
