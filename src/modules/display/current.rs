@@ -162,11 +162,11 @@ impl Current {
 
 		// Display Items
 		let temperature = format!(
-			"{}{}",
+			"{:.1}{}",
 			weather.current_weather.temperature, weather.hourly_units.temperature_2m
 		);
 		let apparent_temperature = format!(
-			"{} {}{}",
+			"{} {:.1}{}",
 			t.feels_like, weather.hourly.apparent_temperature[current_hour], weather.hourly_units.temperature_2m
 		);
 		let humidity = format!(
@@ -174,7 +174,7 @@ impl Current {
 			t.humidity, weather.hourly.relativehumidity_2m[current_hour], weather.hourly_units.relativehumidity_2m,
 		);
 		let dewpoint = format!(
-			"{}: {}{}",
+			"{}: {:.1}{}",
 			t.dew_point, weather.hourly.dewpoint_2m[current_hour], weather.hourly_units.dewpoint_2m
 		);
 		let wind_direction = WindDirection::get_direction(weather.current_weather.winddirection)?;

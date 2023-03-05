@@ -209,7 +209,7 @@ impl HourlyForecast {
 		};
 
 		let temp_max_min = format!(
-			"{}/{}{}",
+			"{:.1}/{:.1}{}",
 			weather.daily.temperature_2m_max[0],
 			weather.daily.temperature_2m_min[0],
 			weather.hourly_units.temperature_2m,

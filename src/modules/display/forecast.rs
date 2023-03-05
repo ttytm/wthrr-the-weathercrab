@@ -158,7 +158,7 @@ impl Forecast {
 
 			let weather_code = WeatherCode::resolve(product.weather.daily.weathercode[i], false, &t.weather_code)?;
 			let weather = format!(
-				"{} {}{}/{}{}",
+				"{} {:.1}{}/{:.1}{}",
 				weather_code.icon,
 				product.weather.daily.temperature_2m_max[i],
 				product.weather.daily_units.temperature_2m_max,
