@@ -57,16 +57,16 @@ pub enum Forecast {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
 #[strum(serialize_all = "snake_case")]
 pub enum UnitArg {
-	// -- Temperature
+	// Temperature
 	#[value(name = "(c)elsius", aliases = ["c", "celsius"])]
 	Celsius,
 	#[value(name = "(f)ahrenheit", aliases = ["f", "fahrenheit"])]
 	Fahrenheit,
-	// -- Windspeed
+	// Windspeed
 	Kmh,
 	Mph,
 	#[value(name = "(kn)ots", aliases = ["kn", "knots"])]
-	// serialize as kn for open-meteo api call
+	// Serialize as kn for open-meteo api call
 	#[strum(serialize = "kn")]
 	Knots,
 	Ms,

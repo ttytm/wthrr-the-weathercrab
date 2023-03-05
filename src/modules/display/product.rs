@@ -17,7 +17,7 @@ impl Product {
 		if !params.config.forecast.is_empty() {
 			Forecast::render(self, params)?;
 		} else {
-			// render only current weather without hourly forecast
+			// Render current weather without hourly forecast
 			Current::render(self, params, false)?;
 		}
 

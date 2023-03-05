@@ -60,12 +60,12 @@ impl Params {
 		self.config.forecast.retain(|forecast| *forecast != Forecast::disable);
 
 		if config_file.address.is_empty() {
-			// offer to save
+			// Prompt to save
 			self.config.apply_to(&mut config_file);
 			self.config = config_file;
 			self.save_prompt(&args.address.unwrap_or_default()).await?;
 		} else {
-			// handle explicit save call
+			// Handle explicit save call
 			self.config.apply_to(&mut config_file);
 			config_file.store();
 			self.texts.store(&config_file.language);

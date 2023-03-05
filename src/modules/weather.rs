@@ -79,7 +79,7 @@ pub struct Daily {
 
 impl Weather {
 	pub async fn get(lat: f64, lon: f64, units: &Units) -> Result<Weather> {
-		// TODO: conditionally extend api instead of always including everything
+		// TODO: conditionally expand api call
 		let url = format!(
 			"https://api.open-meteo.com/v1/forecast?
 latitude={}
