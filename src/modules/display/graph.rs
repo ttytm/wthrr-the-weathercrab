@@ -1,4 +1,3 @@
-use anyhow::Result;
 use optional_struct::*;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -63,7 +62,7 @@ struct GraphLvls {
 }
 
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Result<Graph> {
+	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Graph {
 		let mut graph = Graph(String::new(), String::new());
 		let style = graph_opts.style;
 		let rowspan = graph_opts.rowspan;
@@ -127,7 +126,7 @@ impl Graph {
 				graph_lvls.last = Some(graph_lvls.next);
 			}
 
-			return Ok(graph);
+			return graph;
 		}
 
 		// Two Lines
@@ -274,7 +273,7 @@ impl Graph {
 			};
 		}
 
-		Ok(graph)
+		graph
 	}
 }
 

@@ -1,14 +1,14 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::modules::{params::Params, units::Time};
+use crate::modules::params::Params;
 
 use super::{
 	border::*,
 	gui_config::ColorOption,
 	hourly::HourlyForecast,
 	product::{Product, MIN_WIDTH},
-	utils::lang_len_diff,
+	utils::{lang_len_diff, Times},
 	weathercode::WeatherCode,
 	wind::WindDirection,
 };
@@ -21,10 +21,9 @@ pub struct Current {
 	dewpoint: String,
 	wind: String,
 	pressure: String,
-	sun_rise: String,
-	sun_set: String,
+	sunrise: String,
+	sunset: String,
 	wmo_code: WeatherCode,
-	hourly_forecast: Option<HourlyForecast>,
 	dimensions: Dimensions,
 }
 
@@ -43,10 +42,9 @@ impl Current {
 			dewpoint,
 			wind,
 			pressure,
-			sun_rise,
-			sun_set,
+			sunrise,
+			sunset,
 			wmo_code,
-			hourly_forecast,
 			dimensions,
 		} = Self::prepare(product, params, add_hourly)?;
 
@@ -133,15 +131,15 @@ impl Current {
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			sun_rise,
-			sun_set,
+			sunrise,
+			sunset,
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - cell_width
 		);
 
 		// Hourly Forecast
-		if let Some(hourly_forecast) = hourly_forecast {
-			hourly_forecast.render(width, params)
+		if add_hourly {
+			HourlyForecast::render(&product.weather, params)?;
 		}
 
 		// Border Bottom
@@ -158,25 +156,9 @@ impl Current {
 	fn prepare(product: &Product, params: &Params, add_hourly: bool) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60);
-
-		// Helpers
-		let (current_hour, sunrise_hour, sunset_hour) = (
-			weather.current_weather.time[11..13]
-				.parse::<usize>()
-				.unwrap_or_default(),
-			weather.daily.sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
-			weather.daily.sunset[0][11..13].parse::<usize>().unwrap_or_default(),
-		);
-		let sunrise_time = match params.config.units.time {
-			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
-			_ => weather.daily.sunrise[0][11..16].to_string(),
-		};
-		let sunset_time = match params.config.units.time {
-			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
-			_ => weather.daily.sunset[0][11..16].to_string(),
-		};
-		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 		let t = &params.texts.weather;
+
+		let Times { current_hour, sunrise, sunset, night } = product.weather.get_times(params.config.units.time);
 
 		// Display Items
 		let temperature = format!(
@@ -207,13 +189,9 @@ impl Current {
 			" {}{}",
 			weather.hourly.surface_pressure[current_hour], weather.hourly_units.surface_pressure
 		);
-		let sun_rise = format!(" {sunrise_time}");
-		let sun_set = format!(" {sunset_time}");
+		let sunrise = format!(" {sunrise}");
+		let sunset = format!(" {sunset}");
 		let wmo_code = WeatherCode::resolve(weather.current_weather.weathercode, night, &t.weather_code)?;
-		let hourly_forecast = match add_hourly {
-			true => Some(HourlyForecast::prepare(weather, current_hour, night, params)?),
-			_ => None,
-		};
 
 		// Dimensions
 		let title_width = address.chars().count();
@@ -221,7 +199,7 @@ impl Current {
 		let longest_cell_width = humidity.chars().count();
 		let dimensions = Dimensions {
 			width: if add_hourly {
-				72
+				super::hourly::WIDTH
 			} else if title_width > MIN_WIDTH {
 				title_width + title_padding
 			} else {
@@ -245,10 +223,9 @@ impl Current {
 			dewpoint,
 			wind,
 			pressure,
-			sun_rise,
-			sun_set,
+			sunrise,
+			sunset,
 			wmo_code,
-			hourly_forecast,
 			dimensions,
 		})
 	}

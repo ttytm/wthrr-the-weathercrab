@@ -13,9 +13,16 @@ use crate::modules::{
 	weather::Weather,
 };
 
-use super::{border::*, graph::Graph, gui_config::ColorOption, utils::style_number, weathercode::WeatherCode};
+use super::{
+	border::*,
+	graph::Graph,
+	gui_config::ColorOption,
+	utils::{style_number, Times},
+	weathercode::WeatherCode,
+};
 
 const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
+pub const WIDTH: usize = 72;
 
 pub struct HourlyForecast {
 	temperatures: String,
@@ -27,13 +34,22 @@ pub struct HourlyForecast {
 }
 
 impl HourlyForecast {
-	pub fn render(self, width: usize, params: &Params) {
+	pub fn render(weather: &Weather, params: &Params) -> Result<()> {
+		let HourlyForecast {
+			temperatures,
+			precipitation,
+			temp_max_min,
+			precipitation_probability_max,
+			graph,
+			time_indicator_col,
+		} = Self::prepare(weather, params)?;
+
 		let (units, gui, t) = (&params.config.units, &params.config.gui, &params.texts.weather);
 
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, &gui.border)
+				.fmt(WIDTH, &gui.border)
 				.color_option(BrightBlack, &gui.color)
 		);
 
@@ -48,75 +64,74 @@ impl HourlyForecast {
 		};
 
 		println!(
-			"{} {: <width$} {}",
+			"{} {: <WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			t.hourly_forecast.bold(),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			width = width - 2
+			WIDTH = WIDTH - 2
 		);
 		println!(
-			"{} {} ❲{}{}❳{: <width$} {}",
+			"{} {} ❲{}{}❳{: <WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			self.temp_max_min,
-			self.precipitation_probability_max,
+			temp_max_min,
+			precipitation_probability_max,
 			"󰖎".bold(),
 			"",
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			width = width - 5 - self.temp_max_min.len() - self.precipitation_probability_max.to_string().len()
+			WIDTH = WIDTH - 5 - temp_max_min.len() - precipitation_probability_max.to_string().len()
 		);
 
-		match self.time_indicator_col {
-			Some(_) => {
+		match time_indicator_col {
+			Some(col) => {
 				println!(
 					"{}",
-					self.prepare_separator(&gui.border, width, '╤')
-						.color_option(BrightBlack, &gui.color),
+					Self::prepare_separator(col, &gui.border, WIDTH, '╤').color_option(BrightBlack, &gui.color),
 				);
 			}
 			_ => {
 				println!(
 					"{}",
 					Separator::Dashed
-						.fmt(width, &gui.border)
+						.fmt(WIDTH, &gui.border)
 						.color_option(BrightBlack, &gui.color)
 				);
 			}
 		}
 
 		println!(
-			"{} {: <width$}{} {}",
+			"{} {: <WIDTH$}{} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			self.temperatures.color_option(Yellow, &gui.color).bold(),
+			temperatures.color_option(Yellow, &gui.color).bold(),
 			temperature_unit.color_option(Yellow, &gui.color).bold(),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			width = width - 3
+			WIDTH = WIDTH - 3
 		);
 		println!(
 			"{}",
 			&Separator::Blank
-				.fmt(width, &gui.border)
+				.fmt(WIDTH, &gui.border)
 				.color_option(BrightBlack, &gui.color)
 		);
 
-		if self.graph.1.chars().count() > 0 {
+		if graph.1.chars().count() > 0 {
 			println!(
 				"{}{}{}",
 				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-				self.graph.1.color_option(Yellow, &gui.color),
+				graph.1.color_option(Yellow, &gui.color),
 				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 			);
 		}
 		println!(
 			"{}{}{}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			self.graph.0.color_option(Yellow, &gui.color),
+			graph.0.color_option(Yellow, &gui.color),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		println!(
-			"{} {: <width$}{} {}",
+			"{} {: <WIDTH$}{} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			self.precipitation.color_option(Blue, &gui.color).bold(),
+			precipitation.color_option(Blue, &gui.color).bold(),
 			if units.precipitation == Precipitation::probability {
 				// to enlarge the water percent icon we use bold as a hack
 				precipitation_unit.color_option(Blue, &gui.color).bold()
@@ -124,22 +139,21 @@ impl HourlyForecast {
 				precipitation_unit.color_option(Blue, &gui.color)
 			},
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			width = width - 3
+			WIDTH = WIDTH - 3
 		);
 
-		match self.time_indicator_col {
-			Some(_) => {
+		match time_indicator_col {
+			Some(col) => {
 				println!(
 					"{}",
-					self.prepare_separator(&gui.border, width, '╧')
-						.color_option(BrightBlack, &gui.color),
+					Self::prepare_separator(col, &gui.border, WIDTH, '╧').color_option(BrightBlack, &gui.color),
 				);
 			}
 			_ => {
 				println!(
 					"{}",
 					Separator::Dashed
-						.fmt(width, &gui.border)
+						.fmt(WIDTH, &gui.border)
 						.color_option(BrightBlack, &gui.color)
 				);
 			}
@@ -154,10 +168,13 @@ impl HourlyForecast {
 			print!("{hour: <9}")
 		}
 		println!("{}", Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color));
+
+		Ok(())
 	}
 
-	pub fn prepare(weather: &Weather, current_hour: usize, night: bool, params: &Params) -> Result<Self> {
+	pub fn prepare(weather: &Weather, params: &Params) -> Result<Self> {
 		let (temperatures, weather_codes, precipitation);
+		let Times { current_hour, night, .. } = weather.get_times(params.config.units.time);
 
 		// The graph splits one hour into three "levels": last, current and next.
 		// We slice 25 items to use the 25th in the last "next"-level of a graph.
@@ -167,18 +184,18 @@ impl HourlyForecast {
 			weather_codes = &weather.hourly.weathercode[..=24];
 			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
-					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
+					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])
 				}
-				_ => Self::prepare_precipitation(&weather.hourly.precipitation[..=24])?,
+				_ => Self::prepare_precipitation(&weather.hourly.precipitation[..=24]),
 			};
 		} else {
 			temperatures = &weather.hourly.temperature_2m[25..=49];
 			weather_codes = &weather.hourly.weathercode[25..=49];
 			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
-					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])?
+					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])
 				}
-				_ => Self::prepare_precipitation(&weather.hourly.precipitation[25..=49])?,
+				_ => Self::prepare_precipitation(&weather.hourly.precipitation[25..=49]),
 			};
 		};
 
@@ -210,7 +227,7 @@ impl HourlyForecast {
 			precipitation,
 			temp_max_min,
 			precipitation_probability_max,
-			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph)?,
+			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph),
 			time_indicator_col,
 		})
 	}
@@ -225,7 +242,7 @@ impl HourlyForecast {
 
 		for hour in DISPLAY_HOURS {
 			let temp = temperatures[hour].round() as i32;
-			let temp_sub = style_number(temp, true)?;
+			let temp_sub = style_number(temp, true);
 			let wmo_code = WeatherCode::resolve(weather_codes[hour], night, t)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);
@@ -235,33 +252,36 @@ impl HourlyForecast {
 	}
 
 	// TODO: make precipitation fns generic by chance
-	fn prepare_precipitation(precipitation: &[f32]) -> Result<String> {
+	fn prepare_precipitation(precipitation: &[f32]) -> String {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {
-			let precipitation_sup = style_number(precipitation[hour].ceil() as i32, true)?;
+			let precipitation_sup = style_number(precipitation[hour].ceil() as i32, true);
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{precipitation_sup: >colspan$} ");
 		}
 
-		Ok(result)
+		result
 	}
 
-	fn prepare_precipitation_probability(precipitation: &[u8]) -> Result<String> {
+	fn prepare_precipitation_probability(precipitation: &[u8]) -> String {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {
-			let precipitation_sup = style_number(precipitation[hour].into(), true)?;
+			let precipitation_sup = style_number(precipitation[hour].into(), true);
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{precipitation_sup: >colspan$} ");
 		}
 
-		Ok(result)
+		result
 	}
 
-	fn prepare_separator(&self, border_variant: &BorderStyle, width: usize, time_indicator_glyph: char) -> String {
-		let time_indicator_col = self.time_indicator_col.unwrap();
-
+	fn prepare_separator(
+		time_indicator_col: usize,
+		border_variant: &BorderStyle,
+		width: usize,
+		time_indicator_glyph: char,
+	) -> String {
 		match border_variant {
 			BorderStyle::double => format!(
 				"╟{:─>time_indicator_col$}{:─>width$}╢",
