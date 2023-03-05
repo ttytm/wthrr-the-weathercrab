@@ -13,9 +13,7 @@ async fn main() -> Result<()> {
 	let config = Config::get();
 	let params = Params::merge(&config, &args).await?;
 
-	let product = run(&params).await?;
-	product.render(&params).await?;
-
+	run(&params).await?.render(&params).await?;
 	params.handle_next(args, config).await?;
 
 	Ok(())
