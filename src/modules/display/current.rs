@@ -93,6 +93,8 @@ impl Current {
 			apparent_temperature,
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&apparent_temperature, lang)
+            // manually account for displacepment of this row until improving the lang_len_diff regex
+            + if &lang[..2] == "ja" || &lang[..2] == "ko" { 2 } else { 0 }
 		);
 
 		// Blank Line
@@ -108,13 +110,14 @@ impl Current {
 			"{} {: <width$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			format!(
-				"{: <cell_width$}{}",
+				"{: <cell_width$} {}",
 				humidity,
 				dewpoint,
 				cell_width = cell_width - lang_len_diff(&humidity, lang)
 			),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
+				+ if &lang[..2] == "ja" || &lang[..2] == "ko" { 3 } else { 0 }
 		);
 
 		// Wind & Pressure

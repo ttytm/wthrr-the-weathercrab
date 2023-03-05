@@ -68,7 +68,7 @@ impl HourlyForecast {
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			t.hourly_forecast.bold(),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			WIDTH = WIDTH - 2
+			WIDTH = WIDTH - 2 - lang_len_diff(&t.hourly_forecast, &params.config.language)
 		);
 		println!(
 			"{} {} ❲{}{}❳{: <WIDTH$} {}",
