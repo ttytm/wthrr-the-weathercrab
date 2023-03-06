@@ -7,6 +7,7 @@ use colored::{
 use std::fmt::Write as _;
 
 use crate::modules::{
+	display::utils::lang_len_diff,
 	localization::WeatherCodeLocales,
 	params::Params,
 	units::{Precipitation, Temperature, Time},
