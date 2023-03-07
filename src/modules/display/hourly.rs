@@ -75,16 +75,16 @@ impl HourlyForecast {
 
 		// Day Max/Mix Temperatur + Max Precipitation
 		if day_index == 0 {
-		println!(
-			"{} {} ❲{}{}❳{: <WIDTH$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			temp_max_min,
-			precipitation_probability_max,
-			"󰖎".bold(),
-			"",
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			WIDTH = WIDTH - 5 - temp_max_min.len() - precipitation_probability_max.to_string().len()
-		);
+			println!(
+				"{} {} ❲{}{}❳{: <WIDTH$} {}",
+				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				temp_max_min,
+				precipitation_probability_max,
+				"󰖎".bold(),
+				"",
+				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				WIDTH = WIDTH - 5 - temp_max_min.len() - precipitation_probability_max.to_string().len()
+			);
 		}
 
 		// Graph Border Top with Potential Time Indicator
