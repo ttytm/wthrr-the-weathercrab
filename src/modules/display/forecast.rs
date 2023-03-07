@@ -5,14 +5,13 @@ use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
 use crate::modules::{
-	args::Forecast as ForecastParams,
 	localization::{Locales, WeatherLocales},
 	params::Params,
 };
 
 use super::{
 	border::*,
-	current::Current,
+	current::Dimensions,
 	gui_config::ColorOption,
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,
@@ -33,41 +32,14 @@ pub struct ForecastDay {
 }
 
 impl Forecast {
-	pub fn render(product: &Product, params: &Params) -> Result<()> {
-		let (mut include_day, mut include_week) = (false, false);
-
-		for val in &params.config.forecast {
-			if ForecastParams::disable == *val {
-				Current::render(product, params, false)?;
-				return Ok(());
-			}
-			if ForecastParams::day == *val {
-				include_day = true;
-			}
-			if ForecastParams::week == *val {
-				include_week = true;
-			}
-		}
-
-		// Hourly forecast only
-		if include_day && !include_week {
-			Current::render(product, params, true)?;
-			return Ok(());
-		}
-
-		// Weekly forecast - potentially including hourly forecast
+	pub fn render(product: &Product, params: &Params, current_dimensions: Option<Dimensions>) -> Result<()> {
 		let forecast = Self::prepare(product, &params.config.language, &params.texts.weather)?;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
-		if include_day {
-			let dimensions_current = Current::render(product, params, true)?;
-			if dimensions_current.cell_width > cell_width {
-				cell_width = dimensions_current.cell_width
-			}
-			if dimensions_current.width > width {
-				width = dimensions_current.width
-			}
+		if let Some(dims) = current_dimensions {
+			cell_width = std::cmp::max(cell_width, dims.cell_width);
+			width = std::cmp::max(width, dims.width);
 		}
 
 		// Border Top

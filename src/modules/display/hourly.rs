@@ -35,7 +35,7 @@ pub struct HourlyForecast {
 }
 
 impl HourlyForecast {
-	pub fn render(weather: &Weather, params: &Params) -> Result<()> {
+	pub fn render(weather: &Weather, params: &Params, day_index: usize) -> Result<()> {
 		let HourlyForecast {
 			temperatures,
 			precipitation,
@@ -43,7 +43,7 @@ impl HourlyForecast {
 			precipitation_probability_max,
 			graph,
 			time_indicator_col,
-		} = Self::prepare(weather, params)?;
+		} = Self::prepare(weather, params, day_index)?;
 
 		let (units, gui, t) = (&params.config.units, &params.config.gui, &params.texts.weather);
 
@@ -71,6 +71,7 @@ impl HourlyForecast {
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			WIDTH = WIDTH - 2 - lang_len_diff(&t.hourly_forecast, &params.config.language)
 		);
+		if day_index == 0 {
 		println!(
 			"{} {} ❲{}{}❳{: <WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -81,6 +82,7 @@ impl HourlyForecast {
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			WIDTH = WIDTH - 5 - temp_max_min.len() - precipitation_probability_max.to_string().len()
 		);
+		}
 
 		match time_indicator_col {
 			Some(col) => {
@@ -173,50 +175,91 @@ impl HourlyForecast {
 		Ok(())
 	}
 
-	pub fn prepare(weather: &Weather, params: &Params) -> Result<Self> {
-		let (temperatures, weather_codes, precipitation);
-		let Times { current_hour, night, .. } = weather.get_times(params.config.units.time);
+	pub fn prepare(weather: &Weather, params: &Params, day_index: usize) -> Result<Self> {
+		let (temperatures, weather_codes, precipitation): (&[f32], &[u8], Vec<u8>);
+		let Times { current_hour, night, .. } = weather.get_times(params.config.units.time, day_index);
 
 		// The graph splits one hour into three "levels": last, current and next.
 		// We slice 25 items to use the 25th in the last "next"-level of a graph.
 		// If it's the end of one day we show the weather of the next day
-		if current_hour != 23 {
-			temperatures = &weather.hourly.temperature_2m[..=24];
-			weather_codes = &weather.hourly.weathercode[..=24];
+		let day_start_idx = day_index * 24;
+		let day_end_idx = day_start_idx + 24;
+		let next_day_start_idx = day_end_idx + 1;
+		let next_day_end_idx = next_day_start_idx + 24;
+
+		// If it's the last possible requested day, last index(start_index of the 7th day) is not available.
+		// Therefore we'll extend the values by 1. For this we simply use the last value of the array twice.
+		let (mut temps, mut codes, mut prec);
+		if day_index == 6 {
+			temperatures = {
+				temps = weather.hourly.temperature_2m[day_start_idx..].to_vec();
+				temps.push(weather.hourly.temperature_2m[weather.hourly.temperature_2m.len() - 1]);
+				&temps
+			};
+			weather_codes = {
+				codes = weather.hourly.weathercode[day_start_idx..].to_vec();
+				codes.push(weather.hourly.weathercode[weather.hourly.weathercode.len() - 1]);
+				&codes
+			};
 			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
-					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])
+					prec = weather.hourly.precipitation_probability[day_start_idx..].to_vec();
+					prec.push(
+						weather.hourly.precipitation_probability[weather.hourly.precipitation_probability.len() - 1],
+					);
+					prec
 				}
-				_ => Self::prepare_precipitation(&weather.hourly.precipitation[..=24]),
+				_ => weather.hourly.precipitation[day_start_idx..]
+					.iter()
+					.map(|x| x.ceil() as u8)
+					.collect::<Vec<u8>>(),
+			};
+		} else if current_hour != day_end_idx - 1 || day_index == 6 {
+			temperatures = &weather.hourly.temperature_2m[day_start_idx..=day_end_idx];
+			weather_codes = &weather.hourly.weathercode[day_start_idx..=day_end_idx];
+			precipitation = match params.config.units.precipitation {
+				Precipitation::probability => {
+					weather.hourly.precipitation_probability[day_start_idx..=day_end_idx].to_vec()
+				}
+				_ => weather.hourly.precipitation[day_start_idx..=day_end_idx]
+					.iter()
+					.map(|x| x.ceil() as u8)
+					.collect::<Vec<u8>>(),
 			};
 		} else {
-			temperatures = &weather.hourly.temperature_2m[25..=49];
-			weather_codes = &weather.hourly.weathercode[25..=49];
+			temperatures = &weather.hourly.temperature_2m[next_day_start_idx..=next_day_end_idx];
+			weather_codes = &weather.hourly.weathercode[next_day_start_idx..=next_day_end_idx];
 			precipitation = match params.config.units.precipitation {
 				Precipitation::probability => {
-					Self::prepare_precipitation_probability(&weather.hourly.precipitation_probability[..=24])
+					weather.hourly.precipitation_probability[next_day_start_idx..=next_day_end_idx].to_vec()
 				}
-				_ => Self::prepare_precipitation(&weather.hourly.precipitation[25..=49]),
+				_ => weather.hourly.precipitation[next_day_start_idx..=next_day_end_idx]
+					.iter()
+					.map(|x| x.ceil() as u8)
+					.collect::<Vec<u8>>(),
 			};
 		};
 
 		let time_indicator_col = match params.config.gui.graph.time_indicator {
 			true => Some(
 				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
-				if current_hour != 23 { (current_hour * 3) + 3 } else { 1 }
-					+ (Timelike::minute(&Utc::now()) / 20) as usize,
+				if current_hour != day_end_idx - 1 {
+					(current_hour * 3) + 3
+				} else {
+					1
+				} + (Timelike::minute(&Utc::now()) / 20) as usize,
 			),
 			_ => None,
 		};
 
 		let temp_max_min = format!(
 			"{:.1}/{:.1}{}",
-			weather.daily.temperature_2m_max[0],
-			weather.daily.temperature_2m_min[0],
-			weather.hourly_units.temperature_2m,
+			weather.daily.temperature_2m_max[day_index],
+			weather.daily.temperature_2m_min[day_index],
+			weather.daily_units.temperature_2m_max,
 		);
 
-		let precipitation_probability_max = weather.daily.precipitation_probability_max[0];
+		let precipitation_probability_max = weather.daily.precipitation_probability_max[day_index];
 
 		Ok(HourlyForecast {
 			temperatures: Self::prepare_temperatures(
@@ -225,7 +268,7 @@ impl HourlyForecast {
 				night,
 				&params.texts.weather.weather_code,
 			)?,
-			precipitation,
+			precipitation: Self::prepare_precipitation(&precipitation),
 			temp_max_min,
 			precipitation_probability_max,
 			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph),
@@ -252,20 +295,7 @@ impl HourlyForecast {
 		Ok(result)
 	}
 
-	// TODO: make precipitation fns generic by chance
-	fn prepare_precipitation(precipitation: &[f32]) -> String {
-		let mut result = String::new();
-
-		for hour in DISPLAY_HOURS {
-			let precipitation_sup = style_number(precipitation[hour].ceil() as i32, true);
-			let colspan = if hour == 0 { 2 } else { 8 };
-			let _ = write!(result, "{precipitation_sup: >colspan$} ");
-		}
-
-		result
-	}
-
-	fn prepare_precipitation_probability(precipitation: &[u8]) -> String {
+	fn prepare_precipitation(precipitation: &[u8]) -> String {
 		let mut result = String::new();
 
 		for hour in DISPLAY_HOURS {

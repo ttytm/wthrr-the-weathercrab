@@ -13,6 +13,10 @@ pub struct Cli {
 	#[arg(long, short, use_value_delimiter = true, value_name = "FORECAST,...")]
 	pub forecast: Vec<Forecast>,
 
+	// /// [e.g.: -F 2021-01-01]
+	// #[arg(long, short, use_value_delimiter = true, value_name = "HISTORICAL WEATHER,...")]
+	// pub historical_weather: Date,
+	//
 	/// [e.g.: -u f,12h,in]
 	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
 	pub units: Vec<UnitArg>,
@@ -30,28 +34,28 @@ pub struct Cli {
 	pub reset: bool,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize, Hash)]
 #[allow(non_camel_case_types)]
 pub enum Forecast {
 	disable,
 	#[value(name = "(w)eek", aliases = ["w", "week"])]
 	week,
-	#[value(name = "(d)ay", aliases = ["d", "day", "today"])]
+	#[value(name = "to(d)ay", aliases = ["d", "day", "today"])]
 	day,
-	// #[value(alias = "monday")]
-	// mo,
-	// #[value(alias = "tuesday")]
-	// tu,
-	// #[value(alias = "wednesday")]
-	// we,
-	// #[value(alias = "thursday")]
-	// th,
-	// #[value(alias = "friday")]
-	// fr,
-	// #[value(alias = "saturday")]
-	// sa,
-	// #[value(alias = "sunday")]
-	// su,
+	#[value(aliases = ["mon", "monday"])]
+	mo,
+	#[value(aliases = ["tue", "tuesday"])]
+	tu,
+	#[value(aliases = ["wed", "wednesday"])]
+	we,
+	#[value(aliases = ["thu", "thursday"])]
+	th,
+	#[value(aliases = ["fri", "friday"])]
+	fr,
+	#[value(aliases = ["sat", "saturday"])]
+	sa,
+	#[value(aliases = ["sun", "sunday"])]
+	su,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]

@@ -142,7 +142,7 @@ impl Current {
 
 		// Hourly Forecast
 		if add_hourly {
-			HourlyForecast::render(&product.weather, params)?;
+			HourlyForecast::render(&product.weather, params, 0)?;
 		}
 
 		// Border Bottom
@@ -161,7 +161,7 @@ impl Current {
 		let address = Product::trunc_address(product.address.clone(), 60);
 		let t = &params.texts.weather;
 
-		let Times { current_hour, sunrise, sunset, night } = product.weather.get_times(params.config.units.time);
+		let Times { current_hour, sunrise, sunset, night } = product.weather.get_times(params.config.units.time, 0);
 
 		// Display Items
 		let temperature = format!(
