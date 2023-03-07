@@ -47,6 +47,7 @@ impl HourlyForecast {
 
 		let (units, gui, t) = (&params.config.units, &params.config.gui, &params.texts.weather);
 
+		// Blank Line
 		println!(
 			"{}",
 			&Separator::Blank
@@ -54,6 +55,7 @@ impl HourlyForecast {
 				.color_option(BrightBlack, &gui.color)
 		);
 
+		// Set Measurment Unit Symbols
 		let temperature_unit = match units.temperature {
 			Temperature::fahrenheit => "",
 			_ => "",
@@ -64,6 +66,7 @@ impl HourlyForecast {
 			_ => "󰖎",
 		};
 
+		// Hourly Forecast Heading
 		println!(
 			"{} {: <WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -71,6 +74,8 @@ impl HourlyForecast {
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			WIDTH = WIDTH - 2 - lang_len_diff(&t.hourly_forecast, &params.config.language)
 		);
+
+		// Day Max/Mix Temperatur + Max Precipitation
 		if day_index == 0 {
 		println!(
 			"{} {} ❲{}{}❳{: <WIDTH$} {}",
@@ -84,6 +89,7 @@ impl HourlyForecast {
 		);
 		}
 
+		// Graph Border Top with Potential Time Indicator
 		match time_indicator_col {
 			Some(col) => {
 				println!(
@@ -101,6 +107,7 @@ impl HourlyForecast {
 			}
 		}
 
+		// Temperatures
 		println!(
 			"{} {: <WIDTH$}{} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -109,6 +116,8 @@ impl HourlyForecast {
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			WIDTH = WIDTH - 3
 		);
+
+		// Blank Line
 		println!(
 			"{}",
 			&Separator::Blank
@@ -116,6 +125,7 @@ impl HourlyForecast {
 				.color_option(BrightBlack, &gui.color)
 		);
 
+		// Graph Row 1
 		if graph.1.chars().count() > 0 {
 			println!(
 				"{}{}{}",
@@ -124,6 +134,7 @@ impl HourlyForecast {
 				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 			);
 		}
+		// Graph Row 2
 		println!(
 			"{}{}{}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -131,6 +142,7 @@ impl HourlyForecast {
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
 		);
 
+		// Precipitation
 		println!(
 			"{} {: <WIDTH$}{} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -145,6 +157,7 @@ impl HourlyForecast {
 			WIDTH = WIDTH - 3
 		);
 
+		// Graph Border Bottom with Potential Time Indicator
 		match time_indicator_col {
 			Some(col) => {
 				println!(
@@ -162,11 +175,12 @@ impl HourlyForecast {
 			}
 		}
 
+		// Graph Hours Row
+		print!("{}", Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 		let hours = match units.time {
 			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
-		print!("{}", Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 		for hour in hours {
 			print!("{hour: <9}")
 		}
@@ -187,7 +201,7 @@ impl HourlyForecast {
 		let next_day_start_idx = day_end_idx + 1;
 		let next_day_end_idx = next_day_start_idx + 24;
 
-		// If it's the last possible requested day, last index(start_index of the 7th day) is not available.
+		// If it's the last possible requested day, the last index(start_index of the 7th day) is not available.
 		// Therefore we'll extend the values by 1. For this we simply use the last value of the array twice.
 		let (mut temps, mut codes, mut prec);
 		if day_index == 6 {
