@@ -43,10 +43,7 @@ impl Forecast {
 		}
 
 		// Border Top
-		println!(
-			"{}",
-			&Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", &Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -95,12 +92,7 @@ impl Forecast {
 		}
 
 		// Border Bottom
-		println!(
-			"{}",
-			Edge::Bottom
-				.fmt(width, &gui.border)
-				.color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		Ok(())
 	}

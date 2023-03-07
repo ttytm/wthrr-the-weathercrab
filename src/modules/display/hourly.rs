@@ -50,9 +50,7 @@ impl HourlyForecast {
 		// Blank Line
 		println!(
 			"{}",
-			&Separator::Blank
-				.fmt(WIDTH, &gui.border)
-				.color_option(BrightBlack, &gui.color)
+			&Separator::Blank.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		// Set Measurment Unit Symbols
@@ -100,9 +98,7 @@ impl HourlyForecast {
 			_ => {
 				println!(
 					"{}",
-					Separator::Dashed
-						.fmt(WIDTH, &gui.border)
-						.color_option(BrightBlack, &gui.color)
+					Separator::Dashed.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
 				);
 			}
 		}
@@ -120,9 +116,7 @@ impl HourlyForecast {
 		// Blank Line
 		println!(
 			"{}",
-			&Separator::Blank
-				.fmt(WIDTH, &gui.border)
-				.color_option(BrightBlack, &gui.color)
+			&Separator::Blank.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		// Graph Row 1
@@ -168,9 +162,7 @@ impl HourlyForecast {
 			_ => {
 				println!(
 					"{}",
-					Separator::Dashed
-						.fmt(WIDTH, &gui.border)
-						.color_option(BrightBlack, &gui.color)
+					Separator::Dashed.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
 				);
 			}
 		}

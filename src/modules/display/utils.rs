@@ -13,12 +13,8 @@ impl Weather {
 	pub fn get_times(&self, time_unit: Time, day_index: usize) -> Times {
 		let (current_hour, sunrise_hour, sunset_hour) = (
 			self.current_weather.time[11..13].parse::<usize>().unwrap_or_default(),
-			self.daily.sunrise[day_index][11..13]
-				.parse::<usize>()
-				.unwrap_or_default(),
-			self.daily.sunset[day_index][11..13]
-				.parse::<usize>()
-				.unwrap_or_default(),
+			self.daily.sunrise[day_index][11..13].parse::<usize>().unwrap_or_default(),
+			self.daily.sunset[day_index][11..13].parse::<usize>().unwrap_or_default(),
 		);
 		let sunrise = match time_unit {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &self.daily.sunrise[day_index][14..16]),

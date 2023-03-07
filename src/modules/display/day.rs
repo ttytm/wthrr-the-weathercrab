@@ -40,10 +40,7 @@ impl Day {
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		// Border Top
-		println!(
-			"{}",
-			&Edge::Top.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color));
 
 		// Address / Title
 		println!(
@@ -99,12 +96,7 @@ impl Day {
 		HourlyForecast::render(&product.weather, params, day_index)?;
 
 		// Border Bottom
-		println!(
-			"{}",
-			Edge::Bottom
-				.fmt(WIDTH, &gui.border)
-				.color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", Edge::Bottom.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color));
 
 		Ok(())
 	}
@@ -142,11 +134,8 @@ impl Day {
 		);
 		let sunrise = format!(" {sunrise}");
 		let sunset = format!(" {sunset}");
-		let wmo_code = WeatherCode::resolve(
-			weather.daily.weathercode[day_index],
-			night,
-			&params.texts.weather.weather_code,
-		)?;
+		let wmo_code =
+			WeatherCode::resolve(weather.daily.weathercode[day_index], night, &params.texts.weather.weather_code)?;
 
 		Ok(Day {
 			address,

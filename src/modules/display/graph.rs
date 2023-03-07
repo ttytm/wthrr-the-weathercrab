@@ -101,15 +101,11 @@ impl Graph {
 					}
 				} else {
 					// first iteration - without a last_lvl
-					graph
-						.0
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)])
+					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)])
 				}
 
 				// char 2/3
-				graph
-					.0
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)]);
+				graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)]);
 
 				// char 3/3 - compare with next level
 				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
@@ -187,13 +183,9 @@ impl Graph {
 						GraphStyle::dotted => graph.0.push('⣿'),
 						_ => graph.0.push(' '),
 					}
-					graph
-						.1
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+					graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 				} else {
-					graph
-						.0
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 					graph.1.push(' ');
 				}
 			}
@@ -204,13 +196,9 @@ impl Graph {
 					GraphStyle::dotted => graph.0.push('⣿'),
 					_ => graph.0.push(' '),
 				}
-				graph
-					.1
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+				graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 			} else {
-				graph
-					.0
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+				graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 				graph.1.push(' ');
 			}
 

@@ -52,10 +52,7 @@ impl Current {
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		// Border Top
-		println!(
-			"{}",
-			&Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", &Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		// Address / Title
 		println!(
@@ -100,9 +97,7 @@ impl Current {
 		// Blank Line
 		println!(
 			"{}",
-			Separator::Blank
-				.fmt(width, &gui.border)
-				.color_option(BrightBlack, &gui.color)
+			Separator::Blank.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
 		);
 
 		// Humidity & Dewpoint
@@ -146,12 +141,7 @@ impl Current {
 		}
 
 		// Border Bottom
-		println!(
-			"{}",
-			Edge::Bottom
-				.fmt(width, &gui.border)
-				.color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		Ok(dimensions)
 	}
