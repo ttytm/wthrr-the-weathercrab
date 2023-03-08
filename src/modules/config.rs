@@ -8,6 +8,7 @@ use ron::{
 };
 use serde::{Deserialize, Serialize};
 use std::{
+	collections::HashSet,
 	fs::{self, File},
 	io::Write,
 	path::PathBuf,
@@ -24,7 +25,7 @@ use super::{
 pub struct Config {
 	pub address: String,
 	pub language: String,
-	pub forecast: Vec<Forecast>,
+	pub forecast: HashSet<Forecast>,
 	#[optional_rename(ConfigFileUnits)]
 	pub units: Units,
 	#[optional_rename(ConfigFileGui)]
@@ -35,7 +36,7 @@ impl Default for Config {
 	fn default() -> Self {
 		Self {
 			address: String::new(),
-			forecast: vec![],
+			forecast: HashSet::new(),
 			language: "en_US".to_string(),
 			units: Units::default(),
 			gui: Gui::default(),

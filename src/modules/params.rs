@@ -1,14 +1,12 @@
-use std::collections::HashMap;
-
 use anyhow::{Context, Result};
-use chrono::{Datelike, Local, Weekday};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
 use serde::{Deserialize, Serialize};
 
 use super::{
-	args::{Cli, Forecast},
+	args::Cli,
 	config::Config,
+	forecast::get_indices,
 	localization::{ConfigLocales, Locales},
 	location::Location,
 	units::Units,
@@ -35,81 +33,32 @@ impl Params {
 			std::process::exit(1);
 		}
 
-		// Declare as mutable to disable time_indicator other days then current day
-		let mut gui = config.gui.to_owned();
-
 		let units = Units::merge(&args.units, &config.units);
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
 
-		let mut forecast = if !args.forecast.is_empty() {
-			args.forecast.to_owned()
-		} else {
-			config.forecast.to_owned()
+		let mut forecast = match !args.forecast.is_empty() {
+			true => args.forecast.iter().cloned().collect(),
+			_ => config.forecast.to_owned(),
 		};
 
-		// Create a map of indices for forecasts that should be rendered.
-		// It mainly serves as navigator in the arrays of the api response.
-		// [0] = current day; [1..7] = week days; [7] = week overview ; [8] = disable
-		// Until there is a more concise solution this is a working and fairly slim approach.
-		let mut forecast_indices = [false; 9];
-		if !forecast.is_empty() {
-			// Remove duplicates
-			let mut seen: HashMap<Forecast, bool> = HashMap::new();
-			forecast.retain(|&x| seen.insert(x, true).is_none());
-
-			let todays_index = Local::now().weekday().number_from_monday() as i8;
-
-			for val in &forecast {
-				match val {
-					Forecast::disable => forecast_indices[8] = true,
-					Forecast::day => forecast_indices[0] = true,
-					Forecast::week => forecast_indices[7] = true,
-					// Forecast weekdays
-					Forecast::mo => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Mon.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::tu => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Tue.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::we => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Wed.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::th => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Thu.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::fr => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Fri.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::sa => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Sat.number_from_monday() as i8)] =
-							true;
-					}
-					Forecast::su => {
-						forecast_indices[Self::get_day_index(todays_index, Weekday::Sun.number_from_monday() as i8)] =
-							true;
-					}
-				}
-				match val {
-					Forecast::mo
-					| Forecast::tu
-					| Forecast::we
-					| Forecast::th
-					| Forecast::fr
-					| Forecast::sa
-					| Forecast::su => gui.graph.time_indicator = false,
-					_ => (),
-				}
-			}
+		let forecast_indices = match !forecast.is_empty() {
+			true => get_indices(&forecast),
+			_ => [false; 9],
 		};
 
 		if forecast_indices[8] {
 			forecast.clear()
+		}
+
+		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
+		// TODO: only disable for week days, since the current approach disables it it for all days if week days are included.
+		let mut gui = config.gui.to_owned();
+		for val in forecast_indices.iter().skip(1).take(6) {
+			if *val {
+				gui.graph.time_indicator = false;
+				break;
+			}
 		}
 
 		Ok(Self {
@@ -125,16 +74,12 @@ impl Params {
 		})
 	}
 
-	fn get_day_index(todays_index: i8, weekday_index: i8) -> usize {
-		(((weekday_index - todays_index) % 7 + 7) % 7).try_into().unwrap()
-	}
-
 	pub async fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
 
-		// Restore time_indicator config setting in case it was disabled for a weekday / historical forecast
+		// Restore time_indicator config setting in case it was disabled for a weekday / historical forecast.
 		self.config.gui.graph.time_indicator = config_file.gui.graph.time_indicator;
 
 		if config_file.address.is_empty() {
