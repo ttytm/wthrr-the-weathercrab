@@ -5,7 +5,8 @@ pub mod hourly;
 pub mod product;
 
 mod current;
-mod forecast;
+mod day;
 mod utils;
 mod weathercode;
+mod week;
 mod wind;

@@ -1,14 +1,9 @@
 use anyhow::Result;
 use colored::Color::BrightBlack;
-use regex::Regex;
 
-use crate::modules::{args::Forecast as ForecastParams, localization::WeatherLocales, units::Units, weather::Weather};
+use crate::modules::{forecast::get_indices, params::Params, weather::Weather};
 
-use super::{
-	current::Current,
-	forecast::Forecast,
-	gui_config::{ColorOption, Gui},
-};
+use super::{current::Current, day::Day, gui_config::ColorOption, week::Week};
 
 pub struct Product {
 	pub address: String,
@@ -18,48 +13,39 @@ pub struct Product {
 pub const MIN_WIDTH: usize = 34;
 
 impl Product {
-	pub async fn render(
-		&self,
-		forecast: &[ForecastParams],
-		units: &Units,
-		gui: &Gui,
-		lang: &str,
-		t: &WeatherLocales,
-	) -> Result<()> {
-		if !forecast.is_empty() {
-			Forecast::render(self, forecast, units, gui, lang, t)?;
-		} else {
-			Current::render(self, false, units, gui, lang, t)?;
+	pub async fn render(&self, params: &Params) -> Result<()> {
+		if params.config.forecast.is_empty() {
+			// Today without hours
+			Current::render(self, params, false)?;
+			return Ok(());
+		}
+
+		let forecast_indices = get_indices(&params.config.forecast);
+
+		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
+			// Today with hours & weekly overview
+			Week::render(self, params, Some(Current::render(self, params, true)?))?;
+		} else if forecast_indices.contains(&7) {
+			// Weekly overview
+			Week::render(self, params, None)?;
+		} else if forecast_indices.contains(&0) {
+			// Today with hours
+			Current::render(self, params, true)?;
+		};
+
+		for i in forecast_indices {
+			// Weekdays
+			if i < 7 && i > 0 {
+				Day::render(self, params, i)?;
+			}
 		}
 
 		// Disclaimer
 		println!(
-			" {}",
-			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &gui.color)
+			"{}",
+			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color)
 		);
 
 		Ok(())
-	}
-
-	pub fn trunc_address(mut address: String, max_width: usize) -> String {
-		let address_len = address.chars().count();
-
-		address = if address_len > max_width {
-			// For most locations with overly long addresses, the results seem to be better if
-			// truncated between the first and second comma instead the penultimate and last comma.
-			// let last_comma = title.matches(',').count();
-			let prep_re = format!("^((?:[^,]*,){{{}}})[^,]*,(.*)", 1);
-			let re = Regex::new(&prep_re).unwrap();
-
-			re.replace(&address, "$1$2").to_string()
-		} else {
-			address
-		};
-
-		if address_len > max_width {
-			address = Self::trunc_address(address, max_width);
-		}
-
-		address
 	}
 }

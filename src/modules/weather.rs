@@ -74,18 +74,20 @@ pub struct Daily {
 	pub winddirection_10m_dominant: Vec<u16>,
 	pub temperature_2m_max: Vec<f32>,
 	pub temperature_2m_min: Vec<f32>,
+	pub apparent_temperature_max: Vec<f32>,
+	pub apparent_temperature_min: Vec<f32>,
 	pub precipitation_probability_max: Vec<u8>,
 }
 
 impl Weather {
 	pub async fn get(lat: f64, lon: f64, units: &Units) -> Result<Weather> {
-		// TODO: conditionally extend api instead of always including everything
+		// TODO: conditionally expand api call
 		let url = format!(
 			"https://api.open-meteo.com/v1/forecast?
 latitude={}
 &longitude={}
 &hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,dewpoint_2m,windspeed_10m,weathercode,precipitation,precipitation_probability
-&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min,precipitation_probability_max
+&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min,precipitation_probability_max,apparent_temperature_max,apparent_temperature_min
 &current_weather=true
 &temperature_unit={}
 &windspeed_unit={}

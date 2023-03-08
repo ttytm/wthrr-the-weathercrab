@@ -5,22 +5,21 @@ use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
 use crate::modules::{
-	args::Forecast as ForecastParams,
 	localization::{Locales, WeatherLocales},
-	units::Units,
+	params::Params,
 };
 
 use super::{
 	border::*,
-	current::Current,
-	gui_config::{ColorOption, Gui},
+	current::Dimensions,
+	gui_config::ColorOption,
 	product::{Product, MIN_WIDTH},
 	utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Forecast {
+pub struct Week {
 	pub days: Vec<ForecastDay>,
 	pub width: usize,
 }
@@ -32,55 +31,19 @@ pub struct ForecastDay {
 	pub interpretation: String,
 }
 
-impl Forecast {
-	pub fn render(
-		product: &Product,
-		forecast_params: &[ForecastParams],
-		units: &Units,
-		gui: &Gui,
-		lang: &str,
-		t: &WeatherLocales,
-	) -> Result<()> {
-		let (mut include_day, mut include_week) = (false, false);
-
-		for val in forecast_params {
-			if ForecastParams::disable == *val {
-				Current::render(product, false, units, gui, lang, t)?;
-				return Ok(());
-			}
-			if ForecastParams::day == *val {
-				include_day = true;
-			}
-			if ForecastParams::week == *val {
-				include_week = true;
-			}
-		}
-
-		// hourly forecast only
-		if include_day && !include_week {
-			Current::render(product, true, units, gui, lang, t)?;
-			return Ok(());
-		}
-
-		// weekly forecast - potentially including hourly forecast
-		let forecast = Self::prepare(product, lang, t)?;
+impl Week {
+	pub fn render(product: &Product, params: &Params, current_dimensions: Option<Dimensions>) -> Result<()> {
+		let forecast = Self::prepare(product, &params.config.language, &params.texts.weather)?;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
+		let (gui, lang) = (&params.config.gui, &params.config.language);
 
-		if include_day {
-			let dimensions_current = Current::render(product, true, units, gui, lang, t)?;
-			if dimensions_current.cell_width > cell_width {
-				cell_width = dimensions_current.cell_width
-			}
-			if dimensions_current.width > width {
-				width = dimensions_current.width
-			}
+		if let Some(dims) = current_dimensions {
+			cell_width = std::cmp::max(cell_width, dims.cell_width);
+			width = std::cmp::max(width, dims.width);
 		}
 
 		// Border Top
-		println!(
-			"{}",
-			&Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", &Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -129,12 +92,7 @@ impl Forecast {
 		}
 
 		// Border Bottom
-		println!(
-			"{}",
-			Edge::Bottom
-				.fmt(width, &gui.border)
-				.color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
 		Ok(())
 	}
@@ -164,7 +122,7 @@ impl Forecast {
 
 			let weather_code = WeatherCode::resolve(product.weather.daily.weathercode[i], false, &t.weather_code)?;
 			let weather = format!(
-				"{} {}{}/{}{}",
+				"{} {:.1}{}/{:.1}{}",
 				weather_code.icon,
 				product.weather.daily.temperature_2m_max[i],
 				product.weather.daily_units.temperature_2m_max,
@@ -187,6 +145,6 @@ impl Forecast {
 			days.push(day);
 		}
 
-		Ok(Forecast { width, days })
+		Ok(Week { width, days })
 	}
 }

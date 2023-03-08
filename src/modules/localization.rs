@@ -249,8 +249,7 @@ impl Locales {
 		};
 
 		let mut file = File::create(path).unwrap();
-		file.write_all(serde_json::to_string_pretty(self).unwrap().as_bytes())
-			.unwrap();
+		file.write_all(serde_json::to_string_pretty(self).unwrap().as_bytes()).unwrap();
 	}
 
 	pub fn get_path(lang: &str) -> PathBuf {

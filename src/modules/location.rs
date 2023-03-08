@@ -69,10 +69,7 @@ struct OpenMeteoGeoObj {
 
 impl GeoIpLocation {
 	pub async fn get() -> Result<GeoIpLocation> {
-		let res = reqwest::get("https://api.geoip.rs")
-			.await?
-			.json::<GeoIpLocation>()
-			.await?;
+		let res = reqwest::get("https://api.geoip.rs").await?.json::<GeoIpLocation>().await?;
 
 		Ok(res)
 	}
@@ -106,10 +103,7 @@ impl Location {
 	async fn search_open_meteo(client: &Client) -> Result<Location> {
 		let url = "https://geocoding-api.open-meteo.com/v1/search?name=Berlin&language=fr";
 		let results: OpenMeteoResults = client.get(url).send().await?.json().await?;
-		let result = results
-			.results
-			.first()
-			.ok_or_else(|| anyhow!("Location request failed."))?;
+		let result = results.results.first().ok_or_else(|| anyhow!("Location request failed."))?;
 
 		Ok(Location {
 			name: result.name.clone(),

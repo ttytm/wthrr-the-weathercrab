@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
@@ -21,7 +23,7 @@ impl Params {
 	pub async fn merge(config: &Config, args: &Cli) -> Result<Self> {
 		let language = match &args.language {
 			Some(lang) => lang.to_string(),
-			_ => config.language.to_string(),
+			_ => config.language.to_owned(),
 		};
 
 		let texts = Locales::get(&language).await?;
@@ -31,14 +33,20 @@ impl Params {
 			std::process::exit(1);
 		}
 
-		let forecast = match !args.forecast.is_empty() {
-			true => args.forecast.to_vec(),
-			_ => config.forecast.to_vec(),
-		};
-
 		let units = Units::merge(&args.units, &config.units);
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
+
+		let forecast = if args.forecast.contains(&Forecast::disable) {
+			HashSet::<Forecast>::new()
+		} else if !args.forecast.is_empty() {
+			args.forecast.iter().cloned().collect()
+		} else {
+			config.forecast.to_owned()
+		};
+
+		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
+		let gui = config.gui.to_owned();
 
 		Ok(Self {
 			config: Config {
@@ -46,7 +54,7 @@ impl Params {
 				forecast,
 				units,
 				address,
-				gui: config.gui.clone(),
+				gui,
 			},
 			texts,
 		})
@@ -57,15 +65,16 @@ impl Params {
 			return Ok(());
 		}
 
-		self.config.forecast.retain(|forecast| *forecast != Forecast::disable);
+		// Restore time_indicator config setting in case it was disabled for a weekday / historical forecast.
+		self.config.gui.graph.time_indicator = config_file.gui.graph.time_indicator;
 
 		if config_file.address.is_empty() {
-			// offer to save
+			// Prompt to save
 			self.config.apply_to(&mut config_file);
 			self.config = config_file;
 			self.save_prompt(&args.address.unwrap_or_default()).await?;
 		} else {
-			// handle explicit save call
+			// Handle explicit save call
 			self.config.apply_to(&mut config_file);
 			config_file.store();
 			self.texts.store(&config_file.language);

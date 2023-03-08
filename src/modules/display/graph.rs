@@ -1,4 +1,3 @@
-use anyhow::Result;
 use optional_struct::*;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -63,7 +62,7 @@ struct GraphLvls {
 }
 
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Result<Graph> {
+	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Graph {
 		let mut graph = Graph(String::new(), String::new());
 		let style = graph_opts.style;
 		let rowspan = graph_opts.rowspan;
@@ -102,15 +101,11 @@ impl Graph {
 					}
 				} else {
 					// first iteration - without a last_lvl
-					graph
-						.0
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)])
+					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)])
 				}
 
 				// char 2/3
-				graph
-					.0
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)]);
+				graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)]);
 
 				// char 3/3 - compare with next level
 				match Some(graph_lvls.next.cmp(&graph_lvls.current)) {
@@ -127,7 +122,7 @@ impl Graph {
 				graph_lvls.last = Some(graph_lvls.next);
 			}
 
-			return Ok(graph);
+			return graph;
 		}
 
 		// Two Lines
@@ -188,13 +183,9 @@ impl Graph {
 						GraphStyle::dotted => graph.0.push('⣿'),
 						_ => graph.0.push(' '),
 					}
-					graph
-						.1
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+					graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 				} else {
-					graph
-						.0
-						.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 					graph.1.push(' ');
 				}
 			}
@@ -205,13 +196,9 @@ impl Graph {
 					GraphStyle::dotted => graph.0.push('⣿'),
 					_ => graph.0.push(' '),
 				}
-				graph
-					.1
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+				graph.1.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 			} else {
-				graph
-					.0
-					.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
+				graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_double(Ordering::Equal)]);
 				graph.1.push(' ');
 			}
 
@@ -274,7 +261,7 @@ impl Graph {
 			};
 		}
 
-		Ok(graph)
+		graph
 	}
 }
 
