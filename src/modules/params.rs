@@ -1,12 +1,13 @@
+use std::collections::HashSet;
+
 use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
 use serde::{Deserialize, Serialize};
 
 use super::{
-	args::Cli,
+	args::{Cli, Forecast},
 	config::Config,
-	forecast::get_indices,
 	localization::{ConfigLocales, Locales},
 	location::Location,
 	units::Units,
@@ -15,7 +16,6 @@ use super::{
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Params {
 	pub config: Config,
-	pub forecast_indices: [bool; 9],
 	pub texts: Locales,
 }
 
@@ -37,19 +37,13 @@ impl Params {
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
 
-		let mut forecast = match !args.forecast.is_empty() {
-			true => args.forecast.iter().cloned().collect(),
-			_ => config.forecast.to_owned(),
+		let forecast = if args.forecast.contains(&Forecast::disable) {
+			HashSet::<Forecast>::new()
+		} else if !args.forecast.is_empty() {
+			args.forecast.iter().cloned().collect()
+		} else {
+			config.forecast.to_owned()
 		};
-
-		let forecast_indices = match !forecast.is_empty() {
-			true => get_indices(&forecast),
-			_ => [false; 9],
-		};
-
-		if forecast_indices[8] {
-			forecast.clear()
-		}
 
 		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
 		let gui = config.gui.to_owned();
@@ -62,7 +56,6 @@ impl Params {
 				address,
 				gui,
 			},
-			forecast_indices,
 			texts,
 		})
 	}
