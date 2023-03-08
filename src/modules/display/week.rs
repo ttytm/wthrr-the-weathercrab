@@ -19,7 +19,7 @@ use super::{
 };
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Forecast {
+pub struct Week {
 	pub days: Vec<ForecastDay>,
 	pub width: usize,
 }
@@ -31,7 +31,7 @@ pub struct ForecastDay {
 	pub interpretation: String,
 }
 
-impl Forecast {
+impl Week {
 	pub fn render(product: &Product, params: &Params, current_dimensions: Option<Dimensions>) -> Result<()> {
 		let forecast = Self::prepare(product, &params.config.language, &params.texts.weather)?;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
@@ -145,6 +145,6 @@ impl Forecast {
 			days.push(day);
 		}
 
-		Ok(Forecast { width, days })
+		Ok(Week { width, days })
 	}
 }

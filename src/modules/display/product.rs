@@ -3,7 +3,7 @@ use colored::Color::BrightBlack;
 
 use crate::modules::{forecast::get_indices, params::Params, weather::Weather};
 
-use super::{current::Current, day::Day, forecast::Forecast, gui_config::ColorOption};
+use super::{current::Current, day::Day, gui_config::ColorOption, week::Week};
 
 pub struct Product {
 	pub address: String,
@@ -24,10 +24,10 @@ impl Product {
 
 		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
 			// Today with hours & weekly overview
-			Forecast::render(self, params, Some(Current::render(self, params, true)?))?;
+			Week::render(self, params, Some(Current::render(self, params, true)?))?;
 		} else if forecast_indices.contains(&7) {
 			// Weekly overview
-			Forecast::render(self, params, None)?;
+			Week::render(self, params, None)?;
 		} else if forecast_indices.contains(&0) {
 			// Today with hours
 			Current::render(self, params, true)?;

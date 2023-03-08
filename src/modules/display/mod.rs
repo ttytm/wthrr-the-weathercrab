@@ -6,7 +6,7 @@ pub mod product;
 
 mod current;
 mod day;
-mod forecast;
 mod utils;
 mod weathercode;
+mod week;
 mod wind;
