@@ -52,14 +52,7 @@ impl Params {
 		}
 
 		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
-		// TODO: only disable for week days, since the current approach disables it it for all days if week days are included.
-		let mut gui = config.gui.to_owned();
-		for val in forecast_indices.iter().skip(1).take(6) {
-			if *val {
-				gui.graph.time_indicator = false;
-				break;
-			}
-		}
+		let gui = config.gui.to_owned();
 
 		Ok(Self {
 			config: Config {

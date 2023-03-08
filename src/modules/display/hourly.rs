@@ -246,8 +246,8 @@ impl HourlyForecast {
 			};
 		};
 
-		let time_indicator_col = match params.config.gui.graph.time_indicator {
-			true => Some(
+		let time_indicator_col = match day_index {
+			0 => Some(
 				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
 				if current_hour != day_end_idx - 1 {
 					(current_hour * 3) + 3
