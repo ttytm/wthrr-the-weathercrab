@@ -1,18 +1,25 @@
 use anyhow::Result;
+use chrono::NaiveDate;
 use colored::Color::BrightBlack;
+use std::collections::HashMap;
 
-use crate::modules::{forecast::get_indices, params::Params, weather::Weather};
+use crate::modules::{
+	forecast::get_indices,
+	params::Params,
+	weather::{OptionalWeather, Weather},
+};
 
-use super::{current::Current, day::Day, gui_config::ColorOption, week::Week};
+use super::{current::Current, day::Day, gui_config::ColorOption, historical::HistoricalWeather, week::Week};
 
-pub struct Product {
+pub struct Product<'a> {
 	pub address: String,
 	pub weather: Weather,
+	pub historical_weather: Option<HashMap<&'a NaiveDate, OptionalWeather>>,
 }
 
 pub const MIN_WIDTH: usize = 34;
 
-impl Product {
+impl Product<'_> {
 	pub async fn render(&self, params: &Params) -> Result<()> {
 		if params.config.forecast.is_empty() {
 			// Today without hours
