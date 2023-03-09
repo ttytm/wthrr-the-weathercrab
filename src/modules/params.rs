@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use anyhow::{Context, Result};
+use chrono::NaiveDate;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use optional_struct::Applyable;
-use serde::{Deserialize, Serialize};
 
 use super::{
 	args::{Cli, Forecast},
@@ -13,10 +13,11 @@ use super::{
 	units::Units,
 };
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug, Clone)]
 pub struct Params {
 	pub config: Config,
 	pub texts: Locales,
+	pub historical_weather: HashSet<NaiveDate>,
 }
 
 impl Params {
@@ -37,12 +38,20 @@ impl Params {
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
 
-		let forecast = if args.forecast.contains(&Forecast::disable) {
+		let forecast = if args.forecast.contains(&Forecast::disable)
+			|| (args.forecast.is_empty() && !args.historical_weather.is_empty())
+		{
 			HashSet::<Forecast>::new()
 		} else if !args.forecast.is_empty() {
 			args.forecast.iter().cloned().collect()
 		} else {
 			config.forecast.to_owned()
+		};
+
+		let historical_weather = if !args.historical_weather.is_empty() {
+			args.historical_weather.iter().cloned().collect()
+		} else {
+			HashSet::<NaiveDate>::new()
 		};
 
 		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
@@ -57,6 +66,7 @@ impl Params {
 				gui,
 			},
 			texts,
+			historical_weather,
 		})
 	}
 
