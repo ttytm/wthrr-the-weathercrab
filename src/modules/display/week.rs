@@ -4,10 +4,7 @@ use chrono::prelude::*;
 use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
-use crate::modules::{
-	localization::{Locales, WeatherLocales},
-	params::Params,
-};
+use crate::modules::{localization::Locales, params::Params};
 
 use super::{
 	border::*,
@@ -32,8 +29,8 @@ pub struct ForecastDay {
 }
 
 impl Week {
-	pub fn render(product: &Product, params: &Params, current_dimensions: Option<Dimensions>) -> Result<()> {
-		let forecast = Self::prepare(product, &params.config.language, &params.texts.weather)?;
+	pub fn render(self, params: &Params, current_dimensions: Option<Dimensions>) {
+		let forecast = self;
 		let (mut width, mut cell_width) = (forecast.width + 10, MIN_WIDTH / 2);
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
@@ -93,11 +90,10 @@ impl Week {
 
 		// Border Bottom
 		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
-
-		Ok(())
 	}
 
-	fn prepare(product: &Product, lang: &str, t: &WeatherLocales) -> Result<Self> {
+	pub fn prep(product: &Product, params: &Params) -> Result<Self> {
+		let (lang, t) = (&params.config.language, &params.texts.weather);
 		let mut days = Vec::new();
 		let mut width: usize = 0;
 
