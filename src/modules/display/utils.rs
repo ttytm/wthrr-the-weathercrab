@@ -2,7 +2,7 @@ use regex::Regex;
 
 use crate::modules::display::product::Product;
 
-impl Product {
+impl Product<'_> {
 	pub fn trunc_address(mut address: String, max_width: usize) -> String {
 		let address_len = address.chars().count();
 

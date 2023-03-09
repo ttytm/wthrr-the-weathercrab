@@ -10,13 +10,14 @@ use crate::modules::{
 	localization::WeatherCodeLocales,
 	params::Params,
 	units::{Precipitation, Temperature, Time},
-	weather::Weather,
+	weather::OptionalWeather,
 };
 
 use super::{
 	border::*,
 	graph::Graph,
 	gui_config::ColorOption,
+	product::Product,
 	utils::{lang_len_diff, style_number},
 	weathercode::WeatherCode,
 };
@@ -25,26 +26,31 @@ const DISPLAY_HOURS: [usize; 8] = [0, 3, 6, 9, 12, 15, 18, 21];
 pub const WIDTH: usize = 72;
 
 pub struct HourlyForecast {
+	heading: String,
 	temperatures: String,
 	precipitation: String,
-	temp_max_min: String,
-	precipitation_probability_max: u8,
 	graph: Graph,
+	summary: Option<WeatherSummery>,
 	time_indicator_col: Option<usize>,
 }
 
+struct WeatherSummery {
+	temp_max_min: String,
+	precipitation_probability_max: u8,
+}
+
 impl HourlyForecast {
-	pub fn render(weather: &Weather, params: &Params, day_index: usize) -> Result<()> {
+	pub fn render(self, params: &Params) {
 		let HourlyForecast {
+			heading,
 			temperatures,
 			precipitation,
-			temp_max_min,
-			precipitation_probability_max,
+			summary,
 			graph,
 			time_indicator_col,
-		} = Self::prepare(weather, params, day_index)?;
+		} = self;
 
-		let (units, gui, t) = (&params.config.units, &params.config.gui, &params.texts.weather);
+		let (units, gui) = (&params.config.units, &params.config.gui);
 
 		// Blank Line
 		println!(
@@ -67,22 +73,23 @@ impl HourlyForecast {
 		println!(
 			"{} {: <WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			t.hourly_forecast.bold(),
+			heading.bold(),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			WIDTH = WIDTH - 2 - lang_len_diff(&t.hourly_forecast, &params.config.language)
+			WIDTH = WIDTH - 2 - lang_len_diff(&heading, &params.config.language)
 		);
 
 		// Day Max/Mix Temperatur + Max Precipitation
-		if day_index == 0 {
+		if let Some(summary) = summary {
 			println!(
 				"{} {} ❲{}{}❳{: <WIDTH$} {}",
 				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-				temp_max_min,
-				precipitation_probability_max,
+				summary.temp_max_min,
+				summary.precipitation_probability_max,
 				"󰖎".bold(),
 				"",
 				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-				WIDTH = WIDTH - 5 - temp_max_min.len() - precipitation_probability_max.to_string().len()
+				WIDTH =
+					WIDTH - 5 - summary.temp_max_min.len() - summary.precipitation_probability_max.to_string().len()
 			);
 		}
 
@@ -176,11 +183,10 @@ impl HourlyForecast {
 			print!("{hour: <9}")
 		}
 		println!("{}", Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color));
-
-		Ok(())
 	}
 
-	pub fn prepare(weather: &Weather, params: &Params, day_index: usize) -> Result<Self> {
+	pub fn prepare(product: &Product, params: &Params, day_index: usize) -> Result<Self> {
+		let weather = &product.weather;
 		let current_hour = weather.current_weather.time[11..13].parse::<usize>().unwrap_or_default();
 
 		// The graph splits one hour into three "levels": last, current and next.
@@ -258,21 +264,27 @@ impl HourlyForecast {
 			None
 		};
 
-		let temp_max_min = format!(
-			"{:.1}/{:.1}{}",
-			weather.daily.temperature_2m_max[day_index],
-			weather.daily.temperature_2m_min[day_index],
-			weather.daily_units.temperature_2m_max,
-		);
-
 		let sunrise_sunset = (
 			weather.daily.sunrise[day_index][11..13].parse::<usize>().unwrap_or_default(),
 			weather.daily.sunset[day_index][11..13].parse::<usize>().unwrap_or_default(),
 		);
 
-		let precipitation_probability_max = weather.daily.precipitation_probability_max[day_index];
+		// Future or historical forecast already include a weather Max/Min summary in the top part of the display.
+		let summary = match day_index {
+			0 => Some(WeatherSummery {
+				temp_max_min: format!(
+					"{:.1}/{:.1}{}",
+					weather.daily.temperature_2m_max[day_index],
+					weather.daily.temperature_2m_min[day_index],
+					weather.daily_units.temperature_2m_max,
+				),
+				precipitation_probability_max: weather.daily.precipitation_probability_max[day_index],
+			}),
+			_ => None,
+		};
 
 		Ok(HourlyForecast {
+			heading: params.texts.weather.hourly_forecast.to_string(),
 			temperatures: Self::prepare_temperatures(
 				temperatures,
 				weather_codes,
@@ -280,10 +292,52 @@ impl HourlyForecast {
 				&params.texts.weather.weather_code,
 			)?,
 			precipitation: Self::prepare_precipitation(&precipitation),
-			temp_max_min,
-			precipitation_probability_max,
+			summary,
 			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph),
 			time_indicator_col,
+		})
+	}
+
+	pub fn prepare_historical(weather: &OptionalWeather, params: &Params) -> Result<Self> {
+		// If it's the last possible requested day, the last index(start_index of the 7th day) is not available.
+		// Therefore we'll extend the values by 1. For this we simply use the last value of the array twice.
+		let (mut temps, mut codes, mut prec);
+		let temperatures = {
+			temps = weather.hourly.as_ref().unwrap().temperature_2m.as_ref().unwrap()[0..].to_vec();
+			temps.push(temps[temps.len() - 1]);
+			&temps
+		};
+		let weather_codes = {
+			codes = weather.hourly.as_ref().unwrap().weathercode.as_ref().unwrap()[0..].to_vec();
+			codes.push(codes[codes.len() - 1]);
+			&codes
+		};
+		let sunrise_sunset = (
+			weather.daily.as_ref().unwrap().sunrise.as_ref().unwrap()[0][11..13]
+				.parse::<usize>()
+				.unwrap_or_default(),
+			weather.daily.as_ref().unwrap().sunset.as_ref().unwrap()[0][11..13]
+				.parse::<usize>()
+				.unwrap_or_default(),
+		);
+		let precipitation = {
+			prec = weather.hourly.as_ref().unwrap().precipitation.as_ref().unwrap()[0..].to_vec();
+			prec.push(prec[prec.len() - 1]);
+			prec.iter().map(|x| x.ceil() as u8).collect::<Vec<u8>>()
+		};
+
+		Ok(Self {
+			heading: params.texts.weather.daily_overview.to_string(),
+			temperatures: Self::prepare_temperatures(
+				temperatures,
+				weather_codes,
+				sunrise_sunset,
+				&params.texts.weather.weather_code,
+			)?,
+			precipitation: Self::prepare_precipitation(&precipitation),
+			summary: None,
+			graph: Graph::prepare_graph(temperatures, &params.config.gui.graph),
+			time_indicator_col: None,
 		})
 	}
 

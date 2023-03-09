@@ -25,6 +25,7 @@ pub struct Current {
 	sunset: String,
 	wmo_code: WeatherCode,
 	dimensions: Dimensions,
+	hourly_forecast: Option<HourlyForecast>,
 }
 
 pub struct Dimensions {
@@ -33,7 +34,7 @@ pub struct Dimensions {
 }
 
 impl Current {
-	pub fn render(product: &Product, params: &Params, add_hourly: bool) -> Result<Dimensions> {
+	pub fn render(self, params: &Params) -> Dimensions {
 		let Current {
 			address,
 			temperature,
@@ -46,7 +47,8 @@ impl Current {
 			sunset,
 			wmo_code,
 			dimensions,
-		} = Self::prepare(product, params, add_hourly)?;
+			hourly_forecast,
+		} = self;
 
 		let Dimensions { width, cell_width } = dimensions;
 		let (gui, lang) = (&params.config.gui, &params.config.language);
@@ -136,17 +138,17 @@ impl Current {
 		);
 
 		// Hourly Forecast
-		if add_hourly {
-			HourlyForecast::render(&product.weather, params, 0)?;
+		if let Some(forecast) = hourly_forecast {
+			forecast.render(params);
 		}
 
 		// Border Bottom
 		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
 
-		Ok(dimensions)
+		dimensions
 	}
 
-	fn prepare(product: &Product, params: &Params, add_hourly: bool) -> Result<Self> {
+	pub fn prep(product: &Product, params: &Params, add_hourly: bool) -> Result<Self> {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60);
 		let t = &params.texts.weather;
@@ -221,6 +223,11 @@ impl Current {
 				MIN_WIDTH / 2
 			},
 		};
+		let hourly_forecast = if add_hourly {
+			Some(HourlyForecast::prepare(product, params, 0)?)
+		} else {
+			None
+		};
 
 		Ok(Current {
 			address,
@@ -234,6 +241,7 @@ impl Current {
 			sunset,
 			wmo_code,
 			dimensions,
+			hourly_forecast,
 		})
 	}
 }
