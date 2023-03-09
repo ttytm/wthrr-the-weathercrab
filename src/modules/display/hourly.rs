@@ -60,7 +60,7 @@ impl HourlyForecast {
 		let precipitation_unit = match units.precipitation {
 			Precipitation::mm => "ₘₘ",
 			Precipitation::inch => "ᵢₙ",
-			_ => "󰖎",
+			_ => "󰖎 ",
 		};
 
 		// Hourly Forecast Heading
@@ -137,7 +137,7 @@ impl HourlyForecast {
 
 		// Precipitation
 		println!(
-			"{} {: <WIDTH$}{} {}",
+			"{} {: <WIDTH$}{}{}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			precipitation.color_option(Blue, &gui.color).bold(),
 			if units.precipitation == Precipitation::probability {
@@ -147,7 +147,7 @@ impl HourlyForecast {
 				precipitation_unit.color_option(Blue, &gui.color)
 			},
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			WIDTH = WIDTH - 3
+			WIDTH = WIDTH - 1 - precipitation_unit.chars().count()
 		);
 
 		// Graph Border Bottom with Potential Time Indicator
