@@ -40,9 +40,11 @@ pub struct ConfigLocales {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WeatherLocales {
 	pub feels_like: String,
+	pub felt_like: String,
 	pub humidity: String,
 	pub dew_point: String,
 	pub hourly_forecast: String,
+	pub daily_overview: String,
 	#[optional_rename(WeatherCodeLocalesFile)]
 	pub weather_code: WeatherCodeLocales,
 }
@@ -110,9 +112,11 @@ impl Default for WeatherLocales {
 	fn default() -> Self {
 		Self {
 			feels_like: "Feels like".to_string(),
+			felt_like: "Felt like".to_string(),
 			humidity: "Humidity".to_string(),
 			dew_point: "Dew Point".to_string(),
 			hourly_forecast: "Hourly Forecast".to_string(),
+			daily_overview: "Daily Overview".to_string(),
 			weather_code: WeatherCodeLocales::default(),
 		}
 	}
@@ -281,10 +285,12 @@ impl Locales {
 			}
 		}
 
+		let format = format!("%a, %e %b{}", if dt < Local::now() { " %Y" } else { "" });
+
 		let date = if let Some(locale) = matching_locale {
-			dt.format_localized("%a, %e %b", locale.try_into().unwrap()).to_string()
+			dt.format_localized(&format, locale.try_into().unwrap()).to_string()
 		} else {
-			dt.format("%a, %e %b").to_string()
+			dt.format(&format).to_string()
 		};
 
 		Ok(date)
