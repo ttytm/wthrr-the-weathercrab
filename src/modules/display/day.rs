@@ -2,14 +2,10 @@ use anyhow::Result;
 use chrono::{Duration, Local};
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::modules::{display::hourly::WIDTH, localization::Locales, params::Params};
+use crate::modules::{display::hourly::WIDTH, localization::Locales, params::Params, units::Time};
 
 use super::{
-	border::*,
-	gui_config::ColorOption,
-	hourly::HourlyForecast,
-	product::Product,
-	utils::{lang_len_diff, Times},
+	border::*, gui_config::ColorOption, hourly::HourlyForecast, product::Product, utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
@@ -105,7 +101,21 @@ impl Day {
 		let weather = &product.weather;
 		let address = Product::trunc_address(product.address.clone(), 60);
 
-		let Times { sunrise, sunset, night, .. } = product.weather.get_times(params.config.units.time, day_index);
+		// Times
+		let (current_hour, sunrise_hour, sunset_hour) = (
+			weather.current_weather.time[11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunrise[day_index][11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunset[day_index][11..13].parse::<usize>().unwrap_or_default(),
+		);
+		let sunrise = match params.config.units.time {
+			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[day_index][14..16]),
+			_ => weather.daily.sunrise[day_index][11..16].to_string(),
+		};
+		let sunset = match params.config.units.time {
+			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[day_index][14..16]),
+			_ => weather.daily.sunset[day_index][11..16].to_string(),
+		};
+		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
 		let temp_max_min = format!(
 			"{:.1}/{:.1}{}",
