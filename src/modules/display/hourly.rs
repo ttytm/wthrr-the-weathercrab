@@ -17,7 +17,7 @@ use super::{
 	border::*,
 	graph::Graph,
 	gui_config::ColorOption,
-	utils::{lang_len_diff, style_number, Times},
+	utils::{lang_len_diff, style_number},
 	weathercode::WeatherCode,
 };
 
@@ -181,7 +181,7 @@ impl HourlyForecast {
 	}
 
 	pub fn prepare(weather: &Weather, params: &Params, day_index: usize) -> Result<Self> {
-		let Times { current_hour, night, .. } = weather.get_times(params.config.units.time, day_index);
+		let current_hour = weather.current_weather.time[11..13].parse::<usize>().unwrap_or_default();
 
 		// The graph splits one hour into three "levels": last, current and next.
 		// We slice 25 items to use the 25th in the last "next"-level of a graph.
@@ -265,13 +265,18 @@ impl HourlyForecast {
 			weather.daily_units.temperature_2m_max,
 		);
 
+		let sunrise_sunset = (
+			weather.daily.sunrise[day_index][11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunset[day_index][11..13].parse::<usize>().unwrap_or_default(),
+		);
+
 		let precipitation_probability_max = weather.daily.precipitation_probability_max[day_index];
 
 		Ok(HourlyForecast {
 			temperatures: Self::prepare_temperatures(
 				temperatures,
 				weather_codes,
-				night,
+				sunrise_sunset,
 				&params.texts.weather.weather_code,
 			)?,
 			precipitation: Self::prepare_precipitation(&precipitation),
@@ -285,7 +290,7 @@ impl HourlyForecast {
 	fn prepare_temperatures(
 		temperatures: &[f32],
 		weather_codes: &[u8],
-		night: bool,
+		sunrise_sunset: (usize, usize),
 		t: &WeatherCodeLocales,
 	) -> Result<String> {
 		let mut result = String::new();
@@ -293,6 +298,7 @@ impl HourlyForecast {
 		for hour in DISPLAY_HOURS {
 			let temp = temperatures[hour].round() as i32;
 			let temp_sub = style_number(temp, true);
+			let night = hour < sunrise_sunset.0 || hour > sunrise_sunset.1;
 			let wmo_code = WeatherCode::resolve(weather_codes[hour], night, t)?;
 			let colspan = if hour == 0 { 2 } else { 8 };
 			let _ = write!(result, "{: >colspan$}{}", temp_sub, wmo_code.icon);

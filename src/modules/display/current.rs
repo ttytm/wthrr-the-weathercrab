@@ -1,14 +1,14 @@
 use anyhow::Result;
 use colored::{Color::BrightBlack, Colorize};
 
-use crate::modules::params::Params;
+use crate::modules::{params::Params, units::Time};
 
 use super::{
 	border::*,
 	gui_config::ColorOption,
 	hourly::HourlyForecast,
 	product::{Product, MIN_WIDTH},
-	utils::{lang_len_diff, Times},
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 	wind::WindDirection,
 };
@@ -151,7 +151,21 @@ impl Current {
 		let address = Product::trunc_address(product.address.clone(), 60);
 		let t = &params.texts.weather;
 
-		let Times { current_hour, sunrise, sunset, night } = product.weather.get_times(params.config.units.time, 0);
+		// Times
+		let (current_hour, sunrise_hour, sunset_hour) = (
+			weather.current_weather.time[11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
+			weather.daily.sunset[0][11..13].parse::<usize>().unwrap_or_default(),
+		);
+		let sunrise = match params.config.units.time {
+			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
+			_ => weather.daily.sunrise[0][11..16].to_string(),
+		};
+		let sunset = match params.config.units.time {
+			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
+			_ => weather.daily.sunset[0][11..16].to_string(),
+		};
+		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
 		// Display Items
 		let temperature = format!(
