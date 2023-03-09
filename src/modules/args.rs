@@ -1,4 +1,5 @@
 use anyhow::{anyhow, Result};
+use chrono::NaiveDate;
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use strum_macros::AsRefStr;
@@ -13,16 +14,16 @@ pub struct Cli {
 	#[arg(long, short, use_value_delimiter = true, value_name = "FORECAST,...")]
 	pub forecast: Vec<Forecast>,
 
-	// /// [e.g.: -F 2021-01-01]
-	// #[arg(long, short, use_value_delimiter = true, value_name = "HISTORICAL WEATHER,...")]
-	// pub historical_weather: Date,
-	//
+	/// [e.g.: -F 2021-12-31]
+	#[arg(long, short = 'F', use_value_delimiter = true, value_name = "%Y-%m-%d,...")]
+	pub historical_weather: Vec<NaiveDate>,
+
 	/// [e.g.: -u f,12h,in]
 	#[arg(long, short, use_value_delimiter = true, value_name = "UNIT,...")]
 	pub units: Vec<UnitArg>,
 
 	/// Output language [e.g.: en_US]
-	#[arg(short, long, value_parser = has_min_length)]
+	#[arg(short, long, value_parser = parse_language_code)]
 	pub language: Option<String>,
 
 	/// Save the supplied values as default
@@ -85,7 +86,7 @@ pub enum UnitArg {
 	Inch,
 }
 
-fn has_min_length(s: &str) -> Result<String> {
+fn parse_language_code(s: &str) -> Result<String> {
 	match s.len() < 2 {
 		true => Err(anyhow!("\n  The language code must be at least two characters long.")),
 		_ => Ok(s.to_string()),
