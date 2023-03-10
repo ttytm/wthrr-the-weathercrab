@@ -160,7 +160,15 @@ impl HistoricalWeather {
 			weather_daily.apparent_temperature_min.as_ref().unwrap()[0],
 			weather_daily_units.temperature_2m_max,
 		);
-		let precipitation_sum = format!("❲{}❳", weather_daily.precipitation_sum.as_ref().unwrap()[0]);
+		let precipitation_sum = format!(
+			"❲{}{}❳",
+			weather_daily.precipitation_sum.as_ref().unwrap()[0],
+			if params.config.units.precipitation == Precipitation::inch {
+				"ᵢₙ"
+			} else {
+				"ₘₘ"
+			}
+		);
 		let date = format!(
 			" {}",
 			if !(lang == "en_US" || lang == "en") {
