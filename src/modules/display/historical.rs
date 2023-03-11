@@ -132,7 +132,7 @@ impl HistoricalWeather {
 		let dt: DateTime<Utc> = Utc.from_utc_datetime(&date.and_hms_opt(0, 0, 0).unwrap());
 		// Times
 		let sunrise = weather_daily.sunrise.as_ref().unwrap();
-		let sunset = weather_daily.sunrise.as_ref().unwrap();
+		let sunset = weather_daily.sunset.as_ref().unwrap();
 		let (sunrise_hour, sunset_hour) = (
 			sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
 			sunset[0][11..13].parse::<usize>().unwrap_or_default(),
