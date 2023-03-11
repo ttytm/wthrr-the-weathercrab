@@ -155,10 +155,16 @@ Win: `C:\Users\<user>\AppData\Roaming\weathercrab\`
 
 ## Installation
 
-Wthrr is published on [crates.io](https://crates.io/crates/wthrr) and can be installed via rusts package manager.
+<a href="https://crates.io/crates/wthrr" target="_blank">
+  <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square" />
+</a>
+<br>
+<br>
+
+Use rusts package manger to install wthrr in its latest version from source.
 
 ```
-cargo install wthrr
+cargo install --git  https://github.com/tobealive/wthrr-the-weathercrab.git
 ```
 
 Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).
