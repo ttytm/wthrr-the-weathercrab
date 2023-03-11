@@ -55,13 +55,15 @@ Usage: wthrr [OPTIONS] [ADDRESS]
 
 Arguments:
   [ADDRESS]
-          Address to check the weather for
+          Address to check the weather
 
 Options:
   -f, --forecast <FORECAST,...>
-          [e.g.: -f w,d] [possible values: disable, (w)eek, (d)ay]
+          [e.g.: -f w,d] [possible values: disable, (w)eek, to(d)ay, mo, tu, we, th, fr, sa, su]
+  -F, --historical-weather <%Y-%m-%d,...>
+          [e.g.: -F 2021-12-31]
   -u, --units <UNIT,...>
-          [e.g.: -u f,12h] [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms, 12h, 24h, mm, (in)ch]
+          [e.g.: -u f,12h,in] [possible values: (c)elsius, (f)ahrenheit, kmh, mph, (kn)ots, ms, 12h, 24h, %, mm, (in)ch]
   -l, --language <LANGUAGE>
           Output language [e.g.: en_US]
   -s, --save
@@ -69,9 +71,9 @@ Options:
   -r, --reset
           Wipe wthrr's configuration data
   -h, --help
-          Print help information
+          Print help
   -V, --version
-          Print version information
+          Print version
 ```
 
 ## Showcase
@@ -176,3 +178,11 @@ Until a stable version 1.0 is available, new features will be introduced, existi
 ## Credits
 
 - The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
+
+<br>
+
+##
+
+<div align="right">
+<a href='https://ko-fi.com/O4O4IOTYR' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+</div>
