@@ -45,7 +45,7 @@ impl Product<'_> {
 
 		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
 			// Current day with hours & weekly overview
-			Week::prep(self, params)?.render(params, Some(Current::prep(self, params, false)?.render(params)));
+			Week::prep(self, params)?.render(params, Some(Current::prep(self, params, true)?.render(params)));
 		} else if forecast_indices.contains(&0) {
 			// Current day with hours
 			Current::prep(self, params, true)?.render(params);
