@@ -1,6 +1,7 @@
 use anyhow::Result;
 use chrono::NaiveDate;
 use colored::Color::BrightBlack;
+use scopeguard::defer;
 use std::collections::HashMap;
 
 use crate::modules::{
@@ -21,6 +22,11 @@ pub const MIN_WIDTH: usize = 34;
 
 impl Product<'_> {
 	pub async fn render(&self, params: &Params) -> Result<()> {
+		defer! {
+			// Disclaimer
+			println!("{}", "Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color));
+		}
+
 		if params.config.forecast.is_empty() && params.historical_weather.is_empty() {
 			// Current day without hours
 			Current::prep(self, params, false)?.render(params);
@@ -54,12 +60,6 @@ impl Product<'_> {
 				Day::prep(self, params, i)?.render(params);
 			}
 		}
-
-		// Disclaimer
-		println!(
-			"{}",
-			"Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color)
-		);
 
 		Ok(())
 	}
