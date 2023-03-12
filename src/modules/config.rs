@@ -1,3 +1,4 @@
+use anyhow::Result;
 use colored::{Color::Yellow, Colorize};
 use directories::ProjectDirs;
 use optional_struct::*;
@@ -74,17 +75,18 @@ impl Config {
 		config
 	}
 
-	pub fn store(&self) {
+	pub fn store(&self) -> Result<()> {
 		let path = Self::get_path();
 
 		let cfg_dir = path.parent().unwrap();
 		if !cfg_dir.is_dir() {
-			fs::create_dir(cfg_dir).unwrap();
+			fs::create_dir_all(cfg_dir)?;
 		};
 
-		let mut file = File::create(path).unwrap();
+		let mut file = File::create(path)?;
 		let output = to_string_pretty(self, PrettyConfig::default()).unwrap();
-		file.write_all(output.as_bytes()).unwrap();
+		file.write_all(output.as_bytes())?;
+		Ok(())
 	}
 
 	pub fn get_path() -> PathBuf {

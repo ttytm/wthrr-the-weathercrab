@@ -86,7 +86,7 @@ impl Params {
 		} else {
 			// Handle explicit save call
 			self.config.apply_to(&mut config_file);
-			config_file.store();
+			config_file.store().context("Error saving config file.")?;
 			self.texts.store(&config_file.language);
 		}
 
@@ -118,7 +118,7 @@ impl Params {
 			_ => println!("{}", self.texts.config.no_selection),
 		}
 
-		self.config.store();
+		self.config.store().context("Error saving config file.")?;
 		self.texts.store(&self.config.language);
 
 		Ok(())
