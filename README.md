@@ -1,5 +1,15 @@
 # 🦀 wthrr-the-weathercrab
 
+<div>
+  <a href="https://crates.io/crates/wthrr" target="_blank">
+    <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square" />
+  </a>
+  <a href="https://github.com/tobealive/wthrr-the-weathercrab/actions/workflows/ci.yml?query=branch%3Amain" target="_blank">
+    <img alt="crates.io" src="https://img.shields.io/github/actions/workflow/status/tobealive/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square" />
+  </a>
+</div>
+<br>
+
 `wthrr` lives in your terminal and her passion is meteorology.
 
 If you spend time in the TUI, you'll have a little companion nearby who knows about the weather.
@@ -32,7 +42,7 @@ wthrr melbourne
 
 Depending on the place you are looking for, you might need to be more specific.
 For example, the above call will get Melbourne in Australia. If you are aiming for Melbourne in the US, ask for `melbourne,florida`.
-If the address contains spaces, separate them with a hyphen or enclose them in quotation marks (e.g., "new-york" or "new york").
+If the address contains spaces, separate them with a hyphen or enclose them in quotation marks (e.g., `new-york` or `"new york"`).
 
 To search explicitly for a weather station in the vicinity, call
 
@@ -155,12 +165,6 @@ Win: `C:\Users\<user>\AppData\Roaming\weathercrab\`
 
 ## Installation
 
-<a href="https://crates.io/crates/wthrr" target="_blank">
-  <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square" />
-</a>
-<br>
-<br>
-
 Use rusts package manger to install wthrr in its latest version from source.
 
 ```
@@ -186,5 +190,7 @@ A simple changelog can be found on the [releases page](https://github.com/tobeal
 ##
 
 <div align="right">
-<a href='https://ko-fi.com/O4O4IOTYR' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+  <a href='https://ko-fi.com/O4O4IOTYR' target='_blank'>
+    <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+  </a>
 </div>
