@@ -177,10 +177,6 @@ Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome 
 
 A simple changelog can be found on the [releases page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
 
-## Disclaimer
-
-Until a stable version 1.0 is available, new features will be introduced, existing ones may change, or breaking changes may occur in minor(`0.<minor>.*`) versions.
-
 ## Credits
 
 - The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)

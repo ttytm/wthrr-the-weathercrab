@@ -54,7 +54,6 @@ impl Params {
 			HashSet::<NaiveDate>::new()
 		};
 
-		// Declare as modifiable to disable time_indicator for other weekdays than the current day.
 		let gui = config.gui.to_owned();
 
 		Ok(Self {
