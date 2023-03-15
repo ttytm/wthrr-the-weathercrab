@@ -7,7 +7,7 @@ use super::{
 	border::*,
 	gui_config::ColorOption,
 	hourly::HourlyForecast,
-	product::{Product, MIN_WIDTH},
+	product::{Product, MIN_CELL_WIDTH, MIN_WIDTH},
 	utils::lang_len_diff,
 	weathercode::WeatherCode,
 	wind::WindDirection,
@@ -110,7 +110,9 @@ impl Current {
 				"{: <cell_width$} {}",
 				humidity,
 				dewpoint,
-				cell_width = cell_width - lang_len_diff(&humidity, lang)
+				cell_width = cell_width
+					- lang_len_diff(&humidity, lang)
+					- if &lang[..2] == "ja" || &lang[..2] == "ko" { 0 } else { 1 }
 			),
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
@@ -216,11 +218,11 @@ impl Current {
 			},
 			cell_width: if add_hourly {
 				22
-			} else if longest_cell_width > MIN_WIDTH / 2 {
+			} else if longest_cell_width > MIN_CELL_WIDTH {
 				// increase cell_width for languages with longer texts
-				longest_cell_width + 2
+				longest_cell_width
 			} else {
-				MIN_WIDTH / 2
+				MIN_CELL_WIDTH
 			},
 		};
 		let hourly_forecast = if add_hourly {

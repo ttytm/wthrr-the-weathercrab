@@ -19,12 +19,13 @@ pub struct Product<'a> {
 }
 
 pub const MIN_WIDTH: usize = 34;
+pub const MIN_CELL_WIDTH: usize = MIN_WIDTH / 2 - 2;
 
 impl Product<'_> {
 	pub async fn render(&self, params: &Params) -> Result<()> {
 		defer! {
 			// Disclaimer
-			println!("{}", "Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color));
+			println!(" {}", "Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color));
 		}
 
 		if params.config.forecast.is_empty() && params.historical_weather.is_empty() {
