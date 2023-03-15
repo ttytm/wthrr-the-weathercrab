@@ -86,6 +86,7 @@ impl Config {
 		let mut file = File::create(path)?;
 		let output = to_string_pretty(self, PrettyConfig::default()).unwrap();
 		file.write_all(output.as_bytes())?;
+
 		Ok(())
 	}
 
