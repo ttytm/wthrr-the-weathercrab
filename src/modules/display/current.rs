@@ -222,7 +222,7 @@ impl Current {
 				// increase cell_width for languages with longer texts
 				longest_cell_width
 			} else {
-				MIN_CELL_WIDTH
+				MIN_CELL_WIDTH + 2
 			},
 		};
 		let hourly_forecast = if add_hourly {
