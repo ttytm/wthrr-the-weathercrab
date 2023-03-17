@@ -82,7 +82,7 @@ impl Location {
 
 		match results {
 			Ok(address) => Ok(address),
-			Err(_) => Self::search_open_meteo(&client).await,
+			Err(_) => Self::search_open_meteo(&client, address, lang).await,
 		}
 	}
 
@@ -100,8 +100,8 @@ impl Location {
 		})
 	}
 
-	async fn search_open_meteo(client: &Client) -> Result<Location> {
-		let url = "https://geocoding-api.open-meteo.com/v1/search?name=Berlin&language=fr";
+	async fn search_open_meteo(client: &Client, address: &str, lang: &str) -> Result<Location> {
+		let url = format!("https://geocoding-api.open-meteo.com/v1/search?name={address}&language={lang}");
 		let results: OpenMeteoResults = client.get(url).send().await?.json().await?;
 		let result = results.results.first().ok_or_else(|| anyhow!("Location request failed."))?;
 
