@@ -165,10 +165,10 @@ Win: `C:\Users\<user>\AppData\Roaming\weathercrab\`
 
 ## Installation
 
-Use rusts package manger to install wthrr in its latest version from source.
+Use rusts package manger to install wthrr's latest version.
 
 ```
-cargo install --git  https://github.com/tobealive/wthrr-the-weathercrab.git
+cargo install wthrr
 ```
 
 Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).
