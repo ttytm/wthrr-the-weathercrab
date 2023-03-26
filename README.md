@@ -171,7 +171,7 @@ Use rusts package manger to install wthrr's latest version.
 cargo install wthrr
 ```
 
-Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).
+**Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).**
 
 ## Outlook
 

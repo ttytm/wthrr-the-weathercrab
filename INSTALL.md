@@ -1,27 +1,40 @@
 ## Requirements
 
-This app uses font icons and emojis. Therefore, having a font with Unicode support installed and using a nerd variant of your terminal font is required to display the output correctly.
+This app uses font symbols and emojis. Therefore, font configuration is the primary requirement.
 
-- [nerd fonts](https://github.com/ryanoasis/nerd-fonts)
-- [unicode font](https://github.com/googlefonts/noto-emoji/blob/main/fonts/NotoColorEmoji.ttf) (If none is installed by default, noto font packages are usually available via your distribution's package manager)
+- Set your default terminal font to a nerd font.
+  - For installation check the nerd-fonts github repository: [ryanoasis/nerd-fonts](https://www.nerdfonts.com/font-downloads).
+  - Alternatively they are available on the nerdfonts website: [nerdfonts.com/font-downloads](https://github.com/ryanoasis/nerd-fonts).
+  - For installation via `brew`, see below.
+- A Unicode symbol font needs to be available on the system.
+  - If none is installed by default, noto font packages are usually available via your distribution's package manager.
 
-<!--<sub>If you are using brew, this gist contains easily digestible 🍝 copy-pasta for nerd-font installation.<br>
-https://gist.github.com/davidteren/898f2dcccd42d9f8680ec69a3a5d350e</sub>-->
+### Debian based distros
 
-#### For ubuntu based distros:
+- Install package and font dependencies
 
-- ```
-  sudo apt install fonts-noto-core libssl-dev pkg-config
+  ```
+  sudo apt install libssl-dev pkg-config fonts-noto-core
   ```
 
-- When using the binaries, you may need to add libssl manually
+- When using the binaries from the release page, you may need to add libssl manually
+
   ```
   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
   ```
 
+### MacOS
+
+- Install cask-fonts, a unicode symbol font and a nerd font
+  ```
+  brew tap homebrew/cask-fonts
+  brew install font-noto-sans-symbols-2    # Required when using e.g., iterm2 / alacritty
+  brew install font-jetbrains-mono-nerd-font    # Or any other nerd-font
+  ```
+
 ## Installation
 
-There are several alternatives to `cargo install wthrr`
+There are several alternatives to `cargo install wthrr` from crates.io.
 
 - Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the the [GitHub release page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
 
@@ -36,6 +49,10 @@ There are several alternatives to `cargo install wthrr`
   ```
   ```
   nix run "github:tobealive/wthrr-the-weathercrab"
+  ```
+- Use cargo to install the from souce
+  ```
+  cargo install --git  https://github.com/tobealive/wthrr-the-weathercrab.git `
   ```
 
 ### Build from source
