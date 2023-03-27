@@ -4,6 +4,35 @@ use reqwest::Client;
 use serde::Deserialize;
 
 use super::{config::Config, localization::Locales};
+use crate::modules::api::Api;
+
+struct OpenMeteoLocation<'a> {
+	address: &'a str,
+	language: &'a str,
+}
+
+impl<'a> Api for OpenMeteoLocation<'a> {
+	fn assemble(&self) -> String {
+		format!(
+			"https://geocoding-api.open-meteo.com/v1/search?name={}&language={}",
+			self.address, self.language
+		)
+	}
+}
+
+struct OpenStreetMapLocation<'a> {
+	address: &'a str,
+	language: &'a str,
+}
+
+impl<'a> Api for OpenStreetMapLocation<'a> {
+	fn assemble(&self) -> String {
+		format!(
+			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=jsonv2",
+			self.address, self.language
+		)
+	}
+}
 
 #[derive(Deserialize)]
 pub struct Location {
@@ -36,11 +65,6 @@ struct OpenStreetMapGeoObj {
 	// kind: String,
 	// importance: f64,
 	// icon: String,
-}
-
-#[derive(Deserialize)]
-struct OpenMeteoResults {
-	results: Vec<OpenMeteoGeoObj>,
 }
 
 #[derive(Deserialize)]
@@ -86,30 +110,36 @@ impl Location {
 		}
 	}
 
-	async fn search_osm(client: &Client, address: &str, lang: &str) -> Result<Location> {
-		let url = format!(
-			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=jsonv2",
-		);
-		let results: Vec<OpenStreetMapGeoObj> = client.get(&url).send().await?.json().await?;
-		let result = results.first().ok_or_else(|| anyhow!("Location request failed."))?;
-
-		Ok(Location {
-			name: result.display_name.clone(),
-			lon: result.lon.parse::<f64>().unwrap(),
-			lat: result.lat.parse::<f64>().unwrap(),
-		})
+	async fn search_osm(client: &Client, address: &str, language: &str) -> Result<Location> {
+		client
+			.get(&OpenStreetMapLocation { address, language }.assemble())
+			.send()
+			.await?
+			.json::<Vec<OpenStreetMapGeoObj>>()
+			.await?
+			.first()
+			.ok_or_else(|| anyhow!("Location request failed."))
+			.map(|l| Location {
+				name: l.display_name.clone(),
+				lon: l.lon.parse::<f64>().unwrap(),
+				lat: l.lat.parse::<f64>().unwrap(),
+			})
 	}
 
-	async fn search_open_meteo(client: &Client, address: &str, lang: &str) -> Result<Location> {
-		let url = format!("https://geocoding-api.open-meteo.com/v1/search?name={address}&language={lang}");
-		let results: OpenMeteoResults = client.get(url).send().await?.json().await?;
-		let result = results.results.first().ok_or_else(|| anyhow!("Location request failed."))?;
-
-		Ok(Location {
-			name: result.name.clone(),
-			lon: result.longitude,
-			lat: result.latitude,
-		})
+	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Location> {
+		client
+			.get(&OpenMeteoLocation { address, language }.assemble())
+			.send()
+			.await?
+			.json::<Vec<OpenMeteoGeoObj>>()
+			.await?
+			.first()
+			.ok_or_else(|| anyhow!("Location request failed."))
+			.map(|l| Location {
+				name: l.name.clone(),
+				lon: l.longitude,
+				lat: l.latitude,
+			})
 	}
 
 	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {
