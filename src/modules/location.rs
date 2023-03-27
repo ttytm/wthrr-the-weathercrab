@@ -67,6 +67,16 @@ struct OpenStreetMapGeoObj {
 	// icon: String,
 }
 
+impl From<&OpenStreetMapGeoObj> for Location {
+	fn from(val: &OpenStreetMapGeoObj) -> Self {
+		Self {
+			name: val.display_name.clone(),
+			lon: val.lon.parse::<f64>().unwrap(),
+			lat: val.lat.parse::<f64>().unwrap(),
+		}
+	}
+}
+
 #[derive(Deserialize)]
 struct OpenMeteoGeoObj {
 	// id: i32,
@@ -89,6 +99,16 @@ struct OpenMeteoGeoObj {
 	// admin3_id: i32,
 	// admin4_id: i32,
 	// postcodes: Vec<String>,
+}
+
+impl From<&OpenMeteoGeoObj> for Location {
+	fn from(val: &OpenMeteoGeoObj) -> Self {
+		Self {
+			name: val.name.clone(),
+			lon: val.longitude,
+			lat: val.latitude,
+		}
+	}
 }
 
 impl GeoIpLocation {
@@ -119,11 +139,7 @@ impl Location {
 			.await?
 			.first()
 			.ok_or_else(|| anyhow!("Location request failed."))
-			.map(|l| Location {
-				name: l.display_name.clone(),
-				lon: l.lon.parse::<f64>().unwrap(),
-				lat: l.lat.parse::<f64>().unwrap(),
-			})
+			.map(Location::from)
 	}
 
 	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Location> {
@@ -135,11 +151,7 @@ impl Location {
 			.await?
 			.first()
 			.ok_or_else(|| anyhow!("Location request failed."))
-			.map(|l| Location {
-				name: l.name.clone(),
-				lon: l.longitude,
-				lat: l.latitude,
-			})
+			.map(Location::from)
 	}
 
 	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {
