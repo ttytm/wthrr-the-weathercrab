@@ -66,4 +66,12 @@ cd wthrr-the-weathercrab
 cargo build --release
 ```
 
-When the build has finished, you'll find the `wthrr` binary inside the `./target/release` directory
+When the build has finished, you'll find the `wthrr` binary inside the `./target/release` directory.
+
+The same result is achieved by calling Cargo directly using the following
+command.  Cargo will execute the same steps in the background such that only one
+instruction needs to be executed.
+
+```bash
+cargo install --git https://github.com/tobealive/wthrr-the-weathercrab
+```
