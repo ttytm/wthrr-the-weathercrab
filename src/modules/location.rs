@@ -4,6 +4,7 @@ use reqwest::Client;
 use serde::Deserialize;
 
 use super::{config::Config, localization::Locales};
+use crate::modules::api::{Api, ApiName, ApiQuery, ErrorMessage};
 
 #[derive(Deserialize)]
 pub struct Location {
@@ -18,6 +19,16 @@ pub struct GeoIpLocation {
 	pub longitude: f64,
 	pub city_name: String,
 	pub country_code: String,
+}
+
+impl From<GeoIpLocation> for Location {
+	fn from(val: GeoIpLocation) -> Self {
+		Self {
+			name: val.city_name.clone(),
+			lat: val.latitude,
+			lon: val.longitude,
+		}
+	}
 }
 
 #[derive(Deserialize)]
@@ -38,9 +49,14 @@ struct OpenStreetMapGeoObj {
 	// icon: String,
 }
 
-#[derive(Deserialize)]
-struct OpenMeteoResults {
-	results: Vec<OpenMeteoGeoObj>,
+impl From<&OpenStreetMapGeoObj> for Location {
+	fn from(val: &OpenStreetMapGeoObj) -> Self {
+		Self {
+			name: val.display_name.clone(),
+			lon: val.lon.parse::<f64>().unwrap(),
+			lat: val.lat.parse::<f64>().unwrap(),
+		}
+	}
 }
 
 #[derive(Deserialize)]
@@ -67,11 +83,13 @@ struct OpenMeteoGeoObj {
 	// postcodes: Vec<String>,
 }
 
-impl GeoIpLocation {
-	pub async fn get() -> Result<GeoIpLocation> {
-		let res = reqwest::get("https://api.geoip.rs").await?.json::<GeoIpLocation>().await?;
-
-		Ok(res)
+impl From<&OpenMeteoGeoObj> for Location {
+	fn from(val: &OpenMeteoGeoObj) -> Self {
+		Self {
+			name: val.name.clone(),
+			lon: val.longitude,
+			lat: val.latitude,
+		}
 	}
 }
 
@@ -86,30 +104,32 @@ impl Location {
 		}
 	}
 
-	async fn search_osm(client: &Client, address: &str, lang: &str) -> Result<Location> {
-		let url = format!(
-			"https://nominatim.openstreetmap.org/search?q={address}&accept-language={lang}&limit=1&format=jsonv2",
-		);
-		let results: Vec<OpenStreetMapGeoObj> = client.get(&url).send().await?.json().await?;
-		let result = results.first().ok_or_else(|| anyhow!("Location request failed."))?;
-
-		Ok(Location {
-			name: result.display_name.clone(),
-			lon: result.lon.parse::<f64>().unwrap(),
-			lat: result.lat.parse::<f64>().unwrap(),
-		})
+	async fn search_osm(client: &Client, address: &str, language: &str) -> Result<Location> {
+		client
+			.get(
+				&ApiQuery::location(ApiName::OpenStreetMap, address, language)
+					.convert()
+					.assemble(),
+			)
+			.send()
+			.await?
+			.json::<Vec<OpenStreetMapGeoObj>>()
+			.await?
+			.first()
+			.ok_or_else(|| anyhow!(Location::error_message()))
+			.map(Location::from)
 	}
 
-	async fn search_open_meteo(client: &Client, address: &str, lang: &str) -> Result<Location> {
-		let url = format!("https://geocoding-api.open-meteo.com/v1/search?name={address}&language={lang}");
-		let results: OpenMeteoResults = client.get(url).send().await?.json().await?;
-		let result = results.results.first().ok_or_else(|| anyhow!("Location request failed."))?;
-
-		Ok(Location {
-			name: result.name.clone(),
-			lon: result.longitude,
-			lat: result.latitude,
-		})
+	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Location> {
+		client
+			.get(&ApiQuery::location(ApiName::OpenMeteo, address, language).convert().assemble())
+			.send()
+			.await?
+			.json::<Vec<OpenMeteoGeoObj>>()
+			.await?
+			.first()
+			.ok_or_else(|| anyhow!(Location::error_message()))
+			.map(Location::from)
 	}
 
 	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {
@@ -129,19 +149,26 @@ impl Location {
 			{
 				std::process::exit(1)
 			}
-			let auto_loc = GeoIpLocation::get().await?;
+
+			let auto_loc = ApiQuery::geo_ip().query::<GeoIpLocation>().await?;
 			return Ok(format!("{},{}", auto_loc.city_name, auto_loc.country_code));
 		}
 
 		// Handle address from args or config
 		if arg_address == "auto" || (arg_address.is_empty() && config.address == "auto") {
-			let auto_loc = GeoIpLocation::get().await?;
+			let auto_loc = ApiQuery::geo_ip().query::<GeoIpLocation>().await?;
 			Ok(format!("{},{}", auto_loc.city_name, auto_loc.country_code))
 		} else if !arg_address.is_empty() {
 			Ok(arg_address.to_string())
 		} else {
 			Ok(config.address.to_string())
 		}
+	}
+}
+
+impl ErrorMessage for Location {
+	fn error_message() -> String {
+		String::from("Location request failed.")
 	}
 }
 
