@@ -50,20 +50,24 @@ There are several alternatives to `cargo install wthrr` from crates.io.
   ```
   nix run "github:tobealive/wthrr-the-weathercrab"
   ```
-- Use cargo to install the from souce
-  ```
-  cargo install --git  https://github.com/tobealive/wthrr-the-weathercrab.git `
-  ```
 
 ### Build from source
 
 Another way is to compile the app yourself.
-Assuming the rust toolchain is installed on your system, just clone the repo and build the release version.
+Assuming the Rust toolchain is installed,
 
-```
-git clone https://github.com/tobealive/wthrr-the-weathercrab.git
-cd wthrr-the-weathercrab
-cargo build --release
-```
+- use Cargo to install from the Git source;
 
-When the build has finished, you'll find the `wthrr` binary inside the `./target/release` directory
+  ```bash
+  cargo install --git https://github.com/tobealive/wthrr-the-weathercrab
+  ```
+
+- or clone the repository and build the release version.
+
+  ```bash
+  git clone https://github.com/tobealive/wthrr-the-weathercrab.git
+  cd wthrr-the-weathercrab
+  cargo build --release
+  ```
+
+When the build has finished, you will find the `wthrr` binary inside the `./target/release` directory.
