@@ -17,7 +17,7 @@ chrono = { version = "0.4", default-features = false, features = [
 	"clock",
 	"unstable-locales",
 ] }
-clap = { version = "4.1", default-features = false, features = [
+clap = { version = "4.2", default-features = false, features = [
 	"derive",
 	"std",
 	"help",
