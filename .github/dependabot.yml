@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+      time: "04:00"
+    assignees:
+      - tobealive
+    commit-message:
+      prefix: "⬆️"
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      time: "04:00"
+    assignees:
+      - tobealive
+    commit-message:
+      prefix: "⬆️"
+      include: scope
