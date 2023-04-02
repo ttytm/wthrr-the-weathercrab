@@ -26,7 +26,7 @@ clap = { version = "4.1", default-features = false, features = [
 	"suggestions",
 ] }
 colored = "2.0"
-directories = "4.0"
+directories = "5.0"
 dialoguer = { version = "0.10", default-features = false }
 futures = "0.3"
 optional_struct = "0.3"
