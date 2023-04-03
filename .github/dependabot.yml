@@ -8,7 +8,7 @@ updates:
     assignees:
       - tobealive
     commit-message:
-      prefix: ":arrow_up: "
+      prefix: "⬆️ "
 
   - package-ecosystem: github-actions
     directory: /
@@ -18,4 +18,4 @@ updates:
     assignees:
       - tobealive
     commit-message:
-      prefix: ":arrow_up: "
+      prefix: "⬆️ "
