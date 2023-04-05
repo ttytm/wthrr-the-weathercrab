@@ -23,6 +23,14 @@ This app uses font symbols and emojis. Therefore, font configuration is the prim
   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
   ```
 
+### Arch Linux
+
+- `wthrr` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=wthrr&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
+
+  ```
+  paru -S wthrr
+  ```
+
 ### MacOS
 
 - Install cask-fonts, a unicode symbol font and a nerd font
