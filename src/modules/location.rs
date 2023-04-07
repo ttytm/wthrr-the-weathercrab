@@ -33,20 +33,9 @@ impl From<GeoIpLocation> for Location {
 
 #[derive(Deserialize)]
 struct OpenStreetMapGeoObj {
-	// place_id: u64,
-	// licence: String,
-	// osm_type: String,
-	// osm_id: u64,
-	// boundingbox: Vec<String>,
 	lat: String,
 	lon: String,
 	display_name: String,
-	// place_rank: i32,
-	// category: String,
-	// #[serde(rename(deserialize = "type"))]
-	// kind: String,
-	// importance: f64,
-	// icon: String,
 }
 
 impl From<&OpenStreetMapGeoObj> for Location {
@@ -61,26 +50,9 @@ impl From<&OpenStreetMapGeoObj> for Location {
 
 #[derive(Deserialize)]
 struct OpenMeteoGeoObj {
-	// id: i32,
 	name: String,
 	latitude: f64,
 	longitude: f64,
-	// elevation: f64,
-	// timezone: String,
-	// feature_code: String,
-	// country_code: String,
-	// country: String,
-	// country_id: i32,
-	// population: i32,
-	// admin1: String,
-	// admin2: String,
-	// admin3: String,
-	// admin4: String,
-	// admin1_id: i32,
-	// admin2_id: i32,
-	// admin3_id: i32,
-	// admin4_id: i32,
-	// postcodes: Vec<String>,
 }
 
 impl From<&OpenMeteoGeoObj> for Location {
