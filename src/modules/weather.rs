@@ -12,11 +12,6 @@ use super::units::{Precipitation, Units};
 #[optional_struct]
 #[derive(Deserialize, Debug)]
 pub struct Weather {
-	pub latitude: f64,
-	pub longitude: f64,
-	pub generationtime_ms: f64,
-	pub utc_offset_seconds: i32,
-	pub elevation: f32,
 	#[optional_rename(OptionalCurrentWeather)]
 	pub current_weather: CurrentWeather,
 	#[optional_rename(OptionalHourlyUnits)]
@@ -53,13 +48,11 @@ pub struct HourlyUnits {
 #[optional_struct]
 #[derive(Deserialize, Debug)]
 pub struct Hourly {
-	pub time: Vec<String>,
 	pub temperature_2m: Vec<f32>,
 	pub relativehumidity_2m: Vec<f32>,
 	pub apparent_temperature: Vec<f32>,
 	pub surface_pressure: Vec<f32>,
 	pub dewpoint_2m: Vec<f32>,
-	pub windspeed_10m: Vec<f32>,
 	pub precipitation: Vec<f32>,
 	pub precipitation_probability: Vec<u8>,
 	pub weathercode: Vec<u8>,
@@ -67,10 +60,6 @@ pub struct Hourly {
 
 #[derive(Deserialize, Debug, Clone, PartialEq)]
 pub struct DailyUnits {
-	pub time: String,
-	pub weathercode: String,
-	pub sunrise: String,
-	pub sunset: String,
 	pub temperature_2m_max: String,
 	pub temperature_2m_min: String,
 }
