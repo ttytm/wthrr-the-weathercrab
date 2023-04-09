@@ -1,9 +1,8 @@
 use anyhow::{Context, Result};
-use chrono::prelude::*;
+use chrono::{DateTime, Local, Utc};
 use directories::ProjectDirs;
-use futures::{stream::FuturesOrdered, StreamExt};
-use optional_struct::Applyable;
-use optional_struct::*;
+use futures::{stream::FuturesOrdered, TryStreamExt};
+use optional_struct::{optional_struct, Applyable};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -164,24 +163,16 @@ impl Locales {
 		let mut texts = Locales::default();
 		let path = Self::get_path(lang);
 
-		match fs::read_to_string(path) {
-			Ok(file) => {
-				match serde_json::from_str::<LocalesFile>(&file) {
-					Ok(contents) => contents.apply_to(&mut texts),
-					Err(_) => {
-						if !(lang == "en_US" || lang == "en") {
-							texts.translate_all(lang).await?;
-						}
-						return Ok(texts);
-					}
-				};
-			}
-			Err(_) => {
-				if !(lang == "en_US" || lang == "en") {
-					texts.translate_all(lang).await?;
-				}
-			}
+		if let Ok(file) = fs::read_to_string(path) {
+			if let Ok(contents) = serde_json::from_str::<LocalesFile>(&file) {
+				contents.apply_to(&mut texts);
+				return Ok(texts);
+			};
 		};
+
+		if lang != "en_US" && lang != "en" {
+			texts.translate_all(lang).await?;
+		}
 
 		Ok(texts)
 	}
@@ -190,28 +181,21 @@ impl Locales {
 		let size = std::mem::size_of_val(self);
 		let ptr = self as *mut Self as *mut u8;
 
-		let mut translated_values = Vec::new();
-		let mut futures = FuturesOrdered::new();
-
 		// Iterate over each field in the struct, create a future to translate the current field's value
-		for offset in (0..size).step_by(std::mem::size_of::<String>()) {
-			let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
-			let field_value = unsafe { &*field_ptr };
-			let future = Self::translate_str(lang, field_value);
-			futures.push_back(future);
-		}
-
-		// Wait for each future in the stream to complete and store the translated values in a vector
-		while let Some(result) = futures.next().await {
-			let translated_value = result?;
-			translated_values.push(translated_value);
-		}
+		let translated_values: Vec<_> = (0..size)
+			.step_by(std::mem::size_of::<String>())
+			.map(|offset| {
+				let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
+				let field_value = unsafe { &*field_ptr };
+				Self::translate_str(lang, field_value)
+			})
+			.collect::<FuturesOrdered<_>>()
+			// Wait for each future in the stream to complete and store the translated values in a vector
+			.try_collect()
+			.await?;
 
 		// Iterate over each field in the struct again, update current field value with the translated value
-		for (offset, translated_value) in (0..size)
-			.step_by(std::mem::size_of::<String>())
-			.zip(translated_values.into_iter())
-		{
+		for (offset, translated_value) in (0..size).step_by(std::mem::size_of::<String>()).zip(translated_values) {
 			let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
 			unsafe { *field_ptr = translated_value };
 		}
@@ -231,16 +215,14 @@ impl Locales {
 			.await
 			.with_context(|| "Translation request failed.")?;
 
-		let output = match res.first() {
-			Some(i) => i
-				.as_array()
+		let output = res.first().map_or_else(String::new, |i| {
+			i.as_array()
 				.unwrap()
 				.iter()
 				.map(|s| s[0].as_str().unwrap())
 				.collect::<Vec<&str>>()
-				.join(""),
-			_ => String::new(),
-		};
+				.join("")
+		});
 
 		Ok(output)
 	}
@@ -265,25 +247,12 @@ impl Locales {
 	}
 
 	pub fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
-		let mut matching_locale: Option<&str> = None;
-
-		for line in DATETIME_LOCALES.lines().skip(1) {
-			if line == lang {
-				matching_locale = Some(line);
-				break;
-			}
-		}
-
-		if matching_locale.is_none() {
-			for line in DATETIME_LOCALES.lines().skip(1) {
-				let short_lang_code: Vec<&str> = line.split('_').collect();
-
-				if short_lang_code[0] == lang {
-					matching_locale = Some(line);
-					break;
-				}
-			}
-		}
+		let matching_locale = DATETIME_LOCALES.lines().skip(1).find(|line| line == &lang).or_else(|| {
+			DATETIME_LOCALES.lines().skip(1).find(|line| {
+				let short_lang_code = line.split('_').next().unwrap();
+				short_lang_code == lang
+			})
+		});
 
 		let format = format!("%a, %e %b{}", if dt < Local::now() { " %Y" } else { "" });
 
