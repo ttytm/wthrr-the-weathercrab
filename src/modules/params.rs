@@ -43,13 +43,13 @@ impl Params {
 		{
 			HashSet::<Forecast>::new()
 		} else if !args.forecast.is_empty() {
-			args.forecast.iter().cloned().collect()
+			args.forecast.iter().copied().collect()
 		} else {
 			config.forecast.to_owned()
 		};
 
 		let historical_weather = if !args.historical_weather.is_empty() {
-			args.historical_weather.iter().cloned().collect()
+			args.historical_weather.iter().copied().collect()
 		} else {
 			HashSet::<NaiveDate>::new()
 		};
