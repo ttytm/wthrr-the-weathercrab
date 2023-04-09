@@ -180,7 +180,7 @@ impl HourlyForecast {
 			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
 		for hour in hours {
-			print!("{hour: <9}")
+			print!("{hour: <9}");
 		}
 		println!("{}", Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 	}

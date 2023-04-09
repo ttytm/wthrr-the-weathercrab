@@ -85,7 +85,7 @@ impl Week {
 						_ => Separator::Dashed.fmt(width, &gui.border),
 					}
 					.color_option(BrightBlack, &gui.color)
-				)
+				);
 			}
 
 			n += 1;

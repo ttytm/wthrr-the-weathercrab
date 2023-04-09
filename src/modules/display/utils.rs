@@ -76,7 +76,7 @@ pub fn style_number(mut num: i32, sub: bool) -> String {
 			result.push(match sub {
 				true => SUBSCRIPT_DIGITS[digit as usize],
 				_ => SUPERSCRIPT_DIGITS[digit as usize],
-			})
+			});
 		}
 	}
 

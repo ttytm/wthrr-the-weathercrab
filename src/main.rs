@@ -1,3 +1,5 @@
+#![warn(clippy::semicolon_if_nothing_returned)]
+
 mod modules;
 
 use anyhow::Result;
