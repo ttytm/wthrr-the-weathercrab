@@ -1,4 +1,4 @@
-#![warn(
+#![deny(
 	clippy::semicolon_if_nothing_returned,
 	clippy::wildcard_imports,
 	clippy::cloned_instead_of_copied,
