@@ -87,8 +87,9 @@ pub enum UnitArg {
 }
 
 fn parse_language_code(s: &str) -> Result<String> {
-	match s.len() < 2 {
-		true => Err(anyhow!("\n  The language code must be at least two characters long.")),
-		_ => Ok(s.to_string()),
+	if s.len() < 2 {
+		Err(anyhow!("\n  The language code must be at least two characters long."))
+	} else {
+		Ok(s.to_string())
 	}
 }

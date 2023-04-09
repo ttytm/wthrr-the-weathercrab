@@ -1,4 +1,4 @@
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
@@ -62,8 +62,8 @@ struct GraphLvls {
 }
 
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Graph {
-		let mut graph = Graph(String::new(), String::new());
+	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Self {
+		let mut graph = Self(String::new(), String::new());
 		let style = graph_opts.style;
 		let rowspan = graph_opts.rowspan;
 
@@ -92,16 +92,16 @@ impl Graph {
 					match Some(last_lvl.cmp(&graph_lvls.current)) {
 						Some(o) if o == Ordering::Less => graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(o)]),
 						Some(o) if o == Ordering::Equal => {
-							graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(o)])
+							graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(o)]);
 						}
 						Some(o) if o == Ordering::Greater => {
-							graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(o)])
+							graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(o)]);
 						}
 						_ => {}
 					}
 				} else {
 					// first iteration - without a last_lvl
-					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)])
+					graph.0.push(graph_lvls.glyphs[graph_lvls.get_idx_single(Ordering::Equal)]);
 				}
 
 				// char 2/3
@@ -284,7 +284,7 @@ impl GraphLvls {
 		};
 
 		if graph_rows == &GraphRows::double {
-			glyphs.append(&mut glyphs.to_vec())
+			glyphs.append(&mut glyphs.clone());
 		}
 
 		glyphs
@@ -337,10 +337,10 @@ impl GraphLvls {
 			}
 			Ordering::Equal => {
 				if self.next > self.current + 1 && self.current < self.glyphs.len() {
-					if self.current != graph_one_max_idx {
-						self.current + 1
-					} else {
+					if self.current == graph_one_max_idx {
 						self.current
+					} else {
+						self.current + 1
 					}
 				// this additional clause should further improve details, but small deviations make the graph look a bit scattered
 				/* } else if self.next < self.current && self.current > 0 {

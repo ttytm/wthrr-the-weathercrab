@@ -4,7 +4,7 @@ use colored::{Color::BrightBlack, Colorize};
 use crate::modules::{params::Params, units::Time};
 
 use super::{
-	border::*,
+	border::{Border, BorderStyle, Edge, Separator},
 	gui_config::ColorOption,
 	hourly::HourlyForecast,
 	product::{Product, MIN_CELL_WIDTH, MIN_WIDTH},
@@ -35,7 +35,7 @@ pub struct Dimensions {
 
 impl Current {
 	pub fn render(self, params: &Params) -> Dimensions {
-		let Current {
+		let Self {
 			address,
 			temperature,
 			apparent_temperature,
@@ -163,11 +163,11 @@ impl Current {
 		);
 		let sunrise = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[0][14..16]),
-			_ => weather.daily.sunrise[0][11..16].to_string(),
+			Time::military => weather.daily.sunrise[0][11..16].to_string(),
 		};
 		let sunset = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[0][14..16]),
-			_ => weather.daily.sunset[0][11..16].to_string(),
+			Time::military => weather.daily.sunset[0][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
@@ -231,7 +231,7 @@ impl Current {
 			None
 		};
 
-		Ok(Current {
+		Ok(Self {
 			address,
 			temperature,
 			apparent_temperature,

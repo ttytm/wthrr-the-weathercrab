@@ -41,7 +41,7 @@ impl WeatherCode {
 			_ => return Err(anyhow!("Unknown weather code")),
 		};
 
-		Ok(WeatherCode {
+		Ok(Self {
 			interpretation: res.0.to_string(),
 			icon: res.1,
 		})

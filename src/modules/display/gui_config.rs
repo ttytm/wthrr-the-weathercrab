@@ -1,5 +1,5 @@
 use colored::{Color, ColoredString, Colorize};
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 
 use crate::modules::display::{
@@ -43,8 +43,8 @@ pub trait ColorOption {
 impl<'a> ColorOption for &'a str {
 	fn color_option(self, default_color: Color, config_color: &ColorVariant) -> ColoredString {
 		match config_color {
-			&ColorVariant::plain => self.normal(),
-			_ => self.color(default_color),
+			ColorVariant::plain => self.normal(),
+			ColorVariant::default => self.color(default_color),
 		}
 	}
 }

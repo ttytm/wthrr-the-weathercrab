@@ -11,7 +11,11 @@ use crate::modules::{
 };
 
 use super::{
-	border::*, gui_config::ColorOption, hourly::HourlyForecast, product::Product, utils::lang_len_diff,
+	border::{Border, BorderStyle, Edge, Separator},
+	gui_config::ColorOption,
+	hourly::HourlyForecast,
+	product::Product,
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
@@ -29,7 +33,7 @@ pub struct HistoricalWeather {
 
 impl HistoricalWeather {
 	pub fn render(self, params: &Params) {
-		let HistoricalWeather {
+		let Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,
@@ -84,7 +88,7 @@ impl HistoricalWeather {
 		);
 
 		// Apparent Temperature & Sun Rise & Sun Set
-		let sunrise_and_sunset = format!("{}  {}", sunrise, sunset);
+		let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 		println!(
 			"{} {} {: >WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -141,11 +145,11 @@ impl HistoricalWeather {
 		// Display Items
 		let sunrise = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &sunrise[0][14..16]),
-			_ => sunrise[0][11..16].to_string(),
+			Time::military => sunrise[0][11..16].to_string(),
 		};
 		let sunset = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &sunset[0][14..16]),
-			_ => sunset[0][11..16].to_string(),
+			Time::military => sunset[0][11..16].to_string(),
 		};
 		let temp_max_min = format!(
 			"{:.1}/{:.1}{}",
@@ -171,10 +175,10 @@ impl HistoricalWeather {
 		);
 		let date = format!(
 			" {}",
-			if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt, lang)?
-			} else {
+			if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b %Y").to_string()
+			} else {
+				Locales::localize_date(dt, lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");

@@ -22,7 +22,7 @@ pub const MIN_WIDTH: usize = 34;
 pub const MIN_CELL_WIDTH: usize = MIN_WIDTH / 2 - 2;
 
 impl Product<'_> {
-	pub async fn render(&self, params: &Params) -> Result<()> {
+	pub fn render(&self, params: &Params) -> Result<()> {
 		defer! {
 			// Disclaimer
 			println!(" {}", "Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color));

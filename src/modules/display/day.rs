@@ -5,7 +5,11 @@ use colored::{Color::BrightBlack, Colorize};
 use crate::modules::{display::hourly::WIDTH, localization::Locales, params::Params, units::Time};
 
 use super::{
-	border::*, gui_config::ColorOption, hourly::HourlyForecast, product::Product, utils::lang_len_diff,
+	border::{Border, BorderStyle, Edge, Separator},
+	gui_config::ColorOption,
+	hourly::HourlyForecast,
+	product::Product,
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
@@ -23,7 +27,7 @@ pub struct Day {
 
 impl Day {
 	pub fn render(self, params: &Params) {
-		let Day {
+		let Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,
@@ -78,7 +82,7 @@ impl Day {
 		);
 
 		// Apparent Temperature & Sun Rise & Sun Set
-		let sunrise_and_sunset = format!("{}  {}", sunrise, sunset);
+		let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 		println!(
 			"{} {} {: >WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
@@ -109,11 +113,11 @@ impl Day {
 		);
 		let sunrise = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[day_index][14..16]),
-			_ => weather.daily.sunrise[day_index][11..16].to_string(),
+			Time::military => weather.daily.sunrise[day_index][11..16].to_string(),
 		};
 		let sunset = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[day_index][14..16]),
-			_ => weather.daily.sunset[day_index][11..16].to_string(),
+			Time::military => weather.daily.sunset[day_index][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 
@@ -136,10 +140,10 @@ impl Day {
 		let lang = &params.config.language;
 		let date = format!(
 			" {}",
-			if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt.into(), lang)?
-			} else {
+			if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
+			} else {
+				Locales::localize_date(dt.into(), lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");
@@ -148,7 +152,7 @@ impl Day {
 			WeatherCode::resolve(weather.daily.weathercode[day_index], night, &params.texts.weather.weather_code)?;
 		let hourly_forecast = HourlyForecast::prepare(product, params, day_index)?;
 
-		Ok(Day {
+		Ok(Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,

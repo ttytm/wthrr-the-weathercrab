@@ -1,4 +1,4 @@
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use strum::VariantNames;
@@ -59,23 +59,23 @@ pub enum Precipitation {
 }
 
 impl Units {
-	pub fn merge(arg_units: &[UnitArg], cfg_units: &Units) -> Units {
+	pub fn merge(arg_units: &[UnitArg], cfg_units: &Self) -> Self {
 		cfg_units.assign_unit_args(arg_units)
 	}
 
-	pub fn assign_unit_args(mut self, arg_units: &[UnitArg]) -> Units {
+	pub fn assign_unit_args(mut self, arg_units: &[UnitArg]) -> Self {
 		for val in arg_units {
 			if Temperature::VARIANTS.as_ref().contains(&val.as_ref()) {
-				self.temperature = Temperature::from_str(val.as_ref()).unwrap()
+				self.temperature = Temperature::from_str(val.as_ref()).unwrap();
 			}
 			if Speed::VARIANTS.as_ref().contains(&val.as_ref()) {
-				self.speed = Speed::from_str(val.as_ref()).unwrap()
+				self.speed = Speed::from_str(val.as_ref()).unwrap();
 			}
 			if Time::VARIANTS.as_ref().contains(&val.as_ref()) {
-				self.time = Time::from_str(val.as_ref()).unwrap()
+				self.time = Time::from_str(val.as_ref()).unwrap();
 			}
 			if Precipitation::VARIANTS.as_ref().contains(&val.as_ref()) {
-				self.precipitation = Precipitation::from_str(val.as_ref()).unwrap()
+				self.precipitation = Precipitation::from_str(val.as_ref()).unwrap();
 			}
 		}
 

@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use chrono::NaiveDate;
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 
@@ -80,7 +80,7 @@ pub struct Daily {
 }
 
 impl Weather {
-	pub async fn get(lat: f64, lon: f64, units: &Units) -> Result<Weather> {
+	pub async fn get(lat: f64, lon: f64, units: &Units) -> Result<Self> {
 		// TODO: conditionally expand api call
 		let url = format!(
 			"https://api.open-meteo.com/v1/forecast?
@@ -100,7 +100,7 @@ latitude={lat}
 
 		let res = reqwest::get(url)
 			.await?
-			.json::<Weather>()
+			.json::<Self>()
 			.await
 			.with_context(|| "Weather data request failed.")?;
 
@@ -142,7 +142,7 @@ latitude={lat}
 	) -> Result<HashMap<&'a NaiveDate, OptionalWeather>> {
 		let mut res = HashMap::new();
 		for date in dates {
-			res.insert(date, Weather::get_date(*date, lat, lon, units).await?);
+			res.insert(date, Self::get_date(*date, lat, lon, units).await?);
 		}
 
 		Ok(res)

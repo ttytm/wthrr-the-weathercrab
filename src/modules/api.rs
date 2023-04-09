@@ -42,7 +42,7 @@ impl<'a> ApiQuery<'a> {
 		}
 	}
 
-	pub fn location(api: ApiName, address: &'a str, language: &'a str) -> Self {
+	pub const fn location(api: ApiName, address: &'a str, language: &'a str) -> Self {
 		Self { api, address, language }
 	}
 

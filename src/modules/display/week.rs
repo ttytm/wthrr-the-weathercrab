@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::modules::{localization::Locales, params::Params};
 
 use super::{
-	border::*,
+	border::{Border, BorderStyle, Edge, Separator},
 	current::Dimensions,
 	gui_config::ColorOption,
 	product::{Product, MIN_CELL_WIDTH},
@@ -85,7 +85,7 @@ impl Week {
 						_ => Separator::Dashed.fmt(width, &gui.border),
 					}
 					.color_option(BrightBlack, &gui.color)
-				)
+				);
 			}
 
 			n += 1;
@@ -113,10 +113,10 @@ impl Week {
 				)
 				.unwrap();
 
-			let date = if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt, lang)?
-			} else {
+			let date = if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
+			} else {
+				Locales::localize_date(dt, lang)?
 			};
 
 			let weather_code = WeatherCode::resolve(product.weather.daily.weathercode[i], false, &t.weather_code)?;
@@ -145,6 +145,6 @@ impl Week {
 			days.push(day);
 		}
 
-		Ok(Week { width, days })
+		Ok(Self { days, width })
 	}
 }

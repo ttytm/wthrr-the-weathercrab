@@ -160,7 +160,7 @@ const DATETIME_LOCALES: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), 
 
 impl Locales {
 	pub async fn get(lang: &str) -> Result<Self> {
-		let mut texts = Locales::default();
+		let mut texts = Self::default();
 		let path = Self::get_path(lang);
 
 		if let Ok(file) = fs::read_to_string(path) {

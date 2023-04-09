@@ -66,7 +66,7 @@ impl From<&OpenMeteoGeoObj> for Location {
 }
 
 impl Location {
-	pub async fn get(address: &str, lang: &str) -> Result<Location> {
+	pub async fn get(address: &str, lang: &str) -> Result<Self> {
 		let client = Client::builder().user_agent("wthrr-the-weathercrab").build()?;
 		let results = Self::search_osm(&client, address, lang).await;
 
@@ -76,7 +76,7 @@ impl Location {
 		}
 	}
 
-	async fn search_osm(client: &Client, address: &str, language: &str) -> Result<Location> {
+	async fn search_osm(client: &Client, address: &str, language: &str) -> Result<Self> {
 		client
 			.get(
 				&ApiQuery::location(ApiName::OpenStreetMap, address, language)
@@ -88,11 +88,11 @@ impl Location {
 			.json::<Vec<OpenStreetMapGeoObj>>()
 			.await?
 			.first()
-			.ok_or_else(|| anyhow!(Location::error_message()))
-			.map(Location::from)
+			.ok_or_else(|| anyhow!(Self::error_message()))
+			.map(Self::from)
 	}
 
-	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Location> {
+	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Self> {
 		client
 			.get(&ApiQuery::location(ApiName::OpenMeteo, address, language).convert().assemble())
 			.send()
@@ -100,8 +100,8 @@ impl Location {
 			.json::<Vec<OpenMeteoGeoObj>>()
 			.await?
 			.first()
-			.ok_or_else(|| anyhow!(Location::error_message()))
-			.map(Location::from)
+			.ok_or_else(|| anyhow!(Self::error_message()))
+			.map(Self::from)
 	}
 
 	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {

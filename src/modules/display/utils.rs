@@ -53,9 +53,10 @@ pub fn style_number(mut num: i32, sub: bool) -> String {
 	let mut result = String::new();
 
 	if num == 0 {
-		result.push(match sub {
-			true => SUBSCRIPT_DIGITS[0],
-			_ => SUPERSCRIPT_DIGITS[0],
+		result.push(if sub {
+			SUBSCRIPT_DIGITS[0]
+		} else {
+			SUPERSCRIPT_DIGITS[0]
 		});
 		return result;
 	}
@@ -73,10 +74,11 @@ pub fn style_number(mut num: i32, sub: bool) -> String {
 		power_of_ten /= 10;
 		if digit != 0 || started {
 			started = true;
-			result.push(match sub {
-				true => SUBSCRIPT_DIGITS[digit as usize],
-				_ => SUPERSCRIPT_DIGITS[digit as usize],
-			})
+			result.push(if sub {
+				SUBSCRIPT_DIGITS[digit as usize]
+			} else {
+				SUPERSCRIPT_DIGITS[digit as usize]
+			});
 		}
 	}
 
