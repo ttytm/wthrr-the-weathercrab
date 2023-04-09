@@ -27,7 +27,7 @@ pub struct Day {
 
 impl Day {
 	pub fn render(self, params: &Params) {
-		let Day {
+		let Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,
@@ -152,7 +152,7 @@ impl Day {
 			WeatherCode::resolve(weather.daily.weathercode[day_index], night, &params.texts.weather.weather_code)?;
 		let hourly_forecast = HourlyForecast::prepare(product, params, day_index)?;
 
-		Ok(Day {
+		Ok(Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,

@@ -33,7 +33,7 @@ pub struct HistoricalWeather {
 
 impl HistoricalWeather {
 	pub fn render(self, params: &Params) {
-		let HistoricalWeather {
+		let Self {
 			address,
 			temp_max_min,
 			apparent_temp_max_min,

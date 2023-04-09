@@ -62,8 +62,8 @@ struct GraphLvls {
 }
 
 impl Graph {
-	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Graph {
-		let mut graph = Graph(String::new(), String::new());
+	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Self {
+		let mut graph = Self(String::new(), String::new());
 		let style = graph_opts.style;
 		let rowspan = graph_opts.rowspan;
 

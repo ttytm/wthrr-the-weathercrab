@@ -35,7 +35,7 @@ pub struct Dimensions {
 
 impl Current {
 	pub fn render(self, params: &Params) -> Dimensions {
-		let Current {
+		let Self {
 			address,
 			temperature,
 			apparent_temperature,
@@ -231,7 +231,7 @@ impl Current {
 			None
 		};
 
-		Ok(Current {
+		Ok(Self {
 			address,
 			temperature,
 			apparent_temperature,

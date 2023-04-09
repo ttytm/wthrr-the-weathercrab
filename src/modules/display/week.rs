@@ -145,6 +145,6 @@ impl Week {
 			days.push(day);
 		}
 
-		Ok(Week { days, width })
+		Ok(Self { days, width })
 	}
 }

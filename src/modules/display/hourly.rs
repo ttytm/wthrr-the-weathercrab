@@ -41,7 +41,7 @@ struct WeatherSummery {
 
 impl HourlyForecast {
 	pub fn render(self, params: &Params) {
-		let HourlyForecast {
+		let Self {
 			heading,
 			temperatures,
 			precipitation,
@@ -283,7 +283,7 @@ impl HourlyForecast {
 			_ => None,
 		};
 
-		Ok(HourlyForecast {
+		Ok(Self {
 			heading: params.texts.weather.hourly_forecast.to_string(),
 			temperatures: Self::prepare_temperatures(
 				temperatures,

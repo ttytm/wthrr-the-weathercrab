@@ -9,7 +9,8 @@
 	clippy::unused_async,
 	clippy::uninlined_format_args,
 	clippy::implicit_clone,
-	clippy::inconsistent_struct_constructor
+	clippy::inconsistent_struct_constructor,
+	clippy::use_self
 )]
 
 mod modules;

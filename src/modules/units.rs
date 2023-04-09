@@ -59,11 +59,11 @@ pub enum Precipitation {
 }
 
 impl Units {
-	pub fn merge(arg_units: &[UnitArg], cfg_units: &Units) -> Units {
+	pub fn merge(arg_units: &[UnitArg], cfg_units: &Self) -> Self {
 		cfg_units.assign_unit_args(arg_units)
 	}
 
-	pub fn assign_unit_args(mut self, arg_units: &[UnitArg]) -> Units {
+	pub fn assign_unit_args(mut self, arg_units: &[UnitArg]) -> Self {
 		for val in arg_units {
 			if Temperature::VARIANTS.as_ref().contains(&val.as_ref()) {
 				self.temperature = Temperature::from_str(val.as_ref()).unwrap();

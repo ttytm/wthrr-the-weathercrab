@@ -16,35 +16,35 @@ pub enum Border {
 impl Border {
 	pub fn fmt<'a>(&self, style: &BorderStyle) -> &'a str {
 		match self {
-			Border::TL => match style {
+			Self::TL => match style {
 				BorderStyle::single => "┌",
 				BorderStyle::solid => "┏",
 				BorderStyle::double => "╔",
 				BorderStyle::rounded => "╭",
 			},
-			Border::T | Border::B => match style {
+			Self::T | Self::B => match style {
 				BorderStyle::double => "═",
 				BorderStyle::solid => "━",
 				_ => "─",
 			},
-			Border::TR => match style {
+			Self::TR => match style {
 				BorderStyle::single => "┐",
 				BorderStyle::solid => "┓",
 				BorderStyle::double => "╗",
 				BorderStyle::rounded => "╮",
 			},
-			Border::R | Border::L => match style {
+			Self::R | Self::L => match style {
 				BorderStyle::double => "║",
 				BorderStyle::solid => "┃",
 				_ => "│",
 			},
-			Border::BR => match style {
+			Self::BR => match style {
 				BorderStyle::single => "┘",
 				BorderStyle::solid => "┛",
 				BorderStyle::double => "╝",
 				BorderStyle::rounded => "╯",
 			},
-			Border::BL => match style {
+			Self::BL => match style {
 				BorderStyle::single => "└",
 				BorderStyle::solid => "┗",
 				BorderStyle::double => "╚",
