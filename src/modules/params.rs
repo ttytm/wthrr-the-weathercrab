@@ -58,10 +58,10 @@ impl Params {
 
 		Ok(Self {
 			config: Config {
+				address,
 				language,
 				forecast,
 				units,
-				address,
 				gui,
 			},
 			texts,
