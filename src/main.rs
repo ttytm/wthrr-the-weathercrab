@@ -1,7 +1,8 @@
 #![warn(
 	clippy::semicolon_if_nothing_returned,
 	clippy::wildcard_imports,
-	clippy::cloned_instead_of_copied
+	clippy::cloned_instead_of_copied,
+	clippy::single_match_else
 )]
 
 mod modules;
