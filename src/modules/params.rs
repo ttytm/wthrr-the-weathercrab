@@ -24,7 +24,7 @@ impl Params {
 	pub async fn merge(config: &Config, args: &Cli) -> Result<Self> {
 		let language = match &args.language {
 			Some(lang) => lang.to_string(),
-			_ => config.language.to_owned(),
+			None => config.language.clone(),
 		};
 
 		let texts = Locales::get(&language).await?;
@@ -45,7 +45,7 @@ impl Params {
 		} else if !args.forecast.is_empty() {
 			args.forecast.iter().copied().collect()
 		} else {
-			config.forecast.to_owned()
+			config.forecast.clone()
 		};
 
 		let historical_weather = if args.historical_weather.is_empty() {
@@ -54,7 +54,7 @@ impl Params {
 			args.historical_weather.iter().copied().collect()
 		};
 
-		let gui = config.gui.to_owned();
+		let gui = config.gui.clone();
 
 		Ok(Self {
 			config: Config {

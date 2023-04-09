@@ -7,7 +7,8 @@
 	clippy::match_bool,
 	clippy::if_not_else,
 	clippy::unused_async,
-	clippy::uninlined_format_args
+	clippy::uninlined_format_args,
+	clippy::implicit_clone
 )]
 
 mod modules;

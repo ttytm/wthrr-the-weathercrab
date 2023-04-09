@@ -284,7 +284,7 @@ impl GraphLvls {
 		};
 
 		if graph_rows == &GraphRows::double {
-			glyphs.append(&mut glyphs.to_vec());
+			glyphs.append(&mut glyphs.clone());
 		}
 
 		glyphs
