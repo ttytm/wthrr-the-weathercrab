@@ -6,7 +6,8 @@
 	clippy::match_wildcard_for_single_variants,
 	clippy::match_bool,
 	clippy::if_not_else,
-	clippy::unused_async
+	clippy::unused_async,
+	clippy::uninlined_format_args
 )]
 
 mod modules;

@@ -88,7 +88,7 @@ impl HistoricalWeather {
 		);
 
 		// Apparent Temperature & Sun Rise & Sun Set
-		let sunrise_and_sunset = format!("{}  {}", sunrise, sunset);
+		let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 		println!(
 			"{} {} {: >WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
