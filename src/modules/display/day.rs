@@ -140,10 +140,10 @@ impl Day {
 		let lang = &params.config.language;
 		let date = format!(
 			" {}",
-			if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt.into(), lang)?
-			} else {
+			if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
+			} else {
+				Locales::localize_date(dt.into(), lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");

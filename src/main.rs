@@ -4,7 +4,8 @@
 	clippy::cloned_instead_of_copied,
 	clippy::single_match_else,
 	clippy::match_wildcard_for_single_variants,
-	clippy::match_bool
+	clippy::match_bool,
+	clippy::if_not_else
 )]
 
 mod modules;

@@ -337,10 +337,10 @@ impl GraphLvls {
 			}
 			Ordering::Equal => {
 				if self.next > self.current + 1 && self.current < self.glyphs.len() {
-					if self.current != graph_one_max_idx {
-						self.current + 1
-					} else {
+					if self.current == graph_one_max_idx {
 						self.current
+					} else {
+						self.current + 1
 					}
 				// this additional clause should further improve details, but small deviations make the graph look a bit scattered
 				/* } else if self.next < self.current && self.current > 0 {

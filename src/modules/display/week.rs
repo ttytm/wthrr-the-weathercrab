@@ -113,10 +113,10 @@ impl Week {
 				)
 				.unwrap();
 
-			let date = if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt, lang)?
-			} else {
+			let date = if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
+			} else {
+				Locales::localize_date(dt, lang)?
 			};
 
 			let weather_code = WeatherCode::resolve(product.weather.daily.weathercode[i], false, &t.weather_code)?;

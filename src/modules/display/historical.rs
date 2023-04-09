@@ -175,10 +175,10 @@ impl HistoricalWeather {
 		);
 		let date = format!(
 			" {}",
-			if !(lang == "en_US" || lang == "en") {
-				Locales::localize_date(dt, lang)?
-			} else {
+			if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b %Y").to_string()
+			} else {
+				Locales::localize_date(dt, lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");

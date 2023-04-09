@@ -48,10 +48,10 @@ impl Params {
 			config.forecast.to_owned()
 		};
 
-		let historical_weather = if !args.historical_weather.is_empty() {
-			args.historical_weather.iter().copied().collect()
-		} else {
+		let historical_weather = if args.historical_weather.is_empty() {
 			HashSet::<NaiveDate>::new()
+		} else {
+			args.historical_weather.iter().copied().collect()
 		};
 
 		let gui = config.gui.to_owned();
