@@ -30,7 +30,7 @@ impl Params {
 		let texts = Locales::get(&language).await?;
 
 		if args.reset {
-			Self::reset(&texts.config).await?;
+			Self::reset(&texts.config)?;
 			std::process::exit(1);
 		}
 
@@ -69,7 +69,7 @@ impl Params {
 		})
 	}
 
-	pub async fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
+	pub fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
@@ -81,7 +81,7 @@ impl Params {
 			// Prompt to save
 			self.config.apply_to(&mut config_file);
 			self.config = config_file;
-			self.save_prompt(&args.address.unwrap_or_default()).await?;
+			self.save_prompt(&args.address.unwrap_or_default())?;
 		} else {
 			// Handle explicit save call
 			self.config.apply_to(&mut config_file);
@@ -92,7 +92,7 @@ impl Params {
 		Ok(())
 	}
 
-	async fn save_prompt(mut self, arg_address: &str) -> Result<()> {
+	fn save_prompt(mut self, arg_address: &str) -> Result<()> {
 		let mut items = vec![
 			&self.texts.config.confirm,
 			&self.texts.config.next_time,
@@ -123,7 +123,7 @@ impl Params {
 		Ok(())
 	}
 
-	pub async fn reset(t: &ConfigLocales) -> Result<()> {
+	pub fn reset(t: &ConfigLocales) -> Result<()> {
 		let confirmation = Confirm::with_theme(&ColorfulTheme::default())
 			.with_prompt(&t.reset_config)
 			.interact()?;
