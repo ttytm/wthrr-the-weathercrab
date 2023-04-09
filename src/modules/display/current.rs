@@ -4,7 +4,7 @@ use colored::{Color::BrightBlack, Colorize};
 use crate::modules::{params::Params, units::Time};
 
 use super::{
-	border::*,
+	border::{Border, BorderStyle, Edge, Separator},
 	gui_config::ColorOption,
 	hourly::HourlyForecast,
 	product::{Product, MIN_CELL_WIDTH, MIN_WIDTH},

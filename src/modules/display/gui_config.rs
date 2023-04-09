@@ -1,5 +1,5 @@
 use colored::{Color, ColoredString, Colorize};
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 
 use crate::modules::display::{

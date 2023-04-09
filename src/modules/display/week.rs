@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::modules::{localization::Locales, params::Params};
 
 use super::{
-	border::*,
+	border::{Border, BorderStyle, Edge, Separator},
 	current::Dimensions,
 	gui_config::ColorOption,
 	product::{Product, MIN_CELL_WIDTH},

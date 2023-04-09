@@ -1,4 +1,4 @@
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use strum::VariantNames;

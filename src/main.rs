@@ -1,4 +1,4 @@
-#![warn(clippy::semicolon_if_nothing_returned)]
+#![warn(clippy::semicolon_if_nothing_returned, clippy::wildcard_imports)]
 
 mod modules;
 

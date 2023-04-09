@@ -14,7 +14,7 @@ use crate::modules::{
 };
 
 use super::{
-	border::*,
+	border::{Border, BorderStyle, Separator},
 	graph::Graph,
 	gui_config::ColorOption,
 	product::Product,

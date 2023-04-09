@@ -1,7 +1,7 @@
 use anyhow::Result;
 use colored::{Color::Yellow, Colorize};
 use directories::ProjectDirs;
-use optional_struct::*;
+use optional_struct::{optional_struct, Applyable};
 use ron::{
 	extensions::Extensions,
 	ser::{to_string_pretty, PrettyConfig},

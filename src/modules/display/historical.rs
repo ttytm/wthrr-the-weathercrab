@@ -11,7 +11,11 @@ use crate::modules::{
 };
 
 use super::{
-	border::*, gui_config::ColorOption, hourly::HourlyForecast, product::Product, utils::lang_len_diff,
+	border::{Border, BorderStyle, Edge, Separator},
+	gui_config::ColorOption,
+	hourly::HourlyForecast,
+	product::Product,
+	utils::lang_len_diff,
 	weathercode::WeatherCode,
 };
 
