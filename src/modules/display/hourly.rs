@@ -61,12 +61,12 @@ impl HourlyForecast {
 		// Set Measurment Unit Symbols
 		let temperature_unit = match units.temperature {
 			Temperature::fahrenheit => "",
-			_ => "",
+			Temperature::celsius => "",
 		};
 		let precipitation_unit = match units.precipitation {
 			Precipitation::mm => "ₘₘ",
 			Precipitation::inch => "ᵢₙ",
-			_ => "󰖎 ",
+			Precipitation::probability => "󰖎 ",
 		};
 
 		// Hourly Forecast Heading
@@ -177,7 +177,7 @@ impl HourlyForecast {
 		print!("{}", Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color));
 		let hours = match units.time {
 			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
-			_ => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
+			Time::military => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
 		};
 		for hour in hours {
 			print!("{hour: <9}");

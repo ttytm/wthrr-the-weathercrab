@@ -2,7 +2,8 @@
 	clippy::semicolon_if_nothing_returned,
 	clippy::wildcard_imports,
 	clippy::cloned_instead_of_copied,
-	clippy::single_match_else
+	clippy::single_match_else,
+	clippy::match_wildcard_for_single_variants
 )]
 
 mod modules;

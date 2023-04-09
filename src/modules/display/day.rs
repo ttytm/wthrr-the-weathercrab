@@ -113,11 +113,11 @@ impl Day {
 		);
 		let sunrise = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &weather.daily.sunrise[day_index][14..16]),
-			_ => weather.daily.sunrise[day_index][11..16].to_string(),
+			Time::military => weather.daily.sunrise[day_index][11..16].to_string(),
 		};
 		let sunset = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &weather.daily.sunset[day_index][14..16]),
-			_ => weather.daily.sunset[day_index][11..16].to_string(),
+			Time::military => weather.daily.sunset[day_index][11..16].to_string(),
 		};
 		let night = current_hour < sunrise_hour || current_hour > sunset_hour;
 

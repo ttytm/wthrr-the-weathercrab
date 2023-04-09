@@ -31,7 +31,7 @@ pub fn get_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
 			Forecast::fr => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Fri)),
 			Forecast::sa => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Sat)),
 			Forecast::su => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Sun)),
-			_ => (),
+			Forecast::disable => (),
 		}
 	}
 

@@ -145,11 +145,11 @@ impl HistoricalWeather {
 		// Display Items
 		let sunrise = match params.config.units.time {
 			Time::am_pm => format!("{}:{}am", sunrise_hour, &sunrise[0][14..16]),
-			_ => sunrise[0][11..16].to_string(),
+			Time::military => sunrise[0][11..16].to_string(),
 		};
 		let sunset = match params.config.units.time {
 			Time::am_pm => format!("{}:{}pm", sunset_hour - 12, &sunset[0][14..16]),
-			_ => sunset[0][11..16].to_string(),
+			Time::military => sunset[0][11..16].to_string(),
 		};
 		let temp_max_min = format!(
 			"{:.1}/{:.1}{}",

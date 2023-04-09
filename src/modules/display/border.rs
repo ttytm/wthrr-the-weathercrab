@@ -20,7 +20,7 @@ impl Border {
 				BorderStyle::single => "┌",
 				BorderStyle::solid => "┏",
 				BorderStyle::double => "╔",
-				_ => "╭",
+				BorderStyle::rounded => "╭",
 			},
 			Border::T | Border::B => match style {
 				BorderStyle::double => "═",
@@ -31,7 +31,7 @@ impl Border {
 				BorderStyle::single => "┐",
 				BorderStyle::solid => "┓",
 				BorderStyle::double => "╗",
-				_ => "╮",
+				BorderStyle::rounded => "╮",
 			},
 			Border::R | Border::L => match style {
 				BorderStyle::double => "║",
@@ -42,13 +42,13 @@ impl Border {
 				BorderStyle::single => "┘",
 				BorderStyle::solid => "┛",
 				BorderStyle::double => "╝",
-				_ => "╯",
+				BorderStyle::rounded => "╯",
 			},
 			Border::BL => match style {
 				BorderStyle::single => "└",
 				BorderStyle::solid => "┗",
 				BorderStyle::double => "╚",
-				_ => "╰",
+				BorderStyle::rounded => "╰",
 			},
 		}
 	}
