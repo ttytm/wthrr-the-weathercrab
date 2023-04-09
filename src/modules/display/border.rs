@@ -14,7 +14,7 @@ pub enum Border {
 }
 
 impl Border {
-	pub fn fmt<'a>(&self, style: &BorderStyle) -> &'a str {
+	pub const fn fmt<'a>(&self, style: &BorderStyle) -> &'a str {
 		match self {
 			Self::TL => match style {
 				BorderStyle::single => "┌",
