@@ -3,7 +3,8 @@
 	clippy::wildcard_imports,
 	clippy::cloned_instead_of_copied,
 	clippy::single_match_else,
-	clippy::match_wildcard_for_single_variants
+	clippy::match_wildcard_for_single_variants,
+	clippy::match_bool
 )]
 
 mod modules;
@@ -30,9 +31,10 @@ async fn main() -> Result<()> {
 pub async fn run(params: &Params) -> Result<Product> {
 	let loc = Location::get(&params.config.address, &params.config.language).await?;
 	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
-	let historical_weather = match !params.historical_weather.is_empty() {
-		true => Some(Weather::get_dates(&params.historical_weather, loc.lat, loc.lon, &params.config.units).await?),
-		_ => None,
+	let historical_weather = if params.historical_weather.is_empty() {
+		None
+	} else {
+		Some(Weather::get_dates(&params.historical_weather, loc.lat, loc.lon, &params.config.units).await?)
 	};
 
 	Ok(Product {
