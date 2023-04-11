@@ -22,7 +22,7 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Run llvm-cov
-        run: cargo llvm-cov --all-features --doctests --workspace --lcov --output-path lcov.info
+        run: cargo llvm-cov --doctests --lcov --output-path lcov.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
