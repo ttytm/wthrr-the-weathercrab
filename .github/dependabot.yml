@@ -19,3 +19,5 @@ updates:
       - tobealive
     commit-message:
       prefix: "⬆️ "
+    ignore:
+      - dependency-name: dtolnay/rust-toolchain
