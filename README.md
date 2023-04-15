@@ -181,16 +181,14 @@ Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome 
 
 A simple changelog can be found on the [releases page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
 
+## Contributors
+
+<a href="https://github.com/tobealive/wthrr-the-weathercrab/graphs/contributors">
+  <img height='48' src="https://contrib.rocks/image?repo=tobealive/wthrr-the-weathercrab&columns=24" />
+</a>
+
 ## Credits
 
 - The app uses the open-source weather API for non-commercial use provided by [Open Meteo](https://open-meteo.com/en)
 
 <br>
-
-##
-
-<div align="right">
-  <a href='https://ko-fi.com/O4O4IOTYR' target='_blank'>
-    <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' />
-  </a>
-</div>
