@@ -5,8 +5,7 @@ use std::collections::HashSet;
 use super::args::Forecast;
 
 pub fn get_forecast_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
-	let curr_day = Local::now().weekday();
-	get_indices(forecast, curr_day)
+	get_indices(forecast, Local::now().weekday())
 }
 
 fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
