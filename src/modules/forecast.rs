@@ -16,19 +16,17 @@ fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 	// Until there is a more concise solution this is a working and fairly slim approach.
 	let mut forecast_indices: Vec<usize> = forecast
 		.iter()
-		.map(|val| {
-			match val {
-				Forecast::day => 0,
-				Forecast::week => 7,
-				Forecast::mo => get_day_index(days_from_ref_day, Weekday::Mon),
-				Forecast::tu => get_day_index(days_from_ref_day, Weekday::Tue),
-				Forecast::we => get_day_index(days_from_ref_day, Weekday::Wed),
-				Forecast::th => get_day_index(days_from_ref_day, Weekday::Thu),
-				Forecast::fr => get_day_index(days_from_ref_day, Weekday::Fri),
-				Forecast::sa => get_day_index(days_from_ref_day, Weekday::Sat),
-				Forecast::su => get_day_index(days_from_ref_day, Weekday::Sun),
-				Forecast::disable => 0, // or any default value you prefer
-			}
+		.map(|val| match val {
+			Forecast::day => 0,
+			Forecast::week => 7,
+			Forecast::mo => get_day_index(days_from_ref_day, Weekday::Mon),
+			Forecast::tu => get_day_index(days_from_ref_day, Weekday::Tue),
+			Forecast::we => get_day_index(days_from_ref_day, Weekday::Wed),
+			Forecast::th => get_day_index(days_from_ref_day, Weekday::Thu),
+			Forecast::fr => get_day_index(days_from_ref_day, Weekday::Fri),
+			Forecast::sa => get_day_index(days_from_ref_day, Weekday::Sat),
+			Forecast::su => get_day_index(days_from_ref_day, Weekday::Sun),
+			Forecast::disable => 0,
 		})
 		.collect();
 
