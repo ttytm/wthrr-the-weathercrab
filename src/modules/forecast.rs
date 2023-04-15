@@ -9,28 +9,28 @@ pub fn get_forecast_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
 }
 
 fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
+	let days_from_ref_day = curr_day.number_from_monday();
+
 	// Indices for forecasts that should be rendered. 7 will be used as a special value
 	// [0] = current day; [1..7] = week days; [7] = week overview
 	// Until there is a more concise solution this is a working and fairly slim approach.
-	let mut forecast_indices: Vec<usize> = vec![];
-
-	let days_from_ref_day = curr_day.number_from_monday();
-
-	for val in forecast {
-		match val {
-			Forecast::day => forecast_indices.push(0),
-			Forecast::week => forecast_indices.push(7),
-			// Forecast weekdays
-			Forecast::mo => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Mon)),
-			Forecast::tu => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Tue)),
-			Forecast::we => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Wed)),
-			Forecast::th => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Thu)),
-			Forecast::fr => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Fri)),
-			Forecast::sa => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Sat)),
-			Forecast::su => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Sun)),
-			Forecast::disable => (),
-		}
-	}
+	let mut forecast_indices: Vec<usize> = forecast
+		.iter()
+		.map(|val| {
+			match val {
+				Forecast::day => 0,
+				Forecast::week => 7,
+				Forecast::mo => get_day_index(days_from_ref_day, Weekday::Mon),
+				Forecast::tu => get_day_index(days_from_ref_day, Weekday::Tue),
+				Forecast::we => get_day_index(days_from_ref_day, Weekday::Wed),
+				Forecast::th => get_day_index(days_from_ref_day, Weekday::Thu),
+				Forecast::fr => get_day_index(days_from_ref_day, Weekday::Fri),
+				Forecast::sa => get_day_index(days_from_ref_day, Weekday::Sat),
+				Forecast::su => get_day_index(days_from_ref_day, Weekday::Sun),
+				Forecast::disable => 0, // or any default value you prefer
+			}
+		})
+		.collect();
 
 	forecast_indices.sort();
 	forecast_indices
