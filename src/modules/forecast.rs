@@ -9,7 +9,7 @@ pub fn get_forecast_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
 }
 
 fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
-	let days_from_ref_day = curr_day.number_from_monday();
+	let dist_from_ref_day = curr_day.number_from_monday();
 
 	// Indices for forecasts that should be rendered. 7 will be used as a special value
 	// [0] = current day; [1..7] = week days; [7] = week overview
@@ -18,13 +18,13 @@ fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 		.iter()
 		.map(|val| match val {
 			Forecast::week => 7,
-			Forecast::mo => get_day_index(days_from_ref_day, Weekday::Mon),
-			Forecast::tu => get_day_index(days_from_ref_day, Weekday::Tue),
-			Forecast::we => get_day_index(days_from_ref_day, Weekday::Wed),
-			Forecast::th => get_day_index(days_from_ref_day, Weekday::Thu),
-			Forecast::fr => get_day_index(days_from_ref_day, Weekday::Fri),
-			Forecast::sa => get_day_index(days_from_ref_day, Weekday::Sat),
-			Forecast::su => get_day_index(days_from_ref_day, Weekday::Sun),
+			Forecast::mo => get_day_index(dist_from_ref_day, Weekday::Mon),
+			Forecast::tu => get_day_index(dist_from_ref_day, Weekday::Tue),
+			Forecast::we => get_day_index(dist_from_ref_day, Weekday::Wed),
+			Forecast::th => get_day_index(dist_from_ref_day, Weekday::Thu),
+			Forecast::fr => get_day_index(dist_from_ref_day, Weekday::Fri),
+			Forecast::sa => get_day_index(dist_from_ref_day, Weekday::Sat),
+			Forecast::su => get_day_index(dist_from_ref_day, Weekday::Sun),
 			_ => 0,
 		})
 		.collect();
@@ -34,8 +34,8 @@ fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 }
 
 // Get the index of a requested day to navigate the api response based on the distance from the current day.
-fn get_day_index(days_from_ref_day: u32, forecast_day: Weekday) -> usize {
-	(((forecast_day.number_from_monday() as i8 - days_from_ref_day as i8) % 7 + 7) % 7)
+fn get_day_index(dist_from_ref_day: u32, forecast_day: Weekday) -> usize {
+	(((forecast_day.number_from_monday() as i8 - dist_from_ref_day as i8) % 7 + 7) % 7)
 		.try_into()
 		.unwrap()
 }
@@ -71,7 +71,7 @@ mod tests {
 			get_indices(&HashSet::from([Forecast::mo]), curr_day)
 				== get_indices(&HashSet::from([Forecast::day]), curr_day)
 		);
-		// Test week overview combined with a weekday `-f w mo`. Should result in week overview.
+		// Test week overview `-f w`.
 		assert!(get_indices(&HashSet::from([Forecast::week]), curr_day) == [7]);
 		// Test distance from current day until requested day.
 		assert!(get_indices(&HashSet::from([Forecast::tu, Forecast::we, Forecast::sa]), curr_day) == [1, 2, 5]);
