@@ -5,7 +5,7 @@ use scopeguard::defer;
 use std::collections::HashMap;
 
 use crate::modules::{
-	forecast::get_indices,
+	forecast::get_forecast_indices,
 	params::Params,
 	weather::{OptionalWeather, Weather},
 };
@@ -42,7 +42,7 @@ impl Product<'_> {
 			return Ok(());
 		}
 
-		let forecast_indices = get_indices(&params.config.forecast);
+		let forecast_indices = get_forecast_indices(&params.config.forecast);
 
 		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
 			// Current day with hours & weekly overview

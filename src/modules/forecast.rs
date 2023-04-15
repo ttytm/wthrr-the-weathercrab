@@ -4,33 +4,31 @@ use std::collections::HashSet;
 
 use super::args::Forecast;
 
-pub fn get_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
+pub fn get_forecast_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
+	let curr_day = Local::now().weekday();
+	get_indices(forecast, curr_day)
+}
+
+fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 	// Indices for forecasts that should be rendered. 7 will be used as a special value
 	// [0] = current day; [1..7] = week days; [7] = week overview
 	// Until there is a more concise solution this is a working and fairly slim approach.
 	let mut forecast_indices: Vec<usize> = vec![];
 
-	#[cfg(not(test))]
-	let curr_day_ref = Local::now().weekday().number_from_monday();
-
-	#[cfg(test)]
-	// For tests we mock the current day to always be a Monday. If I find a way to mock the system time
-	// instead of fixing a specific day, it will be integrated as preferred method.
-	// Nevertheless, we will test the `get_day_index` subunit with days other than Monday.
-	let curr_day_ref = Weekday::Mon.number_from_monday();
+	let days_from_ref_day = curr_day.number_from_monday();
 
 	for val in forecast {
 		match val {
 			Forecast::day => forecast_indices.push(0),
 			Forecast::week => forecast_indices.push(7),
 			// Forecast weekdays
-			Forecast::mo => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Mon)),
-			Forecast::tu => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Tue)),
-			Forecast::we => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Wed)),
-			Forecast::th => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Thu)),
-			Forecast::fr => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Fri)),
-			Forecast::sa => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Sat)),
-			Forecast::su => forecast_indices.push(get_day_index(curr_day_ref, Weekday::Sun)),
+			Forecast::mo => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Mon)),
+			Forecast::tu => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Tue)),
+			Forecast::we => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Wed)),
+			Forecast::th => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Thu)),
+			Forecast::fr => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Fri)),
+			Forecast::sa => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Sat)),
+			Forecast::su => forecast_indices.push(get_day_index(days_from_ref_day, Weekday::Sun)),
 			Forecast::disable => (),
 		}
 	}
@@ -40,8 +38,8 @@ pub fn get_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
 }
 
 // Get the index of a requested day to navigate the api response based on the distance from the current day.
-fn get_day_index(curr_day_ref: u32, forecast_day: Weekday) -> usize {
-	(((forecast_day.number_from_monday() as i8 - curr_day_ref as i8) % 7 + 7) % 7)
+fn get_day_index(days_from_ref_day: u32, forecast_day: Weekday) -> usize {
+	(((forecast_day.number_from_monday() as i8 - days_from_ref_day as i8) % 7 + 7) % 7)
 		.try_into()
 		.unwrap()
 }
@@ -71,9 +69,16 @@ mod tests {
 
 	#[test]
 	fn forecast_indices() {
-		assert!(get_indices(&HashSet::from([Forecast::mo])) == get_indices(&HashSet::from([Forecast::day])));
-		assert!(get_indices(&HashSet::from([Forecast::week])) == [7]);
-		assert!(get_indices(&HashSet::from([Forecast::tu, Forecast::we, Forecast::sa])) == [1, 2, 5]);
-		assert!(get_indices(&HashSet::from([Forecast::day, Forecast::week])) == [0, 7]);
+		let curr_day = Weekday::Mon;
+		// Test weekday forcast for same day. E.g. `-f mo` on a monday.
+		assert!(
+			get_indices(&HashSet::from([Forecast::mo]), curr_day)
+				== get_indices(&HashSet::from([Forecast::day]), curr_day)
+		);
+		// Test week overview combined with a weekday `-f w mo`. Should result in week overview.
+		assert!(get_indices(&HashSet::from([Forecast::week]), curr_day) == [7]);
+		// Test distance from current day until requested day.
+		assert!(get_indices(&HashSet::from([Forecast::tu, Forecast::we, Forecast::sa]), curr_day) == [1, 2, 5]);
+		assert!(get_indices(&HashSet::from([Forecast::day, Forecast::week]), curr_day) == [0, 7]);
 	}
 }
