@@ -12,3 +12,8 @@ target/
 
 .history
 NOTES.md
+
+# Coverage artifacts.
+build_rs_cov.profraw
+cobertura.xml
+tarpaulin-report.html
