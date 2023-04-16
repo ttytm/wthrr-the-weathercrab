@@ -1,0 +1,66 @@
+name: tarpaulin
+
+on:
+  pull_request:
+    paths:
+      - Cargo.lock
+      - Cargo.toml
+      - src/*.rs
+      - src/**/*.rs
+      - src/**/**/*.rs
+
+permissions:
+  contents: read
+  pull-request: write
+
+jobs:
+  coverage:
+    name: coverage
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: 3.11
+
+      - name: checkout
+        uses: actions/checkout@v3.5.0
+        with:
+          persist-credentials: false
+          ref: ${{ github.head_ref }}
+
+      - name: cache
+        uses: actions/cache@v3.3.1
+        with:
+          key: ${{ runner.os }}-tarpaulin-${{ github.sha }}
+          path: |
+            ~/.cargo/bin/cargo-tarpaulin
+          restore-keys: |
+            ${{ runner.os }}-tarpaulin-
+
+      - name: cargo
+        run: |
+          if [[ ! -e ~/.cargo/bin/cargo-tarpaulin ]]; then
+            cargo install cargo-tarpaulin;
+          fi
+
+      - name: requirements
+        run: echo pycobertura >> requirements.txt
+
+      - name: dependencies
+        uses: py-actions/py-dependency-install@v4.0.0
+
+      - name: tarpaulin
+        run: |
+          cargo tarpaulin \
+          && echo '```' >> message.md \
+          && pycobertura show cobertura.xml >> message.md \
+          && echo '```' >> message.md
+
+      - name: comment
+        uses: thollander/actions-comment-pull-request@v2.3.1
+        with:
+          comment_tag: tarpaulin
+          filePath: message.md
