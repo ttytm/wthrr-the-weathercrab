@@ -1,0 +1,4 @@
+[default]
+engine = "Llvm"
+out = ["Html", "Xml"]
+skip-clean = true
