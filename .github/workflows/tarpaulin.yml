@@ -11,13 +11,11 @@ on:
 
 permissions:
   contents: read
-  pull-request: write
+  pull-requests: write
 
 jobs:
   coverage:
     name: coverage
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: python
