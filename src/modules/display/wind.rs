@@ -32,14 +32,14 @@ impl WindDirection {
 
 	pub const fn get_icon(&self) -> char {
 		match *self {
-			Self::N => '',
-			Self::NE => '',
-			Self::E => '',
-			Self::SE => '',
-			Self::S => '',
-			Self::SW => '',
-			Self::W => '',
-			Self::NW => '',
+			Self::N => '↓',
+			Self::NE => '↙',
+			Self::E => '←',
+			Self::SE => '↖',
+			Self::S => '↑',
+			Self::SW => '↗',
+			Self::W => '→',
+			Self::NW => '↘',
 		}
 	}
 }
