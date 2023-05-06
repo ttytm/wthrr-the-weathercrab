@@ -25,6 +25,7 @@ fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 			Forecast::fr => get_day_index(dist_from_ref_day, Weekday::Fri),
 			Forecast::sa => get_day_index(dist_from_ref_day, Weekday::Sat),
 			Forecast::su => get_day_index(dist_from_ref_day, Weekday::Sun),
+			Forecast::tomorrow => get_day_index(dist_from_ref_day, Local::now().weekday().succ()),
 			_ => 0,
 		})
 		.collect();
