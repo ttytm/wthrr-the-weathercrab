@@ -57,7 +57,7 @@ pub enum Forecast {
 	sa,
 	#[value(aliases = ["sun", "sunday"])]
 	su,
-	#[value(name = "(t)omorrow", aliases = ["t", "to", "tom"])]
+	#[value(name = "(t)omorrow", aliases = ["t", "to", "tom", "tomorrow"])]
 	tomorrow,
 }
 
