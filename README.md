@@ -69,7 +69,7 @@ Arguments:
 
 Options:
   -f, --forecast <FORECAST,...>
-          [e.g.: -f w,d] [possible values: disable, (w)eek, to(d)ay, mo, tu, we, th, fr, sa, su]
+          [e.g.: -f w,d] [possible values: disable, (w)eek, to(d)ay, (t)omorrow, mo, tu, we, th, fr, sa, su]
   -F, --historical-weather <%Y-%m-%d,...>
           [e.g.: -F 2021-12-31]
   -u, --units <UNIT,...>
