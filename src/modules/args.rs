@@ -43,6 +43,8 @@ pub enum Forecast {
 	week,
 	#[value(name = "to(d)ay", aliases = ["d", "day", "today"])]
 	day,
+	#[value(name = "(t)omorrow", aliases = ["t", "to", "tom", "tomorrow"])]
+	tomorrow,
 	#[value(aliases = ["mon", "monday"])]
 	mo,
 	#[value(aliases = ["tue", "tuesday"])]
@@ -57,8 +59,6 @@ pub enum Forecast {
 	sa,
 	#[value(aliases = ["sun", "sunday"])]
 	su,
-	#[value(name = "(t)omorrow", aliases = ["t", "to", "tom", "tomorrow"])]
-	tomorrow,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize)]
