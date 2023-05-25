@@ -27,6 +27,7 @@ jobs:
         with:
           persist-credentials: false
           ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: requirements
         run: echo pycobertura >> requirements.txt
