@@ -38,7 +38,7 @@ jobs:
       - name: tarpaulin
         run: |
           cargo tarpaulin
-          pycobertura show cobertura.xml >> $COBERTURA
+          pycobertura show cobertura.xml >> "$COBERTURA"
 
       - name: checkout-2
         uses: actions/checkout@v3.5.2
