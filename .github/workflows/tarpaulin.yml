@@ -42,6 +42,12 @@ jobs:
           && pycobertura show cobertura.xml >> message.md \
           && echo '```' >> message.md
 
+      - name: checkout-2
+        uses: actions/checkout@v3.5.2
+        with:
+          persist-credentials: false
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
+
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
