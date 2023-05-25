@@ -38,9 +38,9 @@ jobs:
       - name: tarpaulin
         run: |
           cargo tarpaulin \
-          && echo '```' >> message.md \
-          && pycobertura show cobertura.xml >> message.md \
-          && echo '```' >> message.md
+          && echo '```' > ~/message.md \
+          && pycobertura show cobertura.xml >> ~/message.md \
+          && echo '```' >> ~/message.md
 
       - name: checkout-2
         uses: actions/checkout@v3.5.2
@@ -52,4 +52,4 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
           comment_tag: tarpaulin
-          filePath: message.md
+          filePath: ~/message.md
