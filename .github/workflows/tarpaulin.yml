@@ -5,11 +5,12 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   coverage:
     name: coverage
+    outputs:
+      cobertura: ${{ steps.tarpaulin.outputs.cobertura }}
     runs-on: ubuntu-latest
     steps:
       - name: cargo
@@ -35,16 +36,24 @@ jobs:
       - name: dependencies
         uses: py-actions/py-dependency-install@v4.0.0
 
-      - name: tarpaulin
+      - id: tarpaulin
+        name: tarpaulin
         run: |
           cargo tarpaulin
-          pycobertura show cobertura.xml >> "$COBERTURA"
+          echo "cobertura=`pycobertura show cobertura.xml`" >> "$GITHUB_OUTPUT"
 
-      - name: checkout-2
+  comment:
+    name: comment
+    needs:
+      - coverage
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
         uses: actions/checkout@v3.5.2
         with:
           persist-credentials: false
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
 
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
@@ -52,5 +61,5 @@ jobs:
           comment_tag: tarpaulin
           message: |
             ```
-            $COBERTURA
+            ${{ needs.coverage.outputs.cobertura }}
             ```
