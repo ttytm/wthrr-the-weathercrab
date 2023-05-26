@@ -9,8 +9,6 @@ permissions:
 jobs:
   coverage:
     name: coverage
-    outputs:
-      cobertura: ${{ steps.tarpaulin.outputs.cobertura }}
     runs-on: ubuntu-latest
     steps:
       - name: cargo
@@ -35,20 +33,14 @@ jobs:
       - name: dependencies
         uses: py-actions/py-dependency-install@v4.0.0
 
-      - id: tarpaulin
-        name: tarpaulin
+      - name: tarpaulin
         run: |
-          cargo tarpaulin
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "text<<$EOF" >> $GITHUB_OUTPUT
-          pycobertura show cobertura.xml  >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          cargo tarpaulin \
+          && echo '```' >> message.md \
+          && pycobertura show cobertura.xml >> message.md \
+          && echo '```' >> message.md
 
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
-          comment_tag: tarpaulin
-          message: |
-            ```
-            ${{ steps.tarpaulin.outputs }}
-            ```
+          filePath: message.md
