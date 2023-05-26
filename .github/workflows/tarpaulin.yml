@@ -3,6 +3,9 @@ name: tarpaulin
 on:
   pull_request:
 
+permissions:
+  pull-requests: write
+
 jobs:
   coverage:
     name: coverage
@@ -42,24 +45,11 @@ jobs:
           echo "cobertura=`pycobertura show cobertura.xml`" >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
-  comment:
-    name: comment
-    needs:
-      - coverage
-    permissions:
-      pull-requests: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3.5.2
-        with:
-          persist-credentials: false
-
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
           comment_tag: tarpaulin
           message: |
             ```
-            ${{ needs.coverage.outputs.cobertura }}
+            ${{ steps.tarpaulin.outputs.cobertura }}
             ```
