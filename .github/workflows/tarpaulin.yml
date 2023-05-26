@@ -35,16 +35,13 @@ jobs:
 
       - name: tarpaulin
         run: |
-          cargo tarpaulin
-          output=$(pycobertura show cobertura.xml)
-          echo $cobertura
-          echo "cobertura=$output" >> "$GITHUB_OUTPUT"
+          cargo tarpaulin \
+          && echo '```' >> message.txt \
+          && pycobertura show cobertura.xml >> message.txt \
+          && echo '```' >> message.txt
 
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
           comment_tag: tarpaulin
-          message: |
-            ```
-            ${{ steps.tarpaulin.outputs.cobertura }}
-            ```
+          filePath: message.txt
