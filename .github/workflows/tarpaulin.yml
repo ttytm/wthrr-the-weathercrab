@@ -26,7 +26,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3.5.2
         with:
-          persist-credentials: false
           ref: ${{ github.head_ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
@@ -42,7 +41,7 @@ jobs:
           cargo tarpaulin
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "text<<$EOF" >> $GITHUB_OUTPUT
-          echo "cobertura=`pycobertura show cobertura.xml`" >> $GITHUB_OUTPUT
+          pycobertura show cobertura.xml  >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: comment
@@ -51,5 +50,5 @@ jobs:
           comment_tag: tarpaulin
           message: |
             ```
-            ${{ steps.tarpaulin.outputs.cobertura }}
+            ${{ steps.tarpaulin.outputs }}
             ```
