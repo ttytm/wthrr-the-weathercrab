@@ -4,7 +4,6 @@ on:
   pull_request:
 
 permissions:
-  contents: read
   pull-requests: write
 
 jobs:
@@ -25,8 +24,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3.5.2
         with:
-          persist-credentials: false
           ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: requirements
         run: echo pycobertura >> requirements.txt
@@ -37,12 +36,12 @@ jobs:
       - name: tarpaulin
         run: |
           cargo tarpaulin \
-          && echo '```' >> message.md \
-          && pycobertura show cobertura.xml >> message.md \
-          && echo '```' >> message.md
+          && echo '```' >> message.txt \
+          && pycobertura show cobertura.xml >> message.txt \
+          && echo '```' >> message.txt
 
       - name: comment
         uses: thollander/actions-comment-pull-request@v2.3.1
         with:
           comment_tag: tarpaulin
-          filePath: message.md
+          filePath: message.txt
