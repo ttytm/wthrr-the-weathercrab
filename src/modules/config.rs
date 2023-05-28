@@ -13,6 +13,7 @@ use std::{
 	fs::{self, File},
 	io::Write,
 	path::PathBuf,
+	sync::LazyLock,
 };
 
 use super::{
@@ -48,10 +49,12 @@ impl Default for Config {
 pub const CONFIG_DIR_NAME: &str = "weathercrab";
 const CONFIG_FILE_NAME: &str = "wthrr.ron";
 
+pub static CONFIG: LazyLock<Config> = LazyLock::new(Config::parse);
+
 impl Config {
-	pub fn get() -> Self {
+	pub fn parse() -> Self {
 		let mut config = Self::default();
-		let path = Self::get_path();
+		let path = Self::path();
 
 		if let Ok(file) = fs::read_to_string(&path) {
 			match Options::default()
@@ -61,11 +64,10 @@ impl Config {
 				Ok(contents) => contents.apply_to(&mut config),
 				Err(error) => {
 					let warning_sign = " Warning:".color(Yellow);
+					let indent = "  ";
 					eprintln!(
-						"{warning_sign} {}\n{: >4}At: {error}.\n{: >4}Falling back to default values.\n",
+						"{warning_sign} {}\n{indent}At: {error}.\n{indent}Falling back to default values.\n",
 						path.display(),
-						"",
-						"",
 					);
 					return config;
 				}
@@ -76,7 +78,7 @@ impl Config {
 	}
 
 	pub fn store(&self) -> Result<()> {
-		let path = Self::get_path();
+		let path = Self::path();
 
 		let cfg_dir = path.parent().unwrap();
 		if !cfg_dir.is_dir() {
@@ -90,7 +92,7 @@ impl Config {
 		Ok(())
 	}
 
-	pub fn get_path() -> PathBuf {
+	pub fn path() -> PathBuf {
 		ProjectDirs::from("", "", CONFIG_DIR_NAME)
 			.unwrap()
 			.config_dir()

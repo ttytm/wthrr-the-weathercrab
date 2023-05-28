@@ -1,3 +1,4 @@
+#![feature(lazy_cell)]
 #![deny(
 	clippy::semicolon_if_nothing_returned,
 	clippy::wildcard_imports,
@@ -18,18 +19,15 @@ mod modules;
 use anyhow::Result;
 use clap::Parser;
 
-use modules::{
-	args::Cli, config::Config, display::product::Product, location::Location, params::Params, weather::Weather,
-};
+use modules::{args::Cli, display::product::Product, location::Location, params::Params, weather::Weather};
 
 #[tokio::main]
 async fn main() -> Result<()> {
 	let args = Cli::parse();
-	let config = Config::get();
-	let params = Params::merge(&config, &args).await?;
+	let params = Params::eval(&args).await?;
 
 	run(&params).await?.render(&params)?;
-	params.handle_next(args, config)?;
+	params.handle_next(args)?;
 
 	Ok(())
 }

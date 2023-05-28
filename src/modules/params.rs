@@ -7,7 +7,7 @@ use optional_struct::Applyable;
 
 use super::{
 	args::{Cli, Forecast},
-	config::Config,
+	config::{Config, CONFIG},
 	localization::{ConfigLocales, Locales},
 	location::Location,
 	units::Units,
@@ -21,7 +21,9 @@ pub struct Params {
 }
 
 impl Params {
-	pub async fn merge(config: &Config, args: &Cli) -> Result<Self> {
+	pub async fn eval(args: &Cli) -> Result<Self> {
+		let config = &CONFIG;
+
 		let language = match &args.language {
 			Some(lang) => lang.to_string(),
 			None => config.language.clone(),
@@ -69,7 +71,8 @@ impl Params {
 		})
 	}
 
-	pub fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
+	pub fn handle_next(mut self, args: Cli) -> Result<()> {
+		let mut config_file = CONFIG.clone();
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
@@ -129,9 +132,8 @@ impl Params {
 			.interact()?;
 
 		if confirmation {
-			let path = Config::get_path();
-
-			std::fs::remove_dir_all(path.parent().unwrap()).with_context(|| "Error resetting config file.")?;
+			std::fs::remove_dir_all(Config::path().parent().unwrap())
+				.with_context(|| "Error resetting config file.")?;
 		}
 
 		Ok(())
