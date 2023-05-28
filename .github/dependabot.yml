@@ -6,7 +6,7 @@ updates:
       interval: weekly
       time: "04:00"
     assignees:
-      - tobealive
+      - kevinmatthes
 
   - package-ecosystem: github-actions
     directory: /
@@ -14,4 +14,4 @@ updates:
       interval: weekly
       time: "04:00"
     assignees:
-      - tobealive
+      - kevinmatthes
