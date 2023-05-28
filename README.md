@@ -5,7 +5,10 @@
     <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square" />
   </a>
   <a href="https://github.com/tobealive/wthrr-the-weathercrab/actions/workflows/ci.yml?query=branch%3Amain" target="_blank">
-    <img alt="crates.io" src="https://img.shields.io/github/actions/workflow/status/tobealive/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square" />
+    <img alt="build-status" src="https://img.shields.io/github/actions/workflow/status/tobealive/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square" />
+  </a>
+  <a href="https://github.com/tobealive/wthrr-the-weathercrab" target="_blank">
+    <img alt="last-commit" src="https://img.shields.io/github/last-commit/tobealive/wthrr-the-weathercrab?style=flat-square" />
   </a>
 </div>
 <br>
