@@ -2,7 +2,11 @@ name: tarpaulin
 
 on:
   pull_request:
-    paths: ["**/*.rs", "**/*.toml", "**/*.lock", "**/tarpaulin.yml"]
+    paths:
+      - "**/*.lock"
+      - "**/*.rs"
+      - "**/*.toml"
+      - "**/tarpaulin.yml"
 
 permissions:
   pull-requests: write
