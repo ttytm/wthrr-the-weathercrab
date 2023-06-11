@@ -64,12 +64,12 @@ jobs:
           # linker = "arm-linux-gnueabihf-gcc"
           # EOF
       - name: Install rust target
-        run: rustup target add $TARGET
+        run: rustup target add "$TARGET"
       - name: Run build
         run: |
-          cargo build --release --verbose --target $TARGET
-          if [[ $RUNNER_OS == "Linux" ]]; then 
-            cargo appimage 
+          cargo build --release --verbose --target "$TARGET"
+          if [[ $RUNNER_OS == "Linux" ]]; then
+            cargo appimage
           fi
       - name: Prepare artifacts
         run: |
@@ -84,16 +84,16 @@ jobs:
           else
             TAG=$GITHUB_SHA
           fi
-          if [[ $RUNNER_OS == "Linux" ]]; then 
-            mv ./wthrr-*-x86_64.AppImage ./artifacts/wthrr-$TAG-x86_64-linux.AppImage 
+          if [[ $RUNNER_OS == "Linux" ]]; then
+            mv ./wthrr-*-x86_64.AppImage "./artifacts/wthrr-$TAG-x86_64-linux.AppImage"
           fi
           # beautify release targets (remove '-unknown' / '-gnu' from filename)
-          ARTIFACT_NAME=$APP_NAME-$TAG-$(echo $TARGET | sed -e 's/-unknown//' -e 's/-gnu//')
-          mkdir $ARTIFACT_NAME
-          cp README.md LICENSE $ARTIFACT_NAME/
-          mv ./target/$TARGET/release/$EXEC ./$ARTIFACT_NAME/$EXEC
+          ARTIFACT_NAME=$APP_NAME-$TAG-$(echo "$TARGET" | sed -e 's/-unknown//' -e 's/-gnu//')
+          mkdir "$ARTIFACT_NAME"
+          cp README.md LICENSE "$ARTIFACT_NAME/"
+          mv "./target/$TARGET/release/$EXEC" "./$ARTIFACT_NAME/$EXEC"
           # compress
-          tar -czf ./artifacts/$ARTIFACT_NAME.tar.gz $ARTIFACT_NAME
+          tar -czf "./artifacts/$ARTIFACT_NAME.tar.gz" "$ARTIFACT_NAME"
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
