@@ -1,4 +1,4 @@
-/* Configuration for wthrr the weathercrab, your weather companion for the terminal 
+/* Configuration for wthrr the weathercrab, your weather companion for the terminal
 Lin: /home/<user>/.config/weathercrab/
 Win: C:\Users\<user>\AppData\Roaming\weathercrab\
 Mac: /Users/<user>/Library/Application Support/weathercrab/
@@ -20,7 +20,7 @@ Mac: /Users/<user>/Library/Application Support/weathercrab/
         graph: (
             // Graph style: lines(solid) | lines(slim) | lines(dotted) | dotted | custom((char; 8))
             // `custom` takes exactly 8 chars. E.g. using a set of 4 chars: `custom(('⡀','⡀','⠄','⠄','⠂','⠂','⠁','⠁'))`,
-            style: lines(solid), 
+            style: lines(solid),
             rowspan: double, // Graph height: `double` | `single`
             time_indicator: true, // Indication of the current time in the graph: `true` | `false`
         ),
