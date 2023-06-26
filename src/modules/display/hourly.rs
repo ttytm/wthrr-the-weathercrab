@@ -30,11 +30,11 @@ pub struct HourlyForecast {
 	temperatures: String,
 	precipitation: String,
 	graph: Graph,
-	summary: Option<WeatherSummery>,
+	summary: Option<WeatherSummary>,
 	time_indicator_col: Option<usize>,
 }
 
-struct WeatherSummery {
+struct WeatherSummary {
 	temp_max_min: String,
 	precipitation_probability_max: u8,
 }
@@ -58,7 +58,7 @@ impl HourlyForecast {
 			&Separator::Blank.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
 		);
 
-		// Set Measurment Unit Symbols
+		// Set Measurement Unit Symbols
 		let temperature_unit = match units.temperature {
 			Temperature::fahrenheit => "",
 			Temperature::celsius => "",
@@ -78,7 +78,7 @@ impl HourlyForecast {
 			WIDTH = WIDTH - 2 - lang_len_diff(&heading, &params.config.language)
 		);
 
-		// Day Max/Mix Temperatur + Max Precipitation
+		// Day Max/Mix Temperature + Max Precipitation
 		if let Some(summary) = summary {
 			println!(
 				"{} {} ❲{}{}❳{: <WIDTH$} {}",
@@ -271,7 +271,7 @@ impl HourlyForecast {
 
 		// Future or historical forecast already include a weather Max/Min summary in the top part of the display.
 		let summary = match day_index {
-			0 => Some(WeatherSummery {
+			0 => Some(WeatherSummary {
 				temp_max_min: format!(
 					"{:.1}/{:.1}{}",
 					weather.daily.temperature_2m_max[day_index],

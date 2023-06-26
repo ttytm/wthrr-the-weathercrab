@@ -71,19 +71,19 @@ impl HistoricalWeather {
 		);
 
 		// Temperature & Weathercode
-		let temperatur_and_weathercode = format!(
+		let temperature_and_weathercode = format!(
 			"{} {}, {} {}",
 			wmo_code.icon, wmo_code.interpretation, temp_max_min, precipitation_sum
 		);
 		println!(
 			"{} {} {: >WIDTH$} {}",
 			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			temperatur_and_weathercode.bold(),
+			temperature_and_weathercode.bold(),
 			date,
 			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
 			WIDTH = WIDTH
 				- 3 - lang_len_diff(&wmo_code.interpretation, lang)
-				- temperatur_and_weathercode.chars().count()
+				- temperature_and_weathercode.chars().count()
 				- lang_len_diff(&date, lang)
 		);
 
