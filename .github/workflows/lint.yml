@@ -35,7 +35,9 @@ jobs:
   actionlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
-      - uses: devops-actions/actionlint@v0.1.1
+      - uses: docker://rhysd/actionlint:latest
+        with:
+          args: -color
