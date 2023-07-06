@@ -1,0 +1,40 @@
+{
+  assignees: [
+    "kevinmatthes",
+  ],
+  automerge: false,
+  commitMessageAction: "update",
+  commitMessageLowerCase: "never",
+  commitMessagePrefix: "⬆️",
+  dependencyDashboard: true,
+  dependencyDashboardAutoclose: true,
+  dependencyDashboardLabels: [
+    "dependencies",
+  ],
+  labels: [
+    "dependencies",
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: null,
+  },
+  packageRules: [
+    {
+      addLabels: [
+        "rust",
+      ],
+      matchManagers: [
+        "cargo",
+      ],
+    },
+    {
+      addLabels: [
+        "github_actions",
+      ],
+      matchManagers: [
+        "github-actions",
+      ],
+    },
+  ],
+  schedule: null,
+}
