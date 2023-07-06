@@ -15,8 +15,8 @@
     "dependencies",
   ],
   lockFileMaintenance: {
+    commitMessageAction: "maintain Cargo.lock",
     commitMessagePrefix: "🤖",
-    commitMessageTopic: "Cargo.lock maintenance",
     enabled: true,
     schedule: null,
   },
