@@ -38,7 +38,7 @@ serde_json = "1.0"
 strum = "0.25"
 strum_macros = "0.25"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-scopeguard = "1.1"
+scopeguard = "1.2"
 
 [profile.release]
 strip = true
