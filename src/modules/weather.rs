@@ -133,7 +133,7 @@ latitude={lat}
 			.with_context(|| "Historical weather data request failed.")?;
 
 		// It takes up to 5 days until temperature data is available in open-meteo's archive.
-		// Therefor we check for null values in the temperature.
+		// Therefore, we check for null values in the temperature.
 		if raw_res["hourly"]["temperature_2m"]
 			.as_array()
 			.expect("Failed decoding temperature data for historical weather.")[0]
