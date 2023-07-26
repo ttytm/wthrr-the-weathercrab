@@ -139,7 +139,7 @@ latitude={lat}
 			.expect("Failed decoding temperature data for historical weather.")[0]
 			.is_null()
 		{
-			return Err(anyhow!("The temperature for the requested weather has not yet been archived."));
+			return Err(anyhow!("The temperature for the requested day has not yet been archived."));
 		}
 
 		Ok(serde_json::from_value::<OptionalWeather>(raw_res)?)
