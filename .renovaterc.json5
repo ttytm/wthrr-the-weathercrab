@@ -17,7 +17,7 @@
   lockFileMaintenance: {
     commitMessageAction: "maintain Cargo.lock",
     commitMessagePrefix: "🤖",
-    enabled: false,
+    enabled: true,
     schedule: "* 0 * * MON",
   },
   packageRules: [
