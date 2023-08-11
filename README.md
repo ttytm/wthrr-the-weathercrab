@@ -19,12 +19,12 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 
 ## Contents
 
-- [How to use?](https://github.com/tobealive/wthrr-the-weathercrab#how-to-use)
-- [Showcase](https://github.com/tobealive/wthrr-the-weathercrab#showcase)
-- [Config](https://github.com/tobealive/wthrr-the-weathercrab#config)
-- [Installation](https://github.com/tobealive/wthrr-the-weathercrab#installation)
-- [Outlook](https://github.com/tobealive/wthrr-the-weathercrab#outlook)
-- [Credits](https://github.com/tobealive/wthrr-the-weathercrab#credits)
+- [How to use?](https://github.com/ttytm/wthrr-the-weathercrab#how-to-use)
+- [Showcase](https://github.com/ttytm/wthrr-the-weathercrab#showcase)
+- [Config](https://github.com/ttytm/wthrr-the-weathercrab#config)
+- [Installation](https://github.com/ttytm/wthrr-the-weathercrab#installation)
+- [Outlook](https://github.com/ttytm/wthrr-the-weathercrab#outlook)
+- [Credits](https://github.com/ttytm/wthrr-the-weathercrab#credits)
 
 ## How to use?
 
@@ -34,7 +34,7 @@ If you spend time in the TUI, you'll have a little companion nearby who knows ab
 wthrr
 ```
 
-Without having added an address or options, wthrr uses the [config](https://github.com/tobealive/wthrr-the-weathercrab#config) saved as default.<br>
+Without having added an address or options, wthrr uses the [config](https://github.com/ttytm/wthrr-the-weathercrab#config) saved as default.<br>
 If you haven't configured anything as default yet, wthrr can try to search for a weather station near you and save the searched location as default.
 
 **It's always possible to specify an address.** E.g.,
@@ -174,20 +174,22 @@ Use rusts package manger to install wthrr's latest version.
 cargo install wthrr
 ```
 
-**Requirements and other installations methods can be found in [`INSTALL.md`](https://github.com/tobealive/wthrr-the-weathercrab/blob/main/INSTALL.md).**
+> **Note**
+> To display symbols correctly, the used terminal must be configured to use a NerdFont.
+> Requirements and platform-specific installation instructions can be found in [`INSTALL.md`](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md).
 
 ## Outlook
 
-The [issues](https://github.com/tobealive/wthrr-the-weathercrab/issues) section lists some of the features that are being worked on.
+The [issues](https://github.com/ttytm/wthrr-the-weathercrab/issues) section lists some of the features that are being worked on.
 
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
 
-A simple changelog can be found on the [releases page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
+A simple changelog can be found on the [releases page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
 
 ## Contributors
 
-<a href="https://github.com/tobealive/wthrr-the-weathercrab/graphs/contributors">
-  <img height='48' src="https://contrib.rocks/image?repo=tobealive/wthrr-the-weathercrab&columns=24" />
+<a href="https://github.com/ttytm/wthrr-the-weathercrab/graphs/contributors">
+  <img height='48' src="https://contrib.rocks/image?repo=ttytm/wthrr-the-weathercrab&columns=24" />
 </a>
 
 ## Credits
