@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - uses: giraffate/clippy-action@v1
         with:
-          reporter: "github-pr-review"
+          reporter: 'github-pr-review'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   actionlint:

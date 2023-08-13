@@ -2,7 +2,7 @@ name: Test Results
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types: [completed]
 permissions: {}
 
@@ -38,4 +38,4 @@ jobs:
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/test-event/event.json
           event_name: ${{ github.event.workflow_run.event }}
-          files: "artifacts/**/*.xml"
+          files: 'artifacts/**/*.xml'

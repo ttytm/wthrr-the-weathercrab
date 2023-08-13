@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   lint:
-    uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@main
+    uses: ./.github/workflows/lint.yml
 
   build:
     needs: lint
@@ -75,25 +75,25 @@ jobs:
         run: |
           mkdir -p ./artifacts
           if [[ $RUNNER_OS == "Windows" ]]; then
-            EXEC=$APP_NAME.exe
+            bin_file=$APP_NAME.exe
           else
-            EXEC=$APP_NAME
+            bin_file=$APP_NAME
           fi
           if [[ $GITHUB_REF_TYPE =~ ^tag$ ]]; then
-            TAG=$GITHUB_REF_NAME
+            version=$GITHUB_REF_NAME
           else
-            TAG=$GITHUB_SHA
+            version=$GITHUB_SHA
           fi
           if [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./wthrr-*-x86_64.AppImage "./artifacts/wthrr-$TAG-x86_64-linux.AppImage"
+            mv ./wthrr-*-x86_64.AppImage "./artifacts/wthrr-$version-x86_64-linux.AppImage"
           fi
           # beautify release targets (remove '-unknown' / '-gnu' from filename)
-          ARTIFACT_NAME=$APP_NAME-$TAG-$(echo "$TARGET" | sed -e 's/-unknown//' -e 's/-gnu//')
-          mkdir "$ARTIFACT_NAME"
-          cp README.md LICENSE "$ARTIFACT_NAME/"
-          mv "./target/$TARGET/release/$EXEC" "./$ARTIFACT_NAME/$EXEC"
+          artifact=$APP_NAME-$version-$(echo "$TARGET" | sed -e 's/-unknown//' -e 's/-gnu//')
+          mkdir "$artifact"
+          cp README.md LICENSE "$artifact/"
+          mv "./target/$TARGET/release/$bin_file" "./$artifact/$bin_file"
           # compress
-          tar -czf "./artifacts/$ARTIFACT_NAME.tar.gz" "$ARTIFACT_NAME"
+          tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:

@@ -2,8 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main, "**-dev"]
-    paths: ["**/*.rs", "**/*.yml", "**/*.toml", "**/*.lock"]
+    branches: [main, '**-dev']
+    paths: ['**/*.rs', '**/*.yml', '**/*.toml', '**/*.lock']
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ env:
 
 jobs:
   Lint:
-    uses: tobealive/wthrr-the-weathercrab/.github/workflows/lint.yml@main
+    uses: ./.github/workflows/lint.yml
 
   Test:
     needs: Lint
