@@ -16,12 +16,10 @@ On windows it is advised to use [Windows Terminal](https://apps.microsoft.com/st
 
 ### Fonts
 
-#### Nerd Font
+#### 1. Nerd Font
 
 A nerd font is usually a regular font that is patched to include additional glyphs.
-The nerd-fonts github repository ([ryanoasis/nerd-fonts](https://www.nerdfonts.com/font-downloads)) or the nerdfonts website ([nerdfonts.com/font-downloads](https://github.com/ryanoasis/nerd-fonts)) provide a number of patched fonts. Download and install a font from the above mentioned sources or via your systems package manager if it makes the fonts available.
-
-**Make sure to configure your terminal to use the installed font.**
+The [nerd-fonts github repository](https://www.nerdfonts.com/font-downloads) and the [nerdfonts website](https://github.com/ryanoasis/nerd-fonts) make a number of patched fonts available. Download and install a font from these sources, or use your system's package manager if it provides the fonts.
 
 - On macOS using `brew`
 
@@ -30,15 +28,25 @@ The nerd-fonts github repository ([ryanoasis/nerd-fonts](https://www.nerdfonts.c
   brew install font-jetbrains-mono-nerd-font  # Or any other nerd-font
   ```
 
-- On Windows, you can follow the installation steps of [Oh My Posh](https://ohmyposh.dev/docs/installation/windows) to nerdify your power shell and install a Nerd Font.
+- On Linux, it depends on the used distribution if fonts are available via the package mangager.\
+  If you have `subversion` installed, you can download single files and directories directly from a Github repository on any distro.
 
-#### Unicode symbol font
+  ```sh
+  # Example downloading a font into the font directory, make sure to update paths accodringly
+  cd ~/.local/share/fonts
+  svn export "https://github.com/ryanoasis/nerd-fonts/trunk/patched-fonts/JetBrainsMono/Ligatures" NerdFonts/JetBrainsMono
+  fc-cache -fv # Update font cache
+  ```
+
+- On Windows, install the font directly or follow the installation steps of [Oh My Posh](https://ohmyposh.dev/docs/installation/windows) to nerdify your power shell and install a Nerd Font.
+
+**Make sure to configure your terminal to use the installed font.**
+
+#### 2. Unicode symbol font
 
 A Unicode symbol font("emoji-font") needs to be available on the system.
-It is required for emojis and things like line characters in the daily weather graph to be displayed properly on your system.
+It will allow to display unicode characters like emojis and line characters that are used in the daily weather graph on your system.
 Noto font packages are usually available via your distribution's package manager.
-
-It's enough to install the font, there is no need for configuration changes.
 
 - macOS
 
@@ -52,7 +60,9 @@ It's enough to install the font, there is no need for configuration changes.
   sudo apt install fonts-noto-core
   ```
 
-If you still encounter problems with the graph in the used terminal: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
+It's enough to install the font, there is no need for configuration changes.
+
+Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
 
 ### Other requirements
 
