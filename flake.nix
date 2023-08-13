@@ -40,7 +40,7 @@
           
           meta = with lib; {
             license = licenses.mit;
-            homepage = "https://github.com/tobealive/wthrr-the-weathercrab";
+            homepage = "https://github.com/ttytm/wthrr-the-weathercrab";
             platforms = platforms.all;
           };
         };

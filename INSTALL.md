@@ -5,9 +5,8 @@
 - [Requirements](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#requirements)
   - [Fonts](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#fonts)
   - [Other requirements](https://github.com/ttytm/wthrr-the-weathercrab#other-requirements)
-- [Installation](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#installation)
-  - [Alternatives to cargo](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#installation)
-  - [Build from source](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#build-from-source)
+- [Alternative installation methods](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#alternative-installation-methods)
+- [Build from source](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#build-from-source)
 
 ## Requirements
 
@@ -59,32 +58,32 @@ If you still encounter problems with the graph in the used terminal: Instead of 
 
 - Debian based distros
 
-  ```
+  ```sh
   sudo apt install libssl-dev pkg-config
   ```
 
   When using the binaries from the release page, you may need to add libssl manually
 
-  ```
+  ```sh
   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
   ```
 
-## Installation
+## Alternative installation methods
 
-There are several alternatives to `cargo install wthrr` from crates.io.
+There are several alternatives to the installation via `cargo`.
 
-- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the the [GitHub release page](https://github.com/tobealive/wthrr-the-weathercrab/releases).
+- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the the [GitHub release page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
 
 - If you are on NetBSD, a package is available from the official repositories.
   To install it, simply run
-  ```
+  ```sh
   pkgin install wthrr
   ```
 - A Nix flake is also available
+  ```sh
+  nix profile install "github:ttytm/wthrr-the-weathercrab"
   ```
-  nix profile install "github:tobealive/wthrr-the-weathercrab"
-  ```
-  ```
+  ```sh
   nix run "github:tobealive/wthrr-the-weathercrab"
   ```
 - On Arch Linux `wthrr` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=wthrr&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
@@ -94,21 +93,12 @@ There are several alternatives to `cargo install wthrr` from crates.io.
 
 ### Build from source
 
-Another way is to compile the app yourself.
-Assuming the Rust toolchain is installed,
+To compile the app yourself, clone the repository and build the release version.
 
-- use Cargo to install from the Git source;
-
-  ```bash
-  cargo install --git https://github.com/tobealive/wthrr-the-weathercrab
-  ```
-
-- or clone the repository and build the release version.
-
-  ```bash
-  git clone https://github.com/tobealive/wthrr-the-weathercrab.git
-  cd wthrr-the-weathercrab
-  cargo build --release
-  ```
+```sh
+git clone https://github.com/ttytm/wthrr-the-weathercrab.git
+cd wthrr-the-weathercrab
+cargo build --release
+```
 
 When the build has finished, you will find the `wthrr` binary inside the `./target/release` directory.
