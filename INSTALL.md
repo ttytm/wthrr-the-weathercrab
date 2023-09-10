@@ -6,47 +6,68 @@
   - [Fonts](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#fonts)
   - [Other requirements](https://github.com/ttytm/wthrr-the-weathercrab#other-requirements)
 - [Alternative installation methods](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#alternative-installation-methods)
-- [Build from source](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#build-from-source)
+  - [Build from source](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#build-from-source)
 
-## Requirements
+# Requirements
 
 This app uses font symbols and Unicode characters. Since it runs in the terminal, it depends on the fonts available on the system and the terminal's font configuration.
+This is not a pre-installation requirement, if fonts are missing, you can still install them after the app was installed.
 
 On windows it is advised to use [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) instead of the standard terminal.
 
-### Fonts
+## Fonts
+
+A Nerd Font must be used as terminal font and a Unicode symbol must be installed on the system.
+
+### Direct Download
+
+To download font files directly and use the font installer on your system for installation, use the links below.
+
+- [Download NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)
+- [NotoColorEmoji.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
+- [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
+
+<details> <summary><h3>Platform download instructions with additional information</h3></summary>
 
 #### 1. Nerd Font
 
 A nerd font is usually a regular font that is patched to include additional glyphs.
-The [nerd-fonts github repository](https://www.nerdfonts.com/font-downloads) and the [nerdfonts website](https://github.com/ryanoasis/nerd-fonts) make a number of patched fonts available. Download and install a font from these sources, or use your system's package manager if it provides the fonts.
+The usage is not bound to a single nerd font. Every font that is patched to include nerd icons can work.
+This example uses Nerd Font version of JetBrains Mono.
 
-- On macOS using `brew`
+The nerdfonts [github repository](https://github.com/ryanoasis/nerd-fonts) and [website](https://www.nerdfonts.com/font-downloads) make a number of patched fonts available and provide several installation options for different platforms.
+
+Package manager installation examples are shown below.
+
+- On macOS, using `brew`
 
   ```sh
   brew tap homebrew/cask-fonts   # This is only required once
   brew install font-jetbrains-mono-nerd-font  # Or any other nerd-font
   ```
 
-- On Linux, it depends on the used distribution if fonts are available via the package mangager.\
-  If you have `subversion` installed, you can download single files and directories directly from a Github repository on any distro.
+- On Windows, using `choco`
 
   ```sh
-  # Example downloading a font into the font directory, make sure to update paths accodringly
-  cd ~/.local/share/fonts
-  svn export "https://github.com/ryanoasis/nerd-fonts/trunk/patched-fonts/JetBrainsMono/Ligatures" NerdFonts/JetBrainsMono
-  fc-cache -fv # Update font cache
+  choco install nerd-fonts-jetbrainsmono
   ```
 
-- On Windows, install the font directly or follow the installation steps of [Oh My Posh](https://ohmyposh.dev/docs/installation/windows) to nerdify your power shell and install a Nerd Font.
+- On Linux, many distribution make fonts available via their package manager.
 
-**Make sure to configure your terminal to use the installed font.**
+  E.g., search for the JetBrains Nerd Font on Manjaro using paru
+
+  ```sh
+  paru jetbrains nerd
+  ```
+
+**After installing the font, make sure to update your terminals font configuration!**
 
 #### 2. Unicode symbol font
 
 A Unicode symbol font("emoji-font") needs to be available on the system.
-It will allow to display unicode characters like emojis and line characters that are used in the daily weather graph on your system.
-Noto font packages are usually available via your distribution's package manager.
+It is likely already installed if unicode characters like emojis instead are rendered correctly.
+This will also allow to display unicode line characters that are used in wthrrs the daily weather graphs.
+Noto fonts usually provide symbol- and emoji fonts. They are usually available via the package manager.
 
 - macOS
 
@@ -62,11 +83,14 @@ Noto font packages are usually available via your distribution's package manager
 
 It's enough to install the font, there is no need for configuration changes.
 
-Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
+> **Note**
+> Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
 
-### Other requirements
+</details>
 
-- Debian based distros
+## Other requirements
+
+- Ubuntu
 
   ```sh
   sudo apt install libssl-dev pkg-config
@@ -78,7 +102,7 @@ Depending on the used system and terminal another font package might be necessar
   wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb ; sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
   ```
 
-## Alternative installation methods
+# Alternative installation methods
 
 There are several alternatives to the installation via `cargo`.
 
@@ -101,7 +125,7 @@ There are several alternatives to the installation via `cargo`.
   paru -S wthrr
   ```
 
-### Build from source
+## Build from source
 
 To compile the app yourself, clone the repository and build the release version.
 
