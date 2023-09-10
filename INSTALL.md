@@ -23,19 +23,22 @@ A Nerd Font must be used as terminal font and a Unicode symbol must be installed
 
 To download font files directly and use the font installer on your system for installation, use the links below.
 
-- [Download NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)
-- [NotoColorEmoji.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
-- [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
+1. A font that is patched to include Nerd icons (e.g. JetBrainsMono) - should be configured as terminal font\
+  [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
+
+2. Emoji and unicode support - no config changes required\
+  [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)\
+  [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
 
 <details> <summary><h3>Platform download instructions with additional information</h3></summary>
 
 #### 1. Nerd Font
 
 A nerd font is usually a regular font that is patched to include additional glyphs.
-The usage is not bound to a single nerd font. Every font that is patched to include nerd icons can work.
-This example uses Nerd Font version of JetBrains Mono.
+The usage is not bound to a single font. Every font that is patched to include nerd icons can work.
+This example uses the Nerd Font version of JetBrains Mono.
 
-The nerdfonts [github repository](https://github.com/ryanoasis/nerd-fonts) and [website](https://www.nerdfonts.com/font-downloads) make a number of patched fonts available and provide several installation options for different platforms.
+The nerd-fonts [github repository](https://github.com/ryanoasis/nerd-fonts) and [website](https://www.nerdfonts.com/font-downloads) make a number of patched fonts available and provide several installation options for different platforms.
 
 Package manager installation examples are shown below.
 
