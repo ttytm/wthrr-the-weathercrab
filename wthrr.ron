@@ -1,7 +1,7 @@
 /* Configuration for wthrr the weathercrab, your weather companion for the terminal
-Lin: /home/<user>/.config/weathercrab/
-Win: C:\Users\<user>\AppData\Roaming\weathercrab\
-Mac: /Users/<user>/Library/Application Support/weathercrab/
+Lin: ~/.config/weathercrab/
+Mac: ~/Library/Application Support/weathercrab/
+Win: %USERPROFILE%\AppData\Roaming\weathercrab\
 */
 
 (

@@ -136,7 +136,7 @@ The address, units and default forecast can be saved as default values in wthrr'
 **Platform locations:**<br>
 Lin: `~/.config/weathercrab/`<br>
 Mac: `~/Library/Application Support/weathercrab/`<br>
-Win: `C:\Users\<user>\AppData\Roaming\weathercrab\`
+Win: `%USERPROFILE%\AppData\Roaming\weathercrab\`
 
 **Default values**
 
