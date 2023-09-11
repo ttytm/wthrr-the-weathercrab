@@ -27,7 +27,7 @@ jobs:
           python-version: 3.11
 
       - name: checkout
-        uses: actions/checkout@v3.6.0
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
