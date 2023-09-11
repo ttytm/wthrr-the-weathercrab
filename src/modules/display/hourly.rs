@@ -1,9 +1,6 @@
 use anyhow::Result;
 use chrono::{Timelike, Utc};
-use colored::{
-	Color::{Blue, BrightBlack, Yellow},
-	Colorize,
-};
+use dialoguer::console::style;
 use std::fmt::Write as _;
 
 use crate::modules::{
@@ -16,7 +13,7 @@ use crate::modules::{
 use super::{
 	border::{Border, BorderStyle, Separator},
 	graph::Graph,
-	gui_config::ColorOption,
+	gui_config::ConfigurableColor,
 	product::Product,
 	utils::{lang_len_diff, style_number},
 	weathercode::WeatherCode,
@@ -55,7 +52,7 @@ impl HourlyForecast {
 		// Blank Line
 		println!(
 			"{}",
-			&Separator::Blank.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
+			&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),
 		);
 
 		// Set Measurement Unit Symbols
@@ -72,9 +69,9 @@ impl HourlyForecast {
 		// Hourly Forecast Heading
 		println!(
 			"{} {: <WIDTH$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			heading.bold(),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			style(&heading).bold(),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH - 2 - lang_len_diff(&heading, &params.config.language)
 		);
 
@@ -82,12 +79,12 @@ impl HourlyForecast {
 		if let Some(summary) = summary {
 			println!(
 				"{} {} ❲{}{}❳{: <WIDTH$} {}",
-				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 				summary.temp_max_min,
 				summary.precipitation_probability_max,
-				"󰖎".bold(),
+				style("󰖎").bold(),
 				"",
-				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 				WIDTH =
 					WIDTH - 5 - summary.temp_max_min.len() - summary.precipitation_probability_max.to_string().len()
 			);
@@ -98,13 +95,13 @@ impl HourlyForecast {
 			Some(col) => {
 				println!(
 					"{}",
-					Self::prepare_separator(col, &gui.border, WIDTH, '╤').color_option(BrightBlack, &gui.color),
+					Self::prepare_separator(col, &gui.border, WIDTH, '╤').plain_or_bright_black(&gui.color)
 				);
 			}
 			_ => {
 				println!(
 					"{}",
-					Separator::Dashed.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
+					Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),
 				);
 			}
 		}
@@ -112,48 +109,48 @@ impl HourlyForecast {
 		// Temperatures
 		println!(
 			"{} {: <WIDTH$}{} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			temperatures.color_option(Yellow, &gui.color).bold(),
-			temperature_unit.color_option(Yellow, &gui.color).bold(),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			temperatures.plain_or_yellow(&gui.color).bold(),
+			temperature_unit.plain_or_yellow(&gui.color).bold(),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH - 3
 		);
 
 		// Blank Line
 		println!(
 			"{}",
-			&Separator::Blank.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
+			&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
 		);
 
 		// Graph Row 1
 		if graph.1.chars().count() > 0 {
 			println!(
 				"{}{}{}",
-				Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-				graph.1.color_option(Yellow, &gui.color),
-				Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
+				Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+				graph.1.plain_or_yellow(&gui.color),
+				Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			);
 		}
 		// Graph Row 2
 		println!(
 			"{}{}{}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			graph.0.color_option(Yellow, &gui.color),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color)
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			graph.0.plain_or_yellow(&gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 		);
 
 		// Precipitation
 		println!(
 			"{} {: <WIDTH$}{}{}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			precipitation.color_option(Blue, &gui.color).bold(),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			precipitation.plain_or_blue(&gui.color).bold(),
 			if units.precipitation == Precipitation::probability {
 				// to enlarge the water percent icon we use bold as a hack
-				precipitation_unit.color_option(Blue, &gui.color).bold()
+				precipitation_unit.plain_or_blue(&gui.color).bold()
 			} else {
-				precipitation_unit.color_option(Blue, &gui.color)
+				precipitation_unit.plain_or_blue(&gui.color)
 			},
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH - 1 - precipitation_unit.chars().count()
 		);
 
@@ -162,19 +159,19 @@ impl HourlyForecast {
 			Some(col) => {
 				println!(
 					"{}",
-					Self::prepare_separator(col, &gui.border, WIDTH, '╧').color_option(BrightBlack, &gui.color),
+					Self::prepare_separator(col, &gui.border, WIDTH, '╧').plain_or_bright_black(&gui.color),
 				);
 			}
 			_ => {
 				println!(
 					"{}",
-					Separator::Dashed.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color)
+					Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),
 				);
 			}
 		}
 
 		// Graph Hours Row
-		print!("{}", Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color));
+		print!("{}", Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color));
 		let hours = match units.time {
 			Time::am_pm => ["¹²·⁰⁰ₐₘ", "³·⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 			Time::military => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
@@ -182,7 +179,7 @@ impl HourlyForecast {
 		for hour in hours {
 			print!("{hour: <9}");
 		}
-		println!("{}", Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color));
 	}
 
 	pub fn prepare(product: &Product, params: &Params, day_index: usize) -> Result<Self> {

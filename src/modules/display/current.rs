@@ -1,11 +1,11 @@
 use anyhow::Result;
-use colored::{Color::BrightBlack, Colorize};
+use dialoguer::console::style;
 
 use crate::modules::{params::Params, units::Time};
 
 use super::{
 	border::{Border, BorderStyle, Edge, Separator},
-	gui_config::ColorOption,
+	gui_config::ConfigurableColor,
 	hourly::HourlyForecast,
 	product::{Product, MIN_CELL_WIDTH, MIN_WIDTH},
 	utils::lang_len_diff,
@@ -54,14 +54,14 @@ impl Current {
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		// Border Top
-		println!("{}", &Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", &Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 
 		// Address / Title
 		println!(
 			"{} {: ^width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			address.bold(),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			style(&address).bold(),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - lang_len_diff(&address, lang)
 		);
 
@@ -73,39 +73,36 @@ impl Current {
 				BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
 				_ => Separator::Single.fmt(width, &gui.border),
 			}
-			.color_option(BrightBlack, &gui.color)
+			.plain_or_bright_black(&gui.color),
 		);
 
 		// Temperature & Weathercode
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			(wmo_code.icon.to_string() + " " + &wmo_code.interpretation + ", " + &temperature).bold(),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			style(wmo_code.icon.to_string() + " " + &wmo_code.interpretation + ", " + &temperature).bold(),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - lang_len_diff(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			apparent_temperature,
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - lang_len_diff(&apparent_temperature, lang)
             // manually account for displacepment of this row until improving the lang_len_diff regex
             + if &lang[..2] == "ja" || &lang[..2] == "ko" { 2 } else { 0 }
 		);
 
 		// Blank Line
-		println!(
-			"{}",
-			Separator::Blank.fmt(width, &gui.border).color_option(BrightBlack, &gui.color)
-		);
+		println!("{}", Separator::Blank.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 
 		// Humidity & Dewpoint
 		println!(
 			"{} {: <width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			format!(
 				"{: <cell_width$} {}",
 				humidity,
@@ -114,7 +111,7 @@ impl Current {
 					- lang_len_diff(&humidity, lang)
 					- if &lang[..2] == "ja" || &lang[..2] == "ko" { 0 } else { 1 }
 			),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
 				+ if &lang[..2] == "ja" || &lang[..2] == "ko" { 3 } else { 0 }
 		);
@@ -122,20 +119,20 @@ impl Current {
 		// Wind & Pressure
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			wind,
 			pressure,
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - cell_width
 		);
 
 		// Sunrise & Sunset
 		println!(
 			"{} {: <cell_width$}{: <width$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			sunrise,
 			sunset,
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			width = width - 2 - cell_width
 		);
 
@@ -145,7 +142,7 @@ impl Current {
 		}
 
 		// Border Bottom
-		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", Edge::Bottom.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 
 		dimensions
 	}

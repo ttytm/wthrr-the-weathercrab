@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::{Color::Yellow, Colorize};
+use dialoguer::console::style;
 use directories::ProjectDirs;
 use optional_struct::{optional_struct, Applyable};
 use ron::{
@@ -60,7 +60,7 @@ impl Config {
 			{
 				Ok(contents) => contents.apply_to(&mut config),
 				Err(error) => {
-					let warning_sign = " Warning:".color(Yellow);
+					let warning_sign = style(" Warning:").yellow();
 					eprintln!(
 						"{warning_sign} {}\n{: >4}At: {error}.\n{: >4}Falling back to default values.\n",
 						path.display(),

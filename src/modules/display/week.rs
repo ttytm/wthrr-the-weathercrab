@@ -1,6 +1,5 @@
 use anyhow::Result;
 use chrono::NaiveDate;
-use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
 use crate::modules::{localization::Locales, params::Params};
@@ -8,7 +7,7 @@ use crate::modules::{localization::Locales, params::Params};
 use super::{
 	border::{Border, BorderStyle, Edge, Separator},
 	current::Dimensions,
-	gui_config::ColorOption,
+	gui_config::ConfigurableColor,
 	product::{Product, MIN_CELL_WIDTH},
 	utils::lang_len_diff,
 	weathercode::WeatherCode,
@@ -39,7 +38,7 @@ impl Week {
 		}
 
 		// Border Top
-		println!("{}", &Edge::Top.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", &Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 
 		let mut chunks = forecast.days.chunks(1).peekable();
 
@@ -67,9 +66,9 @@ impl Week {
 			);
 			println!(
 				"{} {: <width$} {}",
-				&Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				&Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 				forecast_day,
-				&Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+				&Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 				width = width
 					- lang_len_diff(&forecast.days[n].interpretation, lang)
 					- lang_len_diff(&forecast.days[n].date, lang)
@@ -83,7 +82,7 @@ impl Week {
 						BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
 						_ => Separator::Dashed.fmt(width, &gui.border),
 					}
-					.color_option(BrightBlack, &gui.color)
+					.plain_or_bright_black(&gui.color)
 				);
 			}
 
@@ -91,7 +90,7 @@ impl Week {
 		}
 
 		// Border Bottom
-		println!("{}", Edge::Bottom.fmt(width, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", Edge::Bottom.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 	}
 
 	pub fn prep(product: &Product, params: &Params) -> Result<Self> {
