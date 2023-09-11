@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use chrono::{DateTime, Local, Utc};
+use chrono::{Local, NaiveDate};
 use directories::ProjectDirs;
 use futures::{stream::FuturesOrdered, TryStreamExt};
 use optional_struct::{optional_struct, Applyable};
@@ -246,7 +246,7 @@ impl Locales {
 			.join(format!("{lang}.json"))
 	}
 
-	pub fn localize_date(dt: DateTime<Utc>, lang: &str) -> Result<String> {
+	pub fn localize_date(dt: NaiveDate, lang: &str) -> Result<String> {
 		let matching_locale = DATETIME_LOCALES.lines().skip(1).find(|line| line == &lang).or_else(|| {
 			DATETIME_LOCALES.lines().skip(1).find(|line| {
 				let short_lang_code = line.split('_').next().unwrap();
@@ -254,7 +254,7 @@ impl Locales {
 			})
 		});
 
-		let format = format!("%a, %e %b{}", if dt < Local::now() { " %Y" } else { "" });
+		let format = format!("%a, %e %b{}", if dt < Local::now().date_naive() { " %Y" } else { "" });
 
 		let date = if let Some(locale) = matching_locale {
 			dt.format_localized(&format, locale.try_into().unwrap()).to_string()

@@ -1,6 +1,5 @@
 use anyhow::Result;
-use chrono::offset::TimeZone;
-use chrono::prelude::*;
+use chrono::NaiveDate;
 use colored::Color::BrightBlack;
 use serde::{Deserialize, Serialize};
 
@@ -102,17 +101,8 @@ impl Week {
 
 		for (i, _) in product.weather.daily.time.iter().enumerate() {
 			let time = &product.weather.daily.time[i];
-			let dt = Utc
-				.with_ymd_and_hms(
-					time[0..4].parse::<i32>().unwrap_or_default(),
-					time[5..7].parse::<u32>().unwrap_or_default(),
-					time[8..10].parse::<u32>().unwrap_or_default(),
-					0,
-					0,
-					0,
-				)
-				.unwrap();
 
+			let dt = NaiveDate::parse_from_str(time, "%Y-%m-%d")?;
 			let date = if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
 			} else {
