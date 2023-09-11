@@ -143,7 +143,7 @@ impl Day {
 			if lang == "en_US" || lang == "en" {
 				dt.format("%a, %e %b").to_string()
 			} else {
-				Locales::localize_date(dt.into(), lang)?
+				Locales::localize_date(dt.date_naive(), lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");

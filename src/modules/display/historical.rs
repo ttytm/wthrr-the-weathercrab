@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{DateTime, NaiveDate, TimeZone, Utc};
+use chrono::NaiveDate;
 use colored::{Color::BrightBlack, Colorize};
 
 use crate::modules::{
@@ -133,7 +133,6 @@ impl HistoricalWeather {
 		let weather_daily = weather.daily.as_ref().unwrap();
 		let weather_daily_units = weather.daily_units.as_ref().unwrap();
 		let lang = &params.config.language;
-		let dt: DateTime<Utc> = Utc.from_utc_datetime(&date.and_hms_opt(0, 0, 0).unwrap());
 		// Times
 		let sunrise = weather_daily.sunrise.as_ref().unwrap();
 		let sunset = weather_daily.sunset.as_ref().unwrap();
@@ -176,9 +175,9 @@ impl HistoricalWeather {
 		let date = format!(
 			" {}",
 			if lang == "en_US" || lang == "en" {
-				dt.format("%a, %e %b %Y").to_string()
+				date.format("%a, %-d %b %Y").to_string()
 			} else {
-				Locales::localize_date(dt, lang)?
+				Locales::localize_date(*date, lang)?
 			}
 		);
 		let sunrise = format!(" {sunrise}");
