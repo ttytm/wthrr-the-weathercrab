@@ -1,12 +1,12 @@
 use anyhow::Result;
 use chrono::{Duration, Local};
-use colored::{Color::BrightBlack, Colorize};
+use dialoguer::console::style;
 
 use crate::modules::{display::hourly::WIDTH, localization::Locales, params::Params, units::Time};
 
 use super::{
 	border::{Border, BorderStyle, Edge, Separator},
-	gui_config::ColorOption,
+	gui_config::ConfigurableColor,
 	hourly::HourlyForecast,
 	product::Product,
 	utils::lang_len_diff,
@@ -42,14 +42,14 @@ impl Day {
 		let (gui, lang) = (&params.config.gui, &params.config.language);
 
 		// Border Top
-		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),);
 
 		// Address / Title
 		println!(
 			"{} {: ^WIDTH$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			address.bold(),
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			style(&address).bold(),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH - 2 - lang_len_diff(&address, lang)
 		);
 
@@ -61,7 +61,7 @@ impl Day {
 				BorderStyle::solid => Separator::Solid.fmt(WIDTH, &gui.border),
 				_ => Separator::Single.fmt(WIDTH, &gui.border),
 			}
-			.color_option(BrightBlack, &gui.color)
+			.plain_or_bright_black(&gui.color),
 		);
 
 		// Temperature & Weathercode
@@ -71,10 +71,10 @@ impl Day {
 		);
 		println!(
 			"{} {} {: >WIDTH$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
-			temperature_and_weathercode.bold(),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			style(&temperature_and_weathercode).bold(),
 			date,
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH
 				- 3 - lang_len_diff(&wmo_code.interpretation, lang)
 				- temperature_and_weathercode.chars().count()
@@ -85,10 +85,10 @@ impl Day {
 		let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 		println!(
 			"{} {} {: >WIDTH$} {}",
-			Border::L.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			apparent_temp_max_min,
 			sunrise_and_sunset,
-			Border::R.fmt(&gui.border).color_option(BrightBlack, &gui.color),
+			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
 			WIDTH = WIDTH
 				- 3 - lang_len_diff(&params.texts.weather.feels_like, lang)
 				- apparent_temp_max_min.chars().count()
@@ -98,7 +98,7 @@ impl Day {
 		hourly_forecast.render(params);
 
 		// Border Bottom
-		println!("{}", Edge::Bottom.fmt(WIDTH, &gui.border).color_option(BrightBlack, &gui.color));
+		println!("{}", Edge::Bottom.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),);
 	}
 
 	pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Self> {

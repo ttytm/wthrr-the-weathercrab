@@ -1,6 +1,5 @@
 use anyhow::Result;
 use chrono::NaiveDate;
-use colored::Color::BrightBlack;
 use scopeguard::defer;
 use std::collections::HashMap;
 
@@ -10,7 +9,7 @@ use crate::modules::{
 	weather::{OptionalWeather, Weather},
 };
 
-use super::{current::Current, day::Day, gui_config::ColorOption, historical::HistoricalWeather, week::Week};
+use super::{current::Current, day::Day, gui_config::ConfigurableColor, historical::HistoricalWeather, week::Week};
 
 pub struct Product<'a> {
 	pub address: String,
@@ -25,7 +24,7 @@ impl Product<'_> {
 	pub fn render(&self, params: &Params) -> Result<()> {
 		defer! {
 			// Disclaimer
-			println!(" {}", "Weather data by Open-Meteo.com\n".color_option(BrightBlack, &params.config.gui.color));
+			println!(" {}", "Weather data by Open-Meteo.com\n".plain_or_bright_black(&params.config.gui.color))
 		}
 
 		if params.config.forecast.is_empty() && params.historical_weather.is_empty() {
