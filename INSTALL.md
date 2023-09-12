@@ -11,24 +11,24 @@
 # Requirements
 
 This app uses font symbols and Unicode characters. Since it runs in the terminal, it depends on the fonts available on the system and the terminal's font configuration.
-This is not a pre-installation requirement, if fonts are missing, you can still install them after the app was installed.
+This is not a pre-installation requirement. If fonts appear to be missing, you can also install them after the app was installed.
 
 On windows it is advised to use [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) instead of the standard terminal.
 
 ## Fonts
 
-A Nerd Font must be used as terminal font and a Unicode symbol must be installed on the system.
+A Nerd Font must be used as terminal font and a Unicode symbol font must be installed on the system.
 
 ### Direct Download
 
-To download font files directly and use the font installer on your system for installation, use the links below.
+To download font files directly and install them using your systems font installer, use the links below.
 
 1. A font that is patched to include Nerd icons (e.g. JetBrainsMono) - should be configured as terminal font\
-  [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
+   [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
 
-2. Emoji and unicode support - no config changes required\
-  [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)\
-  [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
+2. A font that adds Emoji and Unicode support - no config changes required\
+   [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)\
+   [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
 
 <details> <summary><h3>Platform download instructions with additional information</h3></summary>
 
@@ -68,9 +68,9 @@ Package manager installation examples are shown below.
 #### 2. Unicode symbol font
 
 A Unicode symbol font("emoji-font") needs to be available on the system.
-It is likely already installed if unicode characters like emojis instead are rendered correctly.
-This will also allow to display unicode line characters that are used in wthrrs the daily weather graphs.
-Noto fonts usually provide symbol- and emoji fonts. They are usually available via the package manager.
+It is likely already installed if you see emojis correctly rendered in your browser and in other applications.
+It will also allow to display Unicode line characters that are used in wthrrs daily weather graphs.
+Noto fonts provide support for symbol and emoji fonts and are usually available via the package manager.
 
 - macOS
 
