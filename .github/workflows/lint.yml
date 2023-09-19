@@ -41,3 +41,11 @@ jobs:
       - uses: docker://rhysd/actionlint:latest
         with:
           args: -color
+
+  renovate-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
