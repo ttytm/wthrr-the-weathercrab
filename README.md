@@ -10,6 +10,9 @@
   <a href="https://github.com/ttytm/wthrr-the-weathercrab" target="_blank">
     <img alt="last-commit" src="https://img.shields.io/github/last-commit/ttytm/wthrr-the-weathercrab?style=flat-square" />
   </a>
+  <a href="https://github.com/ttytm/wthrr-the-weathercrab" target="_blank">
+    <img alt="msrv" src="https://img.shields.io/badge/MSRV-1.72.0-brightgreen?style=flat-square" />
+  </a>
 </div>
 <br>
 
