@@ -18,7 +18,6 @@
     commitMessageAction: "maintain Cargo.lock",
     commitMessagePrefix: "🤖",
     enabled: true,
-    schedule: "* 0 * * MON",
   },
   packageRules: [
     {
