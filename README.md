@@ -1,17 +1,17 @@
 # 🦀 wthrr-the-weathercrab
 
 <div>
-  <a href="https://crates.io/crates/wthrr" target="_blank">
-    <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square" />
-  </a>
   <a href="https://github.com/ttytm/wthrr-the-weathercrab/actions/workflows/ci.yml?query=branch%3Amain" target="_blank">
     <img alt="build-status" src="https://img.shields.io/github/actions/workflow/status/ttytm/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square" />
   </a>
   <a href="https://github.com/ttytm/wthrr-the-weathercrab" target="_blank">
     <img alt="last-commit" src="https://img.shields.io/github/last-commit/ttytm/wthrr-the-weathercrab?style=flat-square" />
   </a>
+  <a href="https://crates.io/crates/wthrr" target="_blank">
+    <img alt="crates.io" src="https://img.shields.io/crates/v/wthrr?style=flat-square&color=DEA584" />
+  </a>
   <a href="https://github.com/ttytm/wthrr-the-weathercrab" target="_blank">
-    <img alt="msrv" src="https://img.shields.io/badge/MSRV-1.72.0-brightgreen?style=flat-square" />
+    <img alt="msrv" src="https://img.shields.io/badge/MSRV-1.72.0-DEA584?style=flat-square" />
   </a>
 </div>
 <br>
