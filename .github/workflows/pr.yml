@@ -24,7 +24,7 @@ jobs:
           cargo msrv list 2> result.txt
           echo 'The MSRV will not change.' > message.md
           echo "new=$( \
-            grep -E [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+ result.txt \
+            grep -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' result.txt \
             | tail -n 1 \
             | cut -d \  -f 2\
             )"
