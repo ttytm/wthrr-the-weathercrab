@@ -5,6 +5,7 @@ on:
     branches: [main, '**-dev']
     paths: ['**/*.rs', '**/*.yml', '**/*.toml', '**/*.lock']
   pull_request:
+    paths: ['**/*.rs', '**/*.yml', '**/*.toml', '**/*.lock']
   workflow_dispatch:
 
 env:
