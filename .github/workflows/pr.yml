@@ -24,11 +24,11 @@ jobs:
           cargo msrv list 2> result.txt
           echo 'The MSRV will not change.' > message.md
           echo "new=$( \
-            egrep [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+ result.txt \
+            grep -E [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+ result.txt \
             | tail -n 1 \
             | cut -d \  -f 2\
             )"
-          echo "current=$(cat .clippy.toml | cut -d \" -f 2)"
+          echo "current=$(cut -d \" -f 2 < .clippy.toml)"
 
       - if: steps.msrv.outputs.new != steps.msrv.outputs.current
         run: |
