@@ -23,12 +23,8 @@ jobs:
         run: |
           cargo msrv list 2> result.txt
           echo 'The MSRV will not change.' > message.md
-          echo "new=$( \
-            grep -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' result.txt \
-            | tail -n 1 \
-            | cut -d \  -f 2\
-            )"
-          echo "current=$(cut -d \" -f 2 < .clippy.toml)"
+          echo "new=$(grep -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' result.txt | tail -n 1 | cut -d \  -f 2)" >> "$GITHUB_OUTPUT"
+          echo "current=$(cut -d \" -f 2 < .clippy.toml)" >> "$GITHUB_OUTPUT"
 
       - if: steps.msrv.outputs.new != steps.msrv.outputs.current
         run: |
