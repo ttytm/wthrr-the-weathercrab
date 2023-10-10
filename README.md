@@ -141,18 +141,32 @@ Win: `%USERPROFILE%\AppData\Roaming\weathercrab\`
 
 ## Installation
 
-Use rusts package manger to install wthrr's latest version.
+Use rusts package manger to install wthrr.
 
-```sh
-# install the latest release version
-cargo install wthrr
-# or install the application from its source
-cargo install --git https://github.com/ttytm/wthrr-the-weathercrab
-```
+**From crates.io**
 
-> **Note**
+|             |                       |
+| ----------- | --------------------- |
+| **Version** | **Command**           |
+| release     | `cargo install wthrr` |
+|             |                       |
+| development | _not available_       |
+|             |                       |
+
+**From git source**
+
+|             |                                                                                   |
+| ----------- | --------------------------------------------------------------------------------- |
+| **Version** | **Command**                                                                       |
+| release     | `cargo install --git https://github.com/ttytm/wthrr-the-weathercrab --tag v1.1.1` |
+|             |                                                                                   |
+| development | `cargo install --git https://github.com/ttytm/wthrr-the-weathercrab`              |
+|             |                                                                                   |
+
+**Requirements and alternative, platform-specific installation instructions can be found in [`INSTALL.md`](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md).**
+
+> **Important**
 > To display symbols correctly, the used terminal must be configured to use a NerdFont.
-> Requirements and platform-specific installation instructions can be found in [`INSTALL.md`](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md).
 
 ## Outlook
 
