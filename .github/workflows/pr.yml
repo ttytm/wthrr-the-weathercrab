@@ -22,7 +22,7 @@ jobs:
 
       - id: msrv
         run: |
-          cargo msrv list 2> result.txt
+          cargo msrv list > result.txt
           echo 'The MSRV will not change.' > message.md
           echo "new_msrv=$(grep -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' result.txt | tail -n 1 | cut -d ' ' -f 2)" # >> "$GITHUB_OUTPUT"
           echo "current_msrv=$(cut -d \" -f 2 < .clippy.toml)" # >> "$GITHUB_OUTPUT"
