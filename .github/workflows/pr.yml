@@ -1,0 +1,41 @@
+name: pr
+
+on:
+  pull_request:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  msrv-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: baptiste0928/cargo-install@v2.2.0
+        with:
+          crate: cargo-msrv
+
+      - uses: actions/checkout@v4.0.0
+        with:
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - id: msrv
+        run: |
+          cargo msrv list 2> result.txt
+          echo 'The MSRV will not change.' > message.md
+          echo "new=$( \
+            egrep [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+ result.txt \
+            | tail -n 1 \
+            | cut -d \  -f 2\
+            )"
+          echo "current=$(cat .clippy.toml | cut -d \" -f 2)"
+
+      - if: steps.msrv.outputs.new != steps.msrv.outputs.current
+        run: |
+          echo 'Please update the MSRV to ${{ steps.msrv.outputs.new }}.' \
+          > message.md
+
+      - uses: thollander/actions-comment-pull-request@v2.4.2
+        with:
+          comment_tag: msrv-changes
+          filePath: message.md
