@@ -1,8 +1,9 @@
 # 🦀 wthrr-the-weathercrab
 
-[![][crates_io_shield]](https://crates.io/crates/wthrr)
 [![][ci_shield]](https://github.com/ttytm/wthrr-the-weathercrab/actions/workflows/ci.yml?query=branch%3Amain)
 [![][last_commit_shield]](https://github.com/ttytm/wthrr-the-weathercrab/commits/main)
+[![][crates_io_shield]](https://crates.io/crates/wthrr)
+[![][msrv_shield]](https://github.com/ttytm/wthrr-the-weathercrab)
 
 <div align="center">
 
@@ -188,9 +189,10 @@ A simple changelog can be found on the [releases page](https://github.com/ttytm/
 <!-- Images -->
 
 [preview]: https://github.com/ttytm/wthrr-the-weathercrab/assets/34311583/58780205-816b-4cfd-95f8-9453e754eb94
-[crates_io_shield]: https://img.shields.io/crates/v/wthrr?style=flat-square
+[crates_io_shield]: https://img.shields.io/crates/v/wthrr?style=flat-square&color=DEA584
 [ci_shield]: https://img.shields.io/github/actions/workflow/status/ttytm/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square
 [last_commit_shield]: https://img.shields.io/github/last-commit/ttytm/wthrr-the-weathercrab?style=flat-square
+[msrv_shield]: https://img.shields.io/badge/MSRV-1.70.0-DEA584?style=flat-square
 [first_run]: https://user-images.githubusercontent.com/34311583/219735581-8036590f-8354-47fb-a31f-055be79c9229.png
 [hourly_forecast]: https://user-images.githubusercontent.com/34311583/219735474-d8e2899d-c209-46d3-a5cd-bea4ed41ac3c.png
 [weekly_forecast]: https://user-images.githubusercontent.com/34311583/219735452-9766d692-a79b-4a5a-a903-30a3339cc684.png

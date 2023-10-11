@@ -10,6 +10,7 @@ homepage = "https://github.com/ttytm/wthrr-the-weathercrab"
 repository = "https://github.com/ttytm/wthrr-the-weathercrab"
 keywords = ["cli", "weather", "meteorological", "terminal"]
 categories = ["command-line-utilities"]
+rust-version = "1.70.0"
 
 [dependencies]
 anyhow = "1.0"
