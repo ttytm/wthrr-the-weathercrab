@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use chrono::NaiveDate;
+use chrono::{Local, NaiveDate};
 use optional_struct::{optional_struct, Applyable};
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
@@ -108,12 +108,18 @@ latitude={lat}
 	}
 
 	pub async fn get_date(date: NaiveDate, lat: f64, lon: f64, units: &Units) -> Result<OptionalWeather> {
+		// It takes up to five days until temperature data is available in open-meteo's archive.
+		// Therefore, we use the past_days endpoints for the last five days.
+		let base_url = if date.signed_duration_since(Local::now().date_naive()).num_days() > -5 {
+			"https://api.open-meteo.com/v1/forecast?&past_days=10".to_string()
+		} else {
+			format!("https://archive-api.open-meteo.com/v1/archive?&start_date={date}&end_date={date}")
+		};
+
 		let url = format!(
-			"https://archive-api.open-meteo.com/v1/archive?
-latitude={lat}
+			"{base_url}
+&latitude={lat}
 &longitude={lon}
-&start_date={date}
-&end_date={date}
 &temperature_unit={}
 &windspeed_unit={}
 &precipitation_unit={}
