@@ -30,7 +30,8 @@ To download font files directly and install them using your systems font install
    [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)\
    [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
 
-<details> <summary><h3>Platform download instructions with additional information</h3></summary>
+<details>
+<summary><kbd>toggle</kbd> <h3>Font download instructions with additional and platform-specific information</h3></summary>
 
 #### 1. Nerd Font
 
