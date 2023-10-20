@@ -1,8 +1,7 @@
-use anyhow::{anyhow, Context, Result};
-use chrono::NaiveDate;
+use anyhow::{Context, Result};
+use chrono::{Local, NaiveDate};
 use optional_struct::{optional_struct, Applyable};
 use serde::Deserialize;
-use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 
 use super::units::{Precipitation, Units};
@@ -109,12 +108,18 @@ latitude={lat}
 	}
 
 	pub async fn get_date(date: NaiveDate, lat: f64, lon: f64, units: &Units) -> Result<OptionalWeather> {
+		// It takes up to five days until temperature data is available in open-meteo's archive.
+		// Therefore, we use the past_days endpoints for the last five days.
+		let base_url = if date.signed_duration_since(Local::now().date_naive()).num_days() > -5 {
+			"https://api.open-meteo.com/v1/forecast?&past_days=10".to_string()
+		} else {
+			format!("https://archive-api.open-meteo.com/v1/archive?&start_date={date}&end_date={date}")
+		};
+
 		let url = format!(
-			"https://archive-api.open-meteo.com/v1/archive?
-latitude={lat}
+			"{base_url}
+&latitude={lat}
 &longitude={lon}
-&start_date={date}
-&end_date={date}
 &temperature_unit={}
 &windspeed_unit={}
 &precipitation_unit={}
@@ -126,23 +131,13 @@ latitude={lat}
 			if units.precipitation == Precipitation::probability { "mm" } else {units.precipitation.as_ref()},
 		);
 
-		let raw_res = reqwest::get(url)
+		let res = reqwest::get(url)
 			.await?
-			.json::<Value>()
+			.json::<OptionalWeather>()
 			.await
 			.with_context(|| "Historical weather data request failed.")?;
 
-		// It takes up to 5 days until temperature data is available in open-meteo's archive.
-		// Therefore, we check for null values in the temperature.
-		if raw_res["hourly"]["temperature_2m"]
-			.as_array()
-			.expect("Failed decoding temperature data for historical weather.")[0]
-			.is_null()
-		{
-			return Err(anyhow!("The temperature for the requested day has not yet been archived."));
-		}
-
-		Ok(serde_json::from_value::<OptionalWeather>(raw_res)?)
+		Ok(res)
 	}
 
 	pub async fn get_dates<'a>(
