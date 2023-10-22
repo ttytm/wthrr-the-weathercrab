@@ -38,5 +38,5 @@
     },
   ],
   prHourlyLimit: null,
-  schedule: "before 4am on monday",
+  schedule: "before 4am on the first day of the month",
 }
