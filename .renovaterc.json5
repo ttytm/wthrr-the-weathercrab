@@ -1,42 +1,43 @@
 {
-  assignees: [
-    "kevinmatthes",
-  ],
-  automerge: false,
-  commitMessageAction: "update",
-  commitMessageLowerCase: "never",
-  commitMessagePrefix: "⬆️",
-  dependencyDashboard: true,
-  dependencyDashboardAutoclose: true,
-  dependencyDashboardLabels: [
-    "dependencies",
-  ],
-  labels: [
-    "dependencies",
-  ],
-  lockFileMaintenance: {
-    commitMessageAction: "maintain Cargo.lock",
-    commitMessagePrefix: "🤖",
-    enabled: true,
-  },
-  packageRules: [
-    {
-      addLabels: [
-        "rust",
-      ],
-      matchManagers: [
-        "cargo",
-      ],
-    },
-    {
-      addLabels: [
-        "github_actions",
-      ],
-      matchManagers: [
-        "github-actions",
-      ],
-    },
-  ],
-  prHourlyLimit: null,
-  schedule: "before 4am on the first day of the month",
+	assignees: [
+		"kevinmatthes",
+	],
+	automerge: false,
+	commitMessageAction: "update",
+	commitMessageLowerCase: "never",
+	commitMessagePrefix: "⬆️",
+	dependencyDashboard: true,
+	dependencyDashboardAutoclose: true,
+	dependencyDashboardLabels: [
+		"dependencies",
+	],
+	labels: [
+		"dependencies",
+	],
+	lockFileMaintenance: {
+		commitMessageAction: "maintain Cargo.lock",
+		commitMessagePrefix: "🤖",
+		enabled: true,
+		schedule: "before 4am on the first day of the month",
+		},
+	packageRules: [
+		{
+			addLabels: [
+				"rust",
+			],
+			matchManagers: [
+				"cargo",
+			],
+		},
+		{
+			addLabels: [
+				"github_actions",
+			],
+			matchManagers: [
+				"github-actions",
+			],
+		},
+	],
+	prHourlyLimit: null,
+	schedule: "before 4am on the first day of the month",
 }
