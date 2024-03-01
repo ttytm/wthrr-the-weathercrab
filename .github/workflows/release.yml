@@ -95,7 +95,7 @@ jobs:
           # compress
           tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: result
           path: |
