@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cargo
-        uses: taiki-e/install-action@v2.32.0
+        uses: taiki-e/install-action@v2.33.11
         with:
           tool: cargo-tarpaulin
 
