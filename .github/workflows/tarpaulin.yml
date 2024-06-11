@@ -8,6 +8,10 @@ on:
       - '**/*.toml'
       - '**/tarpaulin.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name == 'main' && github.sha || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   pull-requests: write
 

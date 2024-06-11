@@ -2,11 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main, '**-dev']
     paths: ['**/*.rs', '**/*.yml', '**/*.toml', '**/*.lock']
   pull_request:
     paths: ['**/*.rs', '**/*.yml', '**/*.toml', '**/*.lock']
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name == 'main' && github.sha || github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
