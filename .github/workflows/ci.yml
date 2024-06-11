@@ -71,7 +71,7 @@ jobs:
           mv target/nextest/ci/junit-*.xml test-results/
       - name: Upload test results
         if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
@@ -82,7 +82,7 @@ jobs:
     name: Upload Test Event
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: test-event
           path: ${{ github.event_path }}
