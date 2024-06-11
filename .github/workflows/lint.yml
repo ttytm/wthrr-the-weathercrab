@@ -27,7 +27,7 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: giraffate/clippy-action@v1
+      - uses: actions-rs-plus/clippy-check@v2
         with:
           reporter: 'github-pr-review'
           github_token: ${{ secrets.GITHUB_TOKEN }}
