@@ -29,8 +29,8 @@ jobs:
           pr_branches=$(gh pr list --json headRefName --repo "$GITHUB_REPOSITORY")
           echo "pr_branches=$pr_branches"
           echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
-          if [[ $(echo "$(gh pr list --json headRefName --repo "tobealive/wthrr-the-weathercrab")" | jq -r --arg ref_name "$GITHUB_REF_NAME" '.[] | select(.headRefName == $ref_name)') ]]; then
-            echo "This push is associated with a pull request. Skipping the job."
+          if [[ $(echo "$pr_branches" | jq -r --arg ref_name "$GITHUB_REF_NAME" '.[] | select(.headRefName == $ref_name)') ]]; then
+            echo "Push to branch that is associated with a pull request. Skipping redundant the job."
             echo "abort=true" >> "$GITHUB_OUTPUT"
           fi
 
