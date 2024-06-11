@@ -26,8 +26,8 @@ jobs:
         if: github.ref_name != 'main' && github.event_name == 'push'
         id: debounce
         run: |
-          pr_branches=$(gh pr list --json headRefName --repo $GITHUB_REPOSITORY)
-          if [[ "$pr_branches" != '[]' && $(echo "$pr_branches" | jq -r --arg GITHUB_REF_NAME '.[].headRefName | select(. == $GITHUB_REF_NAME)') ]]; then
+          pr_branches="$(gh pr list --json headRefName --repo $GITHUB_REPOSITORY)"
+          if [[ "$pr_branches" != '[]' && "$(echo "$pr_branches" | jq -r --arg GITHUB_REF_NAME '.[].headRefName | select(. == $GITHUB_REF_NAME)')" ]]; then
             echo "This push is associated with a pull request. Skipping the job."
             echo "abort=true" >> "$GITHUB_OUTPUT"
           fi
