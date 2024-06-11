@@ -35,7 +35,7 @@ jobs:
           fi
 
   Lint:
-    needs: debounce
+    needs: Debounce
     if: needs.debounce.outputs.skip != 'true'
     uses: ./.github/workflows/lint.yml
 
@@ -74,8 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            test-results
+          path: test-results
 
   Event:
     needs: test

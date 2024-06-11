@@ -98,8 +98,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: result
-          path: |
-            ./artifacts
+          path: ./artifacts
 
   deploy:
     needs: build
