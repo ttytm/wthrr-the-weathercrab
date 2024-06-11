@@ -2,7 +2,7 @@ use optional_struct::{optional_struct, Applyable};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 use strum::VariantNames;
-use strum_macros::{AsRefStr, EnumString, EnumVariantNames};
+use strum_macros::{AsRefStr, EnumString, VariantNames};
 
 use super::args::UnitArg;
 
@@ -15,9 +15,7 @@ pub struct Units {
 	pub precipitation: Precipitation,
 }
 
-#[derive(
-	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
-)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, VariantNames, EnumString)]
 #[allow(non_camel_case_types)]
 pub enum Temperature {
 	#[default]
@@ -25,9 +23,7 @@ pub enum Temperature {
 	fahrenheit,
 }
 
-#[derive(
-	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
-)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, VariantNames, EnumString)]
 #[allow(non_camel_case_types)]
 pub enum Speed {
 	#[default]
@@ -37,9 +33,7 @@ pub enum Speed {
 	ms,
 }
 
-#[derive(
-	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
-)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, VariantNames, EnumString)]
 #[allow(non_camel_case_types)]
 pub enum Time {
 	am_pm,
@@ -47,9 +41,7 @@ pub enum Time {
 	military,
 }
 
-#[derive(
-	Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, EnumVariantNames, EnumString,
-)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize, AsRefStr, VariantNames, EnumString)]
 #[allow(non_camel_case_types)]
 pub enum Precipitation {
 	#[default]
