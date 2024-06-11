@@ -35,12 +35,12 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           cargo_msrv="cargo-msrv-x86_64-unknown-linux-gnu-v0.16.0-beta.22"
-          curl -SLo $cargo_msrv.tgz https://github.com/foresterre/cargo-msrv/releases/download/v0.16.0-beta.22/$cargo_msrv.tgz
-          tar -xvf $cargo_msrv.tgz
-          mv $cargo_msrv/cargo-msrv ./
-          defined_msrv=$(./cargo-msrv show --output-format json 2>&1 | jq -r '.result.version' | tail -n 1)
-          dependency_msrv=$(./cargo-msrv list --output-format json 2>&1 | jq -r '.result.list.[0].msrv' | tail -n 1)
-          if [ $defined_msrv != $dependency_msrv ]; then
+          curl -SLo "$cargo_msrv".tgz https://github.com/foresterre/cargo-msrv/releases/download/v0.16.0-beta.22/"$cargo_msrv".tgz
+          tar -xvf "$cargo_msrv".tgz
+          mv "$cargo_msrv"/cargo-msrv ./
+          defined_msrv="$(./cargo-msrv show --output-format json 2>&1 | jq -r '.result.version' | tail -n 1)"
+          dependency_msrv="$(./cargo-msrv list --output-format json 2>&1 | jq -r '.result.list.[0].msrv' | tail -n 1)"
+          if [[ $defined_msrv != $dependency_msrv ]]; then
             echo "::error::MSRV changed - current: '$defined_msrv', absolute: '$dependency_msrv'"
             exit 1
           fi
