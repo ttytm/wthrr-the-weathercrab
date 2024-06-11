@@ -32,12 +32,12 @@ jobs:
             echo "abort=true" >> "$GITHUB_OUTPUT"
           fi
 
-  Lint:
+  lint:
     needs: debounce
     if: needs.debounce.outputs.abort != 'true'
     uses: ./.github/workflows/lint.yml
 
-  Test:
+  test:
     needs: Lint
     strategy:
       fail-fast: false
@@ -71,10 +71,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: |
-            test-results
+          path: test-results
 
-  Event:
+  event:
     needs: test
     name: Upload Test Event
     runs-on: ubuntu-latest
@@ -84,7 +83,7 @@ jobs:
           name: test-event
           path: ${{ github.event_path }}
 
-  Build:
+  build:
     needs: test
     strategy:
       fail-fast: false
