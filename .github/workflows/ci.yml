@@ -20,21 +20,23 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     outputs:
-      abort: ${{ steps.debounce.outputs.abort }}
+      skip: ${{ steps.debounce.outputs.skip }}
     steps:
       - name: Debounce
         if: github.ref_name != 'main' && github.event_name == 'push'
         id: debounce
         run: |
           pr_branches=$(gh pr list --json headRefName --repo "$GITHUB_REPOSITORY")
-          if [[ "$pr_branches" != '[]' && $(echo "$pr_branches" | jq -r --arg GITHUB_REF_NAME '.[].headRefName | select(. == "$GITHUB_REF_NAME")') ]]; then
-            echo "This push is associated with a pull request. Skipping the job."
-            echo "abort=true" >> "$GITHUB_OUTPUT"
+          echo "pr_branches=$pr_branches"
+          echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+          if [[ $(echo "$pr_branches" | jq -r --arg ref_name "$GITHUB_REF_NAME" '.[] | select(.headRefName == $ref_name)') ]]; then
+            echo "Push to a branch that is associated with a pull request. Skipping redundant job."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
   Lint:
     needs: debounce
-    if: needs.debounce.outputs.abort != 'true'
+    if: needs.debounce.outputs.skip != 'true'
     uses: ./.github/workflows/lint.yml
 
   Test:
