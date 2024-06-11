@@ -27,7 +27,7 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs-plus/clippy-check@v2
+      - uses: clechasseur/rs-clippy-check@v3
 
   actionlint:
     runs-on: ubuntu-latest
