@@ -45,6 +45,7 @@ jobs:
           echo "dependency_msrv=$dependency_msrv"
           if [[ $defined_msrv != $dependency_msrv ]]; then
             echo "::error::MSRV changed - current: '$defined_msrv', absolute: '$dependency_msrv'"
+            exit 1
           fi
 
   actionlint:
