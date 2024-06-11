@@ -36,11 +36,11 @@ jobs:
       - name: Setup dependencies
         run: |
           # Setup latest jq
-          curl -SLo jq https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64
+          curl -Lo jq https://github.com/jqlang/jq/releases/latest/download/jq-linux-amd64
           chmod +x jq
           # Setup cargo msrv
           cargo_msrv="cargo-msrv-x86_64-unknown-linux-gnu-v0.16.0-beta.22"
-          curl -SLo "$cargo_msrv".tgz https://github.com/foresterre/cargo-msrv/releases/download/v0.16.0-beta.22/"$cargo_msrv".tgz
+          curl -Lo "$cargo_msrv".tgz https://github.com/foresterre/cargo-msrv/releases/download/v0.16.0-beta.22/"$cargo_msrv".tgz
           tar -xvf "$cargo_msrv".tgz
           mv "$cargo_msrv"/cargo-msrv ./
       - name: Detect MSRV changes
