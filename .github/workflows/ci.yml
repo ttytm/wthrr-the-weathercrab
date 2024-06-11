@@ -70,6 +70,7 @@ jobs:
           mkdir -p test-results
           mv target/nextest/ci/junit-*.xml test-results/
       - name: Upload test results
+        if: runner.os == 'Linux'
         uses: actions/upload-artifact@v3
         with:
           name: test-results
