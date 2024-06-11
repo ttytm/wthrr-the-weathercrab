@@ -49,7 +49,7 @@ jobs:
           dependency_msrv="$(./cargo-msrv list --output-format json 2>&1 | ./jq -r '.result.list.[0].msrv' | tail -n 1)"
           echo "defined_msrv=$defined_msrv"
           echo "dependency_msrv=$dependency_msrv"
-          if [[ $defined_msrv != $dependency_msrv ]]; then
+          if [ "$defined_msrv" != "$dependency_msrv" ]; then
             echo "::error::MSRV changed | defined: '$defined_msrv', absolute: '$dependency_msrv'"
             exit 1
           fi
