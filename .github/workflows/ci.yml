@@ -66,6 +66,7 @@ jobs:
           cargo nextest run --verbose --profile ci
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-${{ matrix.os }}.xml
       - name: Publish results
+        if: runner.os == 'Linux'
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: 'target/nextest/ci/junit*.xml'
