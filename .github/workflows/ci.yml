@@ -61,6 +61,7 @@ jobs:
           RUST_BACKTRACE: full
           CARGO_TERM_COLOR: always
         run: |
+          which cargo
           cargo nextest run --verbose --profile ci
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-${{ matrix.os }}.xml
       - name: Publish results
