@@ -1,40 +1,34 @@
 name: Release
 
 on:
-  push:
-    tags: [v*]
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
 
 env:
   CARGO_TERM_COLOR: always
 
 defaults:
   run:
-    shell: bash # necessary for windows
+    shell: bash # Convenience workaround for Windows.
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-
   build:
-    needs: lint
+    if: github.event.workflow_run.conclusion == 'success'
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-apple-darwin # not properly signed, so there are security warnings
-            os: macos-latest
-          - target: x86_64-pc-windows-gnu
-            os: windows-latest
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
-          # - target: aarch64-unknown-linux-gnu
-          #   os: ubuntu-latest
-          # - target: armv7-unknown-linux-gnueabihf
-          #   os: ubuntu-latest
+          - os: ubuntu-latest
+            target: x86_64-linux
+          - os: windows-latest
+            target: x86_64-windows
+            # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
+          - os: macos-12
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            target: arm64-apple-darwin
     runs-on: ${{ matrix.os }}
-    env:
-      APP_NAME: wthrr
-      TARGET: ${{ matrix.target }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -46,53 +40,32 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Install and configure dependencies
-        # dependencies are only needed on ubuntu
-        # as that's the only place where we build the AppImage and would make cross-compilation
+      - name: Install dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install libfuse2
           sudo wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
           sudo chmod +x /usr/local/bin/appimagetool
           cargo install cargo-appimage
-          # sudo apt-get install -qq crossbuild-essential-arm64 crossbuild-essential-armhf
-          # some additional configuration for cross-compilation on linux
-          # cat >>~/.cargo/config <<EOF
-          # [target.aarch64-unknown-linux-gnu]
-          # linker = "aarch64-linux-gnu-gcc"
-          # [target.armv7-unknown-linux-gnueabihf]
-          # linker = "arm-linux-gnueabihf-gcc"
-          # EOF
-      - name: Install rust target
-        run: rustup target add "$TARGET"
-      - name: Run build
+      - name: Build
         run: |
-          cargo build --release --verbose --target "$TARGET"
+          cargo build --release --verbose
           if [[ $RUNNER_OS == "Linux" ]]; then
             cargo appimage
           fi
       - name: Prepare artifacts
         run: |
           mkdir -p ./artifacts
-          if [[ $RUNNER_OS == "Windows" ]]; then
-            bin_file=$APP_NAME.exe
-          else
-            bin_file=$APP_NAME
-          fi
-          if [[ $GITHUB_REF_TYPE =~ ^tag$ ]]; then
-            version=$GITHUB_REF_NAME
-          else
-            version=$GITHUB_SHA
-          fi
-          if [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./wthrr-*-x86_64.AppImage "./artifacts/wthrr-$version-x86_64-linux.AppImage"
-          fi
-          # beautify release targets (remove '-unknown' / '-gnu' from filename)
-          artifact=$APP_NAME-$version-$(echo "$TARGET" | sed -e 's/-unknown//' -e 's/-gnu//')
+          version="$GITHUB_REF_NAME"
+          artifact="wthrr-$version-${{ matrix.target }}"
           mkdir "$artifact"
           cp README.md LICENSE "$artifact/"
-          mv "./target/$TARGET/release/$bin_file" "./$artifact/$bin_file"
-          # compress
+          if [[ $RUNNER_OS == "Windows" ]]; then
+            mv "./target/release/wthrr.exe" "./$artifact/"
+          elif [[ $RUNNER_OS == "Linux" ]]; then
+            mv "./target/release/wthrr" "./$artifact/"
+            mv ./wthrr-*-x86_64.AppImage "./artifacts/"
+          fi
           tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
@@ -102,6 +75,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.ref_name == 'main' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -118,6 +92,7 @@ jobs:
 
   publish:
     needs: build
+    if: github.ref_name == 'main' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
