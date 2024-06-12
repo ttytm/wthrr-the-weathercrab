@@ -1,22 +1,20 @@
 name: Release
 
 on:
-  push:
-    tags: [v*]
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
 
 env:
   CARGO_TERM_COLOR: always
 
 defaults:
   run:
-    shell: bash # necessary for windows
+    shell: bash # Convenience workaround for Windows.
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-
   build:
-    needs: lint
+    if: github.event.workflow_run.conclusion != 'skipped'
     strategy:
       fail-fast: false
       matrix:
@@ -26,9 +24,9 @@ jobs:
           - os: windows-latest
             target: x86_64-windows
             # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
-          - os: macos-latest
-            target: x86_64-apple-darwin
           - os: macos-12
+            target: x86_64-apple-darwin
+          - os: macos-latest
             target: arm64-apple-darwin
     runs-on: ${{ matrix.os }}
     steps:
@@ -77,6 +75,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.ref_name == 'main' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -93,6 +92,7 @@ jobs:
 
   publish:
     needs: build
+    if: github.ref_name == 'main' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
