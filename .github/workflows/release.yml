@@ -92,7 +92,7 @@ jobs:
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ env.ARTIFACT }}.zip
+          artifacts: ${{ matrix.target }}/wthrr*
           tag: ${{ env.TAG }}
           body: ${{ env.BODY }}
           name: ${{ env.TITLE }}
