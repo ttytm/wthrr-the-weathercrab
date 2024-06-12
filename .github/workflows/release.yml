@@ -3,12 +3,11 @@ name: Release
 on:
   workflow_call:
 
-env:
-  CARGO_TERM_COLOR: always
-
 defaults:
   run:
     shell: bash # Convenience workaround for Windows.
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
