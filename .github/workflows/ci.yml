@@ -15,7 +15,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  debounce:
+  Debounce:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -77,7 +77,7 @@ jobs:
           path: test-results
 
   Event:
-    needs: test
+    needs: Test
     name: Upload Test Event
     runs-on: ubuntu-latest
     steps:
@@ -85,24 +85,3 @@ jobs:
         with:
           name: test-event
           path: ${{ github.event_path }}
-
-  Build:
-    needs: test
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, macOS-11, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build
-        run: cargo build --verbose
