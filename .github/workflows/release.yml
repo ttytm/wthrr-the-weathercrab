@@ -104,5 +104,7 @@ jobs:
           name: ${{ env.TITLE }}
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Publish on crates.io
-        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.ref_type == 'tag'
+        if: >
+          matrix.os == 'ubuntu-latest' &&
+          github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.ref_type == 'tag'
         run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
