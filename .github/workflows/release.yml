@@ -20,16 +20,13 @@ jobs:
           - os: windows-latest
             target: x86_64-windows
             # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
-          - os: macos-13
+          - os: macos-11
             target: x86_64-apple-darwin
           - os: macos-latest
             target: arm64-apple-darwin
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        # Should not be required, though `cargo: command not found` [2024/06/12]
-        if: ${{ matrix.os == 'macos-13' }}
       - uses: actions/cache@v4
         with:
           path: |

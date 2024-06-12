@@ -41,13 +41,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-11, macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        # Should not be required, though `cargo: command not found` [2024/06/12]
-        if: ${{ matrix.os == 'macos-13' }}
       - uses: actions/cache@v4
         with:
           path: |
