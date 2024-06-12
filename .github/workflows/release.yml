@@ -56,7 +56,7 @@ jobs:
           if [[ $RUNNER_OS == "Windows" ]]; then
             binary+=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
+            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/"
           fi
           mv "./target/release/$binary" "./${{ matrix.target }}/"
           cp README.md LICENSE "${{ matrix.target }}/"
@@ -83,7 +83,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./artifacts/*.tar.gz, ./artifacts/*.AppImage
+          files: ./artifacts/wthrr*
 
   publish:
     needs: build
