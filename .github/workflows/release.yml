@@ -62,18 +62,42 @@ jobs:
             mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/wthrr.deb"
           fi
           mv "./target/release/$binary" "./${{ matrix.target }}/"
-          [[ $RUNNER_OS == "tag" ]] && version="$GITHUB_REF" || version="$GITHUB_SHA"
-          echo "ARTIFACT=wthrr-$version-${{ matrix.target }}" >> "$GITHUB_ENV"
+          echo "ARTIFACT=wthrr-${{ matrix.target }}" >> "$GITHUB_ENV"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT }}
           path: ${{ matrix.target }}/**
-      - name: Release
-        if: github.ref_name == 'main' && github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v2
+      - name: Prepare release
+        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
+        run: |
+          if [ "$GITHUB_REF_TYPE" == tag ]; then
+            echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          else
+            {
+              echo "IS_PRERELEASE=true";
+              echo "TAG=nightly";
+              echo "BODY=Generated on <samp>$(date -u +'%Y-%m-%d %H:%M:%S UTC')</samp> from commit $GITHUB_SHA.";
+              echo "TITLE=wthrr nightly build";
+            } >> "$GITHUB_ENV"
+          fi
+      - name: Update nightly tag
+        if: env.IS_PRERELEASE
+        uses: richardsimko/update-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./artifacts/wthrr*
+          tag_name: nightly
+      - name: Release
+        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.ARTIFACT }}.zip
+          tag: ${{ env.TAG }}
+          body: ${{ env.BODY }}
+          name: ${{ env.TITLE }}
+          prerelease: ${{ env.IS_PRERELEASE }}
+          allowUpdates: true
       - name: Publish on crates.io
-        if: github.ref_name == 'main' && github.ref_type == 'tag'
+        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.ref_type == 'tag'
         run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
