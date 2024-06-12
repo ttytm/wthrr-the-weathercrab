@@ -16,14 +16,14 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            target: x86_64-linux
+            target: linux-x86_64
           - os: windows-latest
-            target: x86_64-windows
+            target: windows-x86_64
             # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
           - os: macos-11
-            target: x86_64-apple-darwin
+            target: macos-x86_64
           - os: macos-latest
-            target: arm64-apple-darwin
+            target: macos-arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,6 @@ jobs:
             mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/wthrr.deb"
           fi
           mv "./target/release/$binary" "./${{ matrix.target }}/"
-          cp README.md LICENSE "${{ matrix.target }}/"
           [[ $RUNNER_OS == "tag" ]] && version="$GITHUB_REF" || version="$GITHUB_SHA"
           echo "ARTIFACT=wthrr-$version-${{ matrix.target }}" >> "$GITHUB_ENV"
       - name: Upload artifacts
