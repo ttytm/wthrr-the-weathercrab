@@ -70,3 +70,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: 'target/nextest/ci/junit*.xml'
+
+  Release:
+    needs: Test
+    uses: ./.github/workflows/release.yml
