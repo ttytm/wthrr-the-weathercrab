@@ -52,18 +52,16 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir "${{ matrix.target }}"
-          version="$GITHUB_REF_NAME"
-          artifact="wthrr-$version-${{ matrix.target }}"
-          cp README.md LICENSE "${{ matrix.target }}/"
+          binary=wthrr
           if [[ $RUNNER_OS == "Windows" ]]; then
-            mv "./target/release/wthrr.exe" "./${{ matrix.target }}/"
-          else
-            mv "./target/release/wthrr" "./${{ matrix.target }}/"
-          fi
-          if [[ $RUNNER_OS == "Linux" ]]; then
+            binary+=.exe
+          elif [[ $RUNNER_OS == "Linux" ]]; then
             mv ./wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
           fi
-          echo "ARTIFACT=$artifact" >> "$GITHUB_ENV"
+          mv "./target/release/$binary" "./${{ matrix.target }}/"
+          cp README.md LICENSE "${{ matrix.target }}/"
+          [[ $RUNNER_OS == "tag" ]] && version="$GITHUB_REF" || version="$GITHUB_SHA"
+          echo "ARTIFACT=wthrr-$version-${{ matrix.target }}" >> "$GITHUB_ENV"
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
