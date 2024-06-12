@@ -65,16 +65,10 @@ jobs:
         run: |
           cargo nextest run --verbose --profile ci
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-${{ matrix.os }}.xml
-      - name: Prepare test-results
-        run: |
-          mkdir -p test-results
-          mv target/nextest/ci/junit-*.xml test-results/
-      - name: Upload test results
-        if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v4
+      - name: Publish results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          name: test-results
-          path: test-results
+          files: 'target/nextest/ci/junit*.xml'
 
   Event:
     needs: Test
