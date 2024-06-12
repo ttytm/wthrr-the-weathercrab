@@ -61,7 +61,7 @@ jobs:
             mv "./target/release/wthrr.exe" "./$artifact/"
           elif [[ $RUNNER_OS == "Linux" ]]; then
             mv "./target/release/wthrr" "./$artifact/"
-            mv ./wthrr-*-x86_64.AppImage "./artifacts/"
+            mv ./wthrr.AppImage "./artifacts/$artifact.AppImage"
           fi
           tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
       - name: Archive artifacts
