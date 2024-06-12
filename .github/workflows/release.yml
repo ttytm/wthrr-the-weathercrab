@@ -1,20 +1,16 @@
 name: Release
 
 on:
-  workflow_run:
-    workflows: ['CI']
-    types: [completed]
-
-env:
-  CARGO_TERM_COLOR: always
+  workflow_call:
 
 defaults:
   run:
     shell: bash # Convenience workaround for Windows.
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
-    if: github.event.workflow_run.conclusion == 'success'
     strategy:
       fail-fast: false
       matrix:
@@ -24,7 +20,7 @@ jobs:
           - os: windows-latest
             target: x86_64-windows
             # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
-          - os: macos-12
+          - os: macos-11
             target: x86_64-apple-darwin
           - os: macos-latest
             target: arm64-apple-darwin
@@ -55,55 +51,27 @@ jobs:
           fi
       - name: Prepare artifacts
         run: |
-          mkdir -p ./artifacts
-          version="$GITHUB_REF_NAME"
-          artifact="wthrr-$version-${{ matrix.target }}"
-          mkdir "$artifact"
-          cp README.md LICENSE "$artifact/"
+          mkdir "${{ matrix.target }}"
+          binary=wthrr
           if [[ $RUNNER_OS == "Windows" ]]; then
-            mv "./target/release/wthrr.exe" "./$artifact/"
+            binary+=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv "./target/release/wthrr" "./$artifact/"
-            mv ./wthrr-*-x86_64.AppImage "./artifacts/"
+            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/"
           fi
-          tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
-      - name: Archive artifacts
+          mv "./target/release/$binary" "./${{ matrix.target }}/"
+          cp README.md LICENSE "${{ matrix.target }}/"
+          [[ $RUNNER_OS == "tag" ]] && version="$GITHUB_REF" || version="$GITHUB_SHA"
+          echo "ARTIFACT=wthrr-$version-${{ matrix.target }}" >> "$GITHUB_ENV"
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: result
-          path: ./artifacts
-
-  deploy:
-    needs: build
-    if: github.ref_name == 'main' && github.ref_type == 'tag'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: result
-          path: ./artifacts
-      - name: List
-        run: find ./artifacts
+          name: ${{ env.ARTIFACT }}
+          path: ${{ matrix.target }}/**
       - name: Release
+        if: github.ref_name == 'main' && github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: ./artifacts/*.tar.gz, ./artifacts/*.AppImage
-
-  publish:
-    needs: build
-    if: github.ref_name == 'main' && github.ref_type == 'tag'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Publish
+          files: ./artifacts/wthrr*
+      - name: Publish on crates.io
+        if: github.ref_name == 'main' && github.ref_type == 'tag'
         run: cargo publish --token ${{ secrets.CRATES_TOKEN }}

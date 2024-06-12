@@ -11,9 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name == 'main' && github.sha || github.ref }}
   cancel-in-progress: true
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   Debounce:
     runs-on: ubuntu-latest
@@ -44,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-11, macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -62,6 +59,7 @@ jobs:
       - name: Run test
         env:
           RUST_BACKTRACE: full
+          CARGO_TERM_COLOR: always
         run: |
           cargo nextest run --verbose --profile ci
           mv target/nextest/ci/junit.xml target/nextest/ci/junit-${{ matrix.os }}.xml
@@ -70,3 +68,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: 'target/nextest/ci/junit*.xml'
+
+  Release:
+    needs: Test
+    uses: ./.github/workflows/release.yml
