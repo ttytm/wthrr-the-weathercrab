@@ -25,6 +25,8 @@ jobs:
           - os: macos-latest
             target: macos-arm64
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -54,20 +56,21 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir "${{ matrix.target }}"
+          artifact=wthrr-${{ matrix.target }}
           binary=wthrr
           if [[ $RUNNER_OS == "Windows" ]]; then
-            binary+=.exe
+            ext=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/"
-            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/wthrr.deb"
+            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
+            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/$artifact.deb"
           fi
-          mv "./target/release/$binary" "./${{ matrix.target }}/"
-          echo "ARTIFACT=wthrr-${{ matrix.target }}" >> "$GITHUB_ENV"
+          mv "./target/release/$binary$ext" "./${{ matrix.target }}/$artifact$ext"
+          ls ${{ matrix.target }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT }}
-          path: ${{ matrix.target }}/**
+          name: wthrr-${{ matrix.target }}
+          path: ${{ matrix.target }}/wthrr*
       - name: Prepare release
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
         run: |
@@ -77,8 +80,8 @@ jobs:
             {
               echo "IS_PRERELEASE=true";
               echo "TAG=nightly";
-              echo "BODY=Generated on <samp>$(date -u +'%Y-%m-%d %H:%M:%S UTC')</samp> from commit $GITHUB_SHA.";
-              echo "TITLE=wthrr nightly build";
+              echo "TITLE=nightly build $(date -u +'%Y-%m-%d %H:%M:%S UTC')";
+              echo "BODY=Generated from commit $GITHUB_SHA.";
             } >> "$GITHUB_ENV"
           fi
       - name: Update nightly tag
@@ -90,14 +93,13 @@ jobs:
           tag_name: nightly
       - name: Release
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: ${{ matrix.target }}/wthrr*
-          tag: ${{ env.TAG }}
+          files: ${{ matrix.target }}/wthrr*
+          tag_name: ${{ env.TAG }}
           body: ${{ env.BODY }}
           name: ${{ env.TITLE }}
           prerelease: ${{ env.IS_PRERELEASE }}
-          allowUpdates: true
       - name: Publish on crates.io
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.ref_type == 'tag'
         run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
