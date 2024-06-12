@@ -54,15 +54,15 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir "${{ matrix.target }}"
-          binary=wthrr
+          artifact=wthrr-${{ matrix.target }}
           if [[ $RUNNER_OS == "Windows" ]]; then
-            binary+=.exe
+            artifact+=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/"
-            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/wthrr.deb"
+            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
+            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/$artifact.deb"
           fi
-          mv "./target/release/$binary" "./${{ matrix.target }}/"
-          echo "ARTIFACT=wthrr-${{ matrix.target }}" >> "$GITHUB_ENV"
+          mv "./target/release/$binary" "./${{ matrix.target }}/$artifact"
+          echo "ARTIFACT=$artifact" >> "$GITHUB_ENV"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -77,8 +77,8 @@ jobs:
             {
               echo "IS_PRERELEASE=true";
               echo "TAG=nightly";
-              echo "BODY=Generated on <samp>$(date -u +'%Y-%m-%d %H:%M:%S UTC')</samp> from commit $GITHUB_SHA.";
-              echo "TITLE=wthrr nightly build";
+              echo "TITLE=nightly build $(date -u +'%Y-%m-%d %H:%M:%S UTC')";
+              echo "BODY=Generated from commit $GITHUB_SHA.";
             } >> "$GITHUB_ENV"
           fi
       - name: Update nightly tag
@@ -92,7 +92,7 @@ jobs:
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ matrix.target }}/wthrr*
+          artifacts: ${{ env.ARTIFACT }}*
           tag: ${{ env.TAG }}
           body: ${{ env.BODY }}
           name: ${{ env.TITLE }}
