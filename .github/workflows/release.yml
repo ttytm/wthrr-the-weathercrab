@@ -43,11 +43,13 @@ jobs:
           sudo wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O /usr/local/bin/appimagetool
           sudo chmod +x /usr/local/bin/appimagetool
           cargo install cargo-appimage
+          cargo install cargo-deb
       - name: Build
         run: |
           cargo build --release --verbose
           if [[ $RUNNER_OS == "Linux" ]]; then
             cargo appimage
+            cargo deb
           fi
       - name: Prepare artifacts
         run: |
@@ -57,6 +59,7 @@ jobs:
             binary+=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
             mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/"
+            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/wthrr.deb"
           fi
           mv "./target/release/$binary" "./${{ matrix.target }}/"
           cp README.md LICENSE "${{ matrix.target }}/"
