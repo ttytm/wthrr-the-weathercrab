@@ -52,23 +52,24 @@ jobs:
           fi
       - name: Prepare artifacts
         run: |
-          mkdir -p ./artifacts
+          mkdir "${{ matrix.target }}"
           version="$GITHUB_REF_NAME"
           artifact="wthrr-$version-${{ matrix.target }}"
-          mkdir "$artifact"
-          cp README.md LICENSE "$artifact/"
+          cp README.md LICENSE "${{ matrix.target }}/"
           if [[ $RUNNER_OS == "Windows" ]]; then
-            mv "./target/release/wthrr.exe" "./$artifact/"
-          elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv "./target/release/wthrr" "./$artifact/"
-            mv ./wthrr.AppImage "./artifacts/$artifact.AppImage"
+            mv "./target/release/wthrr.exe" "./${{ matrix.target }}/"
+          else
+            mv "./target/release/wthrr" "./${{ matrix.target }}/"
           fi
-          tar -czf "./artifacts/$artifact.tar.gz" "$artifact"
+          if [[ $RUNNER_OS == "Linux" ]]; then
+            mv ./wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
+          fi
+          echo "ARTIFACT=$artifact" >> "$GITHUB_ENV"
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: result
-          path: ./artifacts
+          name: ${{ env.ARTIFACT }}
+          path: ${{ matrix.target }}/**
 
   deploy:
     needs: build
