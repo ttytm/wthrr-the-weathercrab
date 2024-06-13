@@ -75,7 +75,10 @@ jobs:
         if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
         run: |
           if [ "$GITHUB_REF_TYPE" == tag ]; then
-            echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+            {
+              echo "TAG=$GITHUB_REF_NAME";
+              echo "TITLE=wthrr ${GITHUB_REF_NAME:1}"; # v1.0.0 -> wthrr 1.0.0
+            } >> "$GITHUB_ENV"
           else
             {
               echo "IS_PRERELEASE=true";
