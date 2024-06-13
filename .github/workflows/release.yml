@@ -72,7 +72,9 @@ jobs:
           name: wthrr-${{ matrix.target }}
           path: ${{ matrix.target }}/wthrr*
       - name: Prepare release
-        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
+        if: >
+          github.repository_owner == 'ttytm'
+          && ((github.ref_name == 'main' && github.event_name == 'push') || github.ref_type == 'tag')
         run: |
           if [ "$GITHUB_REF_TYPE" == tag ]; then
             {
@@ -95,7 +97,9 @@ jobs:
         with:
           tag_name: nightly
       - name: Release
-        if: github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.event_name == 'push'
+        if: >
+          github.repository_owner == 'ttytm'
+          && ((github.ref_name == 'main' && github.event_name == 'push') || github.ref_type == 'tag')
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ matrix.target }}/wthrr*
@@ -105,6 +109,6 @@ jobs:
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Publish on crates.io
         if: >
-          matrix.os == 'ubuntu-latest' &&
-          github.repository_owner == 'ttytm' && github.ref_name == 'main' && github.ref_type == 'tag'
+          matrix.os == 'ubuntu-latest' && github.repository_owner == 'ttytm'
+          && ((github.ref_name == 'main' && github.event_name == 'push') || github.ref_type == 'tag')
         run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
