@@ -789,18 +789,19 @@ checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
 
 [[package]]
 name = "optional_struct"
-version = "0.3.2"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a6a5805fc07abb78282acc68420a70902e585f80538cc9050f20128129bc4af"
+checksum = "4cc83044fbb5cf2dfbf5bbe011f1ce6c68ce1c7f0c41423091e2c3b21c7ebb66"
 dependencies = [
  "optional_struct_export",
+ "serde",
 ]
 
 [[package]]
 name = "optional_struct_export"
-version = "0.3.2"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d104275df932249fcae2db0bd2e34b8e690be925aaee5cca5251b928fe71230a"
+checksum = "3aab351802d85e41a5e679e6862c7639726920c7b93fbd2a7aec925509c088ed"
 dependencies = [
  "optional_struct_macro_impl",
  "quote",
@@ -808,9 +809,9 @@ dependencies = [
 
 [[package]]
 name = "optional_struct_macro_impl"
-version = "0.3.2"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3314c27f4503e50bd5f7632cd51fef7ac7b1a4af161db616647f190052ffd92"
+checksum = "6d8ed6022d195dd0ab66d5d214eddbe887ef5489f708ff8be131296111d475ef"
 dependencies = [
  "proc-macro2",
  "quote",
