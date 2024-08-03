@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, macos-13, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
       - name: Install cargo-nextest
         uses: taiki-e/install-action@nextest
       - name: Install cargo, if required
-        if: matrix.os == 'macos-12' || matrix.os == 'macos-13'
+        if: matrix.os == 'macos-13'
         uses: dtolnay/rust-toolchain@stable
       - name: Run test
         env:
