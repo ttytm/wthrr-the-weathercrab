@@ -56,6 +56,9 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install cargo-nextest
         uses: taiki-e/install-action@nextest
+      - name: Install cargo, if required
+        if: matrix.os == 'macos-12' || matrix.os == 'macos-13'
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
       - name: Run test
         env:
           RUST_BACKTRACE: full
