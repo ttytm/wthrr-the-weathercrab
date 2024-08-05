@@ -60,7 +60,7 @@ jobs:
         if: matrix.os == 'macos-13'
         run: |
           # mkdir -p /Users/runner/.cargo/bin
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh -s -- -y
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
       - name: Run test
         env:
           RUST_BACKTRACE: full
