@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install cargo-nextest
         uses: taiki-e/install-action@nextest
       - name: Run test
