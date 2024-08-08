@@ -22,8 +22,6 @@ jobs:
             # Apple targets are not properly signed. Users will have to mark the binaries as secure manually.
           - os: macos-13
             target: macos-x86_64
-          - os: macos-13
-            target: macos-arm64
           - os: macos-latest
             target: macos-arm64
     runs-on: ${{ matrix.os }}
@@ -39,7 +37,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install dependencies
         if: runner.os == 'Linux'
         run: |
