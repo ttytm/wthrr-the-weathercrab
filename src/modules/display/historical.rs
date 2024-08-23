@@ -130,12 +130,11 @@ impl HistoricalWeather {
 
 		// Helpers
 		let weather = &product.historical_weather.as_ref().unwrap()[date];
-		let weather_daily = &weather.daily;
 		let weather_daily_units = weather.daily_units.as_ref().unwrap();
 		let lang = &params.config.language;
 		// Times
-		let sunrise = weather_daily.sunrise.as_ref().unwrap();
-		let sunset = weather_daily.sunset.as_ref().unwrap();
+		let sunrise = weather.daily.sunrise.as_ref().unwrap();
+		let sunset = weather.daily.sunset.as_ref().unwrap();
 		let (sunrise_hour, sunset_hour) = (
 			sunrise[0][11..13].parse::<usize>().unwrap_or_default(),
 			sunset[0][11..13].parse::<usize>().unwrap_or_default(),
@@ -152,20 +151,20 @@ impl HistoricalWeather {
 		};
 		let temp_max_min = format!(
 			"{:.1}/{:.1}{}",
-			weather_daily.temperature_2m_max.as_ref().unwrap()[0],
-			weather_daily.temperature_2m_min.as_ref().unwrap()[0],
+			weather.daily.temperature_2m_max.as_ref().unwrap()[0],
+			weather.daily.temperature_2m_min.as_ref().unwrap()[0],
 			weather_daily_units.temperature_2m_max,
 		);
 		let apparent_temp_max_min = format!(
 			"{} {:.1}/{:.1}{}",
 			params.texts.weather.felt_like,
-			weather_daily.apparent_temperature_max.as_ref().unwrap()[0],
-			weather_daily.apparent_temperature_min.as_ref().unwrap()[0],
+			weather.daily.apparent_temperature_max.as_ref().unwrap()[0],
+			weather.daily.apparent_temperature_min.as_ref().unwrap()[0],
 			weather_daily_units.temperature_2m_max,
 		);
 		let precipitation_sum = format!(
 			"❲{}{}❳",
-			weather_daily.precipitation_sum.as_ref().unwrap()[0],
+			weather.daily.precipitation_sum.as_ref().unwrap()[0],
 			if params.config.units.precipitation == Precipitation::inch {
 				"ᵢₙ"
 			} else {
