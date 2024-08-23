@@ -29,7 +29,7 @@ clap = { version = "4.5", default-features = false, features = [
 directories = "5.0"
 dialoguer = { version = "0.11", default-features = false }
 futures = "0.3"
-optional_struct = "0.3"
+optional_struct = "0.5"
 regex = { version = "1.10" }
 reqwest = { version = "0.12", features = ["json"] }
 ron = "0.8"

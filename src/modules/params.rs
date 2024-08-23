@@ -3,7 +3,6 @@ use std::collections::HashSet;
 use anyhow::{Context, Result};
 use chrono::NaiveDate;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
-use optional_struct::Applyable;
 
 use super::{
 	args::{Cli, Forecast},
@@ -69,7 +68,7 @@ impl Params {
 		})
 	}
 
-	pub fn handle_next(mut self, args: Cli, mut config_file: Config) -> Result<()> {
+	pub fn handle_next(mut self, args: Cli, config_file: Config) -> Result<()> {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
@@ -79,13 +78,10 @@ impl Params {
 
 		if config_file.address.is_empty() {
 			// Prompt to save
-			self.config.apply_to(&mut config_file);
-			self.config = config_file;
 			self.save_prompt(&args.address.unwrap_or_default())?;
 		} else {
 			// Handle explicit save call
-			self.config.apply_to(&mut config_file);
-			config_file.store().context("Error saving config file.")?;
+			self.config.store().context("Error saving config file.")?;
 			self.texts.store(&config_file.language);
 		}
 

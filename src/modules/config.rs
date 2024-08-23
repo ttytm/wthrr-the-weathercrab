@@ -1,7 +1,7 @@
 use anyhow::Result;
 use dialoguer::console::style;
 use directories::ProjectDirs;
-use optional_struct::{optional_struct, Applyable};
+use optional_struct::{optional_struct, Applicable};
 use ron::{
 	extensions::Extensions,
 	ser::{to_string_pretty, PrettyConfig},

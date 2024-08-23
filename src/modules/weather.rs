@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use chrono::{Local, NaiveDate};
-use optional_struct::{optional_struct, Applyable};
+use optional_struct::{optional_struct, Applicable};
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 
