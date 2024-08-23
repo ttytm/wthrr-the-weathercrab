@@ -130,7 +130,7 @@ impl HistoricalWeather {
 
 		// Helpers
 		let weather = &product.historical_weather.as_ref().unwrap()[date];
-		let weather_daily = weather.daily.as_ref().unwrap();
+		let weather_daily = &weather.daily;
 		let weather_daily_units = weather.daily_units.as_ref().unwrap();
 		let lang = &params.config.language;
 		// Times
@@ -183,7 +183,7 @@ impl HistoricalWeather {
 		let sunrise = format!(" {sunrise}");
 		let sunset = format!(" {sunset}");
 		let wmo_code = WeatherCode::resolve(
-			weather.daily.as_ref().unwrap().weathercode.as_ref().unwrap()[0],
+			weather.daily.weathercode.as_ref().unwrap()[0],
 			false,
 			&params.texts.weather.weather_code,
 		)?;

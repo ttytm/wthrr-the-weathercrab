@@ -1,5 +1,5 @@
 use dialoguer::console::{style, StyledObject};
-use optional_struct::{optional_struct, Applyable};
+use optional_struct::{optional_struct, Applicable};
 use serde::{Deserialize, Serialize};
 
 use crate::modules::display::{

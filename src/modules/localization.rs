@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use chrono::{Local, NaiveDate};
 use directories::ProjectDirs;
 use futures::{stream::FuturesOrdered, TryStreamExt};
-use optional_struct::{optional_struct, Applyable};
+use optional_struct::{optional_struct, Applicable};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;

@@ -1,4 +1,4 @@
-use optional_struct::{optional_struct, Applyable};
+use optional_struct::optional_struct;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 

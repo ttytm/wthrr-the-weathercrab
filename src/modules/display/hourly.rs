@@ -300,25 +300,25 @@ impl HourlyForecast {
 		// Therefore we'll extend the values by 1. For this we simply use the last value of the array twice.
 		let (mut temps, mut codes, mut prec);
 		let temperatures = {
-			temps = weather.hourly.as_ref().unwrap().temperature_2m.as_ref().unwrap()[0..].to_vec();
+			temps = weather.hourly.temperature_2m.as_ref().unwrap()[0..].to_vec();
 			temps.push(temps[temps.len() - 1]);
 			&temps
 		};
 		let weather_codes = {
-			codes = weather.hourly.as_ref().unwrap().weathercode.as_ref().unwrap()[0..].to_vec();
+			codes = weather.hourly.weathercode.as_ref().unwrap()[0..].to_vec();
 			codes.push(codes[codes.len() - 1]);
 			&codes
 		};
 		let sunrise_sunset = (
-			weather.daily.as_ref().unwrap().sunrise.as_ref().unwrap()[0][11..13]
+			weather.daily.sunrise.as_ref().unwrap()[0][11..13]
 				.parse::<usize>()
 				.unwrap_or_default(),
-			weather.daily.as_ref().unwrap().sunset.as_ref().unwrap()[0][11..13]
+			weather.daily.sunset.as_ref().unwrap()[0][11..13]
 				.parse::<usize>()
 				.unwrap_or_default(),
 		);
 		let precipitation = {
-			prec = weather.hourly.as_ref().unwrap().precipitation.as_ref().unwrap()[0..].to_vec();
+			prec = weather.hourly.precipitation.as_ref().unwrap()[0..].to_vec();
 			prec.push(prec[prec.len() - 1]);
 			prec.iter().map(|x| x.ceil() as u8).collect::<Vec<u8>>()
 		};
