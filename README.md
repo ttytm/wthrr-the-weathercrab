@@ -119,7 +119,7 @@ Win: `%USERPROFILE%\AppData\Roaming\weathercrab\`
     units: (
         temperature: celsius, // Temperature units: `celsius` | `fahrenheit`
         speed: kmh, // (Wind)speed units: `kmh` | `mph` | `knots` | `ms`
-        time: military, // Time Format: `military` | `ap_pm`
+        time: military, // Time Format: `military` | `am_pm`
         precipitation: probability, // Precipitation units: `probability` | `mm` | `inch`
     ),
     gui: (
