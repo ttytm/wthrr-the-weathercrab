@@ -124,9 +124,13 @@ There are several alternatives to the installation via `cargo`.
   ```sh
   nix run "github:tobealive/wthrr-the-weathercrab"
   ```
-- On Arch Linux `wthrr` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=wthrr&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
+- On Arch Linux, `wthrr` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=wthrr&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
   ```
   paru -S wthrr
+  ```
+- On macOS, you can use Homebrew
+  ```
+  brew install wthrr
   ```
 
 ## Build from source
