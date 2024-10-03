@@ -79,7 +79,7 @@ impl Location {
 	async fn search_osm(client: &Client, address: &str, language: &str) -> Result<Self> {
 		client
 			.get(
-				&ApiQuery::location(ApiName::OpenStreetMap, address, language)
+				ApiQuery::location(ApiName::OpenStreetMap, address, language)
 					.convert()
 					.assemble(),
 			)
@@ -94,7 +94,7 @@ impl Location {
 
 	async fn search_open_meteo(client: &Client, address: &str, language: &str) -> Result<Self> {
 		client
-			.get(&ApiQuery::location(ApiName::OpenMeteo, address, language).convert().assemble())
+			.get(ApiQuery::location(ApiName::OpenMeteo, address, language).convert().assemble())
 			.send()
 			.await?
 			.json::<Vec<OpenMeteoGeoObj>>()
