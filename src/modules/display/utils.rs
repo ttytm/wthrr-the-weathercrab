@@ -1,4 +1,5 @@
 use regex::Regex;
+use unicode_width::UnicodeWidthStr;
 
 use crate::modules::display::product::Product;
 
@@ -26,23 +27,13 @@ impl Product<'_> {
 	}
 }
 
-pub fn lang_len_diff(input: &str, lang: &str) -> usize {
-	match &lang[..2] {
-		"zh" => {
-			let re = Regex::new(r"\p{Han}").unwrap();
-			re.find_iter(input).count()
-		}
-		"ko" => {
-			let re = Regex::new(r"[\u3131-\uD79D\w]").unwrap();
-			let nu = Regex::new(r"[-]?\d+(\.\d+)?").unwrap();
-			re.find_iter(input).count() - nu.find_iter(input).count()
-		}
-		"ja" => {
-			let re = Regex::new(r"[ぁ-んァ-ン\w]").unwrap();
-			let nu = Regex::new(r"[-]?\d+(\.\d+)?").unwrap();
-			re.find_iter(input).count() - nu.find_iter(input).count()
-		}
-		_ => 0,
+pub fn pad_string_to_width(s: &str, total_width: usize) -> String {
+	let current_width = s.width(); // Effective width of the string
+	if current_width >= total_width {
+		s.to_string() // No padding needed if already wide enough
+	} else {
+		let padding = total_width - current_width;
+		format!("{}{}", s, " ".repeat(padding))
 	}
 }
 

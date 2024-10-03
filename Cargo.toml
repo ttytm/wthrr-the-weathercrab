@@ -39,6 +39,7 @@ strum = "0.26"
 strum_macros = "0.26"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 scopeguard = "1.2"
+unicode-width = "0.2"
 
 [profile.release]
 strip = true

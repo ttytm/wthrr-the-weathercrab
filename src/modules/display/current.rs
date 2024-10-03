@@ -8,7 +8,7 @@ use super::{
 	gui_config::ConfigurableColor,
 	hourly::HourlyForecast,
 	product::{Product, MIN_CELL_WIDTH, MIN_WIDTH},
-	utils::lang_len_diff,
+	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 	wind::WindDirection,
 };
@@ -50,19 +50,19 @@ impl Current {
 			hourly_forecast,
 		} = self;
 
+		let gui = &params.config.gui;
 		let Dimensions { width, cell_width } = dimensions;
-		let (gui, lang) = (&params.config.gui, &params.config.language);
+		let width_no_border_pad = width - 2;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
 
 		// Address / Title
 		println!(
-			"{} {: ^width$} {}",
+			"{} {} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			style(&address).bold(),
+			style(pad_string_to_width(&address, width_no_border_pad)).bold(),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - lang_len_diff(&address, lang)
 		);
 
 		// Separator
@@ -76,24 +76,23 @@ impl Current {
 			.plain_or_bright_black(&gui.color),
 		);
 
-		// Temperature & Weathercode
 		println!(
-			"{} {: <width$} {}",
+			"{} {} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			style(wmo_code.icon.to_string() + " " + &wmo_code.interpretation + ", " + &temperature).bold(),
+			style(pad_string_to_width(
+				&(wmo_code.icon.to_string() + " " + &wmo_code.interpretation + ", " + &temperature),
+				width_no_border_pad
+			))
+			.bold(),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - lang_len_diff(&wmo_code.interpretation, lang)
 		);
 
 		// Apparent Temperature
 		println!(
-			"{} {: <width$} {}",
+			"{} {} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			apparent_temperature,
+			pad_string_to_width(&apparent_temperature, width_no_border_pad),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - lang_len_diff(&apparent_temperature, lang)
-            // manually account for displacepment of this row until improving the lang_len_diff regex
-            + if &lang[..2] == "ja" || &lang[..2] == "ko" { 2 } else { 0 }
 		);
 
 		// Blank Line
@@ -101,19 +100,14 @@ impl Current {
 
 		// Humidity & Dewpoint
 		println!(
-			"{} {: <width$} {}",
+			"{} {}{} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			format!(
-				"{: <cell_width$} {}",
-				humidity,
-				dewpoint,
-				cell_width = cell_width
-					- lang_len_diff(&humidity, lang)
-					- if &lang[..2] == "ja" || &lang[..2] == "ko" { 0 } else { 1 }
-			),
+			pad_string_to_width(&humidity, cell_width),
+			// NOTE: When using the Thai language, an apparent combining character issue was observed
+			// with the dew point, resulting in the border being displaced by one space or the border
+			// color being removed in some terminal/font configurations.
+			pad_string_to_width(&dewpoint, width_no_border_pad - cell_width),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - lang_len_diff(&humidity, lang) - lang_len_diff(&dewpoint, lang)
-				+ if &lang[..2] == "ja" || &lang[..2] == "ko" { 3 } else { 0 }
 		);
 
 		// Wind & Pressure
@@ -123,7 +117,7 @@ impl Current {
 			wind,
 			pressure,
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - cell_width
+			width = width_no_border_pad - cell_width
 		);
 
 		// Sunrise & Sunset
@@ -133,7 +127,7 @@ impl Current {
 			sunrise,
 			sunset,
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			width = width - 2 - cell_width
+			width = width_no_border_pad - cell_width
 		);
 
 		// Hourly Forecast
