@@ -1,6 +1,7 @@
 use anyhow::Result;
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
+use unicode_width::UnicodeWidthStr;
 
 use crate::modules::{localization::Locales, params::Params};
 
@@ -9,7 +10,7 @@ use super::{
 	current::Dimensions,
 	gui_config::ConfigurableColor,
 	product::{Product, MIN_CELL_WIDTH},
-	utils::lang_len_diff,
+	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 };
 
@@ -29,13 +30,14 @@ pub struct ForecastDay {
 impl Week {
 	pub fn render(self, params: &Params, current_dimensions: Option<Dimensions>) {
 		let forecast = self;
-		let (mut width, mut cell_width) = (forecast.width + 10, MIN_CELL_WIDTH);
-		let (gui, lang) = (&params.config.gui, &params.config.language);
+		let gui = &params.config.gui;
 
+		let (mut width, mut cell_width) = (forecast.width + 10, MIN_CELL_WIDTH);
 		if let Some(dims) = current_dimensions {
 			cell_width = std::cmp::max(cell_width, dims.cell_width);
 			width = std::cmp::max(width, dims.width);
 		}
+		let width_no_border_pad = width - 2;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color));
@@ -43,36 +45,21 @@ impl Week {
 		let mut chunks = forecast.days.chunks(1).peekable();
 
 		let mut n = 0;
-		let date_len = forecast.days[0].date.chars().count() - lang_len_diff(&forecast.days[0].date, lang);
 		while let Some(_) = chunks.next() {
 			let forecast_day = format!(
-				"{: <cell_width$}{}{: >width$}",
-				forecast.days[n].date,
-				forecast.days[n].weather,
+				"{}{}{}",
+				pad_string_to_width(&forecast.days[n].date, cell_width),
+				pad_string_to_width(
+					&forecast.days[n].weather,
+					width_no_border_pad - forecast.days[n].interpretation.width() - cell_width
+				),
 				forecast.days[n].interpretation,
-				width = width
-					- if date_len < 11 { 11 } else { date_len }
-					- forecast.days[n].weather.len()
-					- lang_len_diff(&forecast.days[n].interpretation, lang)
-					- if &lang[..2] == "zh" || &lang[..2] == "ja" || &lang[..2] == "ko" {
-						2
-					} else {
-						0
-					} - if cell_width == MIN_CELL_WIDTH {
-					2
-				} else {
-					2 + cell_width - MIN_CELL_WIDTH
-				}
 			);
 			println!(
-				"{} {: <width$} {}",
+				"{} {} {}",
 				&Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-				forecast_day,
+				pad_string_to_width(&forecast_day, width_no_border_pad),
 				&Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-				width = width
-					- lang_len_diff(&forecast.days[n].interpretation, lang)
-					- lang_len_diff(&forecast.days[n].date, lang)
-					- 2,
 			);
 			if chunks.peek().is_some() {
 				println!(
@@ -117,8 +104,7 @@ impl Week {
 				product.weather.daily.temperature_2m_min[i],
 				product.weather.daily_units.temperature_2m_min,
 			);
-			let day = format!("{}{}{}", date, weather, weather_code.interpretation);
-			let day_width = day.chars().count() + lang_len_diff(&day, lang) + 2;
+			let day_width = format!("{}{}{}", date, weather, weather_code.interpretation).width();
 			if day_width > width {
 				width = day_width;
 			}

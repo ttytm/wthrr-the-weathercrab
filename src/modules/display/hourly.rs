@@ -15,7 +15,7 @@ use super::{
 	graph::Graph,
 	gui_config::ConfigurableColor,
 	product::Product,
-	utils::{lang_len_diff, style_number},
+	utils::{pad_string_to_width, style_number},
 	weathercode::WeatherCode,
 };
 
@@ -48,6 +48,7 @@ impl HourlyForecast {
 		} = self;
 
 		let (units, gui) = (&params.config.units, &params.config.gui);
+		let width_no_border_pad = WIDTH - 2;
 
 		// Blank Line
 		println!(
@@ -68,11 +69,10 @@ impl HourlyForecast {
 
 		// Hourly Forecast Heading
 		println!(
-			"{} {: <WIDTH$} {}",
+			"{} {} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			style(&heading).bold(),
+			style(pad_string_to_width(&heading, width_no_border_pad)).bold(),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			WIDTH = WIDTH - 2 - lang_len_diff(&heading, &params.config.language)
 		);
 
 		// Day Max/Mix Temperature + Max Precipitation

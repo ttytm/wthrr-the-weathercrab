@@ -1,6 +1,7 @@
 use anyhow::Result;
 use chrono::NaiveDate;
 use dialoguer::console::style;
+use unicode_width::UnicodeWidthStr;
 
 use crate::modules::{
 	config::Config,
@@ -15,7 +16,7 @@ use super::{
 	gui_config::ConfigurableColor,
 	hourly::HourlyForecast,
 	product::Product,
-	utils::lang_len_diff,
+	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 };
 
@@ -45,18 +46,18 @@ impl HistoricalWeather {
 			hourly_forecast,
 		} = self;
 
-		let (gui, lang) = (&params.config.gui, &params.config.language);
+		let gui = &params.config.gui;
+		let width_no_border_pad = WIDTH - 2;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color));
 
 		// Address / Title
 		println!(
-			"{} {: ^WIDTH$} {}",
+			"{} {} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			style(&address).bold(),
+			style(pad_string_to_width(&address, width_no_border_pad)).bold(),
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			WIDTH = WIDTH - 2 - lang_len_diff(&address, lang)
 		);
 
 		// Separator
@@ -76,28 +77,25 @@ impl HistoricalWeather {
 			wmo_code.icon, wmo_code.interpretation, temp_max_min, precipitation_sum
 		);
 		println!(
-			"{} {} {: >WIDTH$} {}",
+			"{} {}{} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			style(&temperature_and_weathercode).bold(),
+			style(pad_string_to_width(
+				&temperature_and_weathercode,
+				width_no_border_pad - date.width()
+			))
+			.bold(),
 			date,
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			WIDTH = WIDTH
-				- 3 - lang_len_diff(&wmo_code.interpretation, lang)
-				- temperature_and_weathercode.chars().count()
-				- lang_len_diff(&date, lang)
 		);
 
 		// Apparent Temperature & Sun Rise & Sun Set
 		let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 		println!(
-			"{} {} {: >WIDTH$} {}",
+			"{} {}{} {}",
 			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			apparent_temp_max_min,
+			pad_string_to_width(&apparent_temp_max_min, width_no_border_pad - sunrise_and_sunset.width()),
 			sunrise_and_sunset,
 			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			WIDTH = WIDTH
-				- 3 - lang_len_diff(&params.texts.weather.felt_like, lang)
-				- apparent_temp_max_min.chars().count()
 		);
 
 		// Hourly Overview
