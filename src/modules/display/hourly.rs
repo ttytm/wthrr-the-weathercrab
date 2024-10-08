@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{Timelike, Utc};
+use chrono::{NaiveDateTime, Timelike};
 use dialoguer::console::style;
 use std::fmt::Write as _;
 
@@ -184,7 +184,8 @@ impl HourlyForecast {
 
 	pub fn prepare(product: &Product, params: &Params, day_index: usize) -> Result<Self> {
 		let weather = &product.weather;
-		let current_hour = weather.current_weather.time[11..13].parse::<usize>().unwrap_or_default();
+		let current_dt = NaiveDateTime::parse_from_str(&product.weather.current_weather.time, "%Y-%m-%dT%H:%M")?;
+		let current_hour = current_dt.hour() as usize;
 
 		// The graph splits one hour into three "levels": last, current and next.
 		// We slice 25 items to use the 25th in the last "next"-level of a graph.
@@ -256,7 +257,7 @@ impl HourlyForecast {
 				// add 3 cols to adjust to the multiple chars used to display the current hour below the chart
 				(current_hour * 3) + 3
 			};
-			Some(col_adjustment + (Timelike::minute(&Utc::now()) / 20) as usize)
+			Some(col_adjustment + (current_dt.minute() / 20) as usize)
 		} else {
 			None
 		};
