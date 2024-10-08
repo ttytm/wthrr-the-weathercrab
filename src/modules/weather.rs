@@ -12,7 +12,6 @@ use super::units::{Precipitation, Units};
 #[optional_struct]
 #[derive(Deserialize, Debug)]
 pub struct Weather {
-	#[optional_rename(OptionalCurrentWeather)]
 	pub current_weather: CurrentWeather,
 	#[optional_rename(OptionalHourlyUnits)]
 	pub hourly_units: HourlyUnits,
@@ -24,7 +23,7 @@ pub struct Weather {
 }
 
 #[optional_struct]
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone, PartialEq)]
 pub struct CurrentWeather {
 	pub temperature: f32,
 	pub windspeed: f32,
