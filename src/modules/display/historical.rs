@@ -4,11 +4,10 @@ use dialoguer::console::style;
 use unicode_width::UnicodeWidthStr;
 
 use crate::modules::{
-	config::Config,
-	display::{graph::GraphOpts, gui_config::Gui, hourly::WIDTH},
+	display::hourly::WIDTH,
 	localization::Locales,
 	params::Params,
-	units::{Precipitation, Time, Units},
+	units::{Precipitation, Time},
 };
 
 use super::{
@@ -99,24 +98,10 @@ impl HistoricalWeather {
 		);
 
 		// Hourly Overview
-		// For now, we use this more expensive approach of cloning parameters for historical forecasts
-		let params = Params {
-			config: Config {
-				gui: Gui {
-					graph: GraphOpts {
-						time_indicator: false,
-						..params.config.gui.graph
-					},
-					..params.config.gui
-				},
-				units: Units {
-					precipitation: Precipitation::mm,
-					..params.config.units
-				},
-				..params.config.clone()
-			},
-			..params.clone()
-		};
+		// Adjust forecast config to use values that are compatible with historical weather.
+		let mut params = params.clone();
+		params.config.gui.graph.time_indicator = false;
+		params.config.units.precipitation = Precipitation::mm;
 		hourly_forecast.render(&params);
 
 		// Border Bottom
