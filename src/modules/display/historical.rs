@@ -101,7 +101,9 @@ impl HistoricalWeather {
 		// Adjust forecast config to use values that are compatible with historical weather.
 		let mut params = params.clone();
 		params.config.gui.graph.time_indicator = false;
-		params.config.units.precipitation = Precipitation::mm;
+		if params.config.units.precipitation == Precipitation::probability {
+			params.config.units.precipitation = Precipitation::mm;
+		};
 		hourly_forecast.render(&params);
 
 		// Border Bottom
