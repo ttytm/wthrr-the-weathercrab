@@ -9,8 +9,9 @@ use crate::modules::{
 	weather::{OptionalWeather, Weather},
 };
 
-use super::{current::Current, day::Day, gui_config::ConfigurableColor, historical::HistoricalWeather, week::Week};
+use super::{current, day, gui_config::ConfigurableColor, historical, week};
 
+#[derive(Debug)]
 pub struct Product<'a> {
 	pub address: String,
 	pub weather: Weather,
@@ -30,12 +31,13 @@ impl Product<'_> {
 
 		if params.config.forecast.is_empty() && params.historical_weather.is_empty() {
 			// Current day without hours
-			Current::prep(self, params, false)?.render(params);
+			let (lines, _) = current::prep(self, params, false)?;
+			Self::print_lines(lines);
 			return Ok(());
 		}
 
 		for date in &params.historical_weather {
-			HistoricalWeather::prep(self, params, date)?.render(params);
+			Self::print_lines(historical::prep(self, params, date)?);
 		}
 
 		if params.config.forecast.is_empty() {
@@ -46,22 +48,29 @@ impl Product<'_> {
 
 		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
 			// Current day with hours & weekly overview
-			Week::prep(self, params)?.render(params, Some(Current::prep(self, params, true)?.render(params)));
+			let (lines, dimensions) = current::prep(self, params, true)?;
+			Self::print_lines(lines);
+			Self::print_lines(week::prep(self, params, Some(dimensions))?);
 		} else if forecast_indices.contains(&0) {
 			// Current day with hours
-			Current::prep(self, params, true)?.render(params);
+			let (lines, _) = current::prep(self, params, true)?;
+			Self::print_lines(lines);
 		} else if forecast_indices.contains(&7) {
 			// Weekly overview only
-			Week::prep(self, params)?.render(params, None);
+			Self::print_lines(week::prep(self, params, None)?);
 		};
 
 		for i in forecast_indices {
 			// Weekdays
 			if i < 7 && i > 0 {
-				Day::prep(self, params, i)?.render(params);
+				Self::print_lines(day::prep(self, params, i)?);
 			}
 		}
 
 		Ok(())
+	}
+
+	fn print_lines(lines: Vec<String>) {
+		lines.iter().for_each(|line| println!("{line}"));
 	}
 }
