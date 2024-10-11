@@ -14,7 +14,7 @@ use super::{
 	border::{Border, BorderStyle, Separator},
 	graph::Graph,
 	gui_config::ConfigurableColor,
-	product::Product,
+	product::{Product, TOTAL_BORDER_PADDING},
 	utils::{pad_string_to_width, style_number},
 	weathercode::WeatherCode,
 };
@@ -48,7 +48,7 @@ impl HourlyForecast {
 		} = self;
 
 		let (units, gui) = (&params.config.units, &params.config.gui);
-		let width_no_border_pad = WIDTH - 2;
+		let width_no_border_pad = WIDTH - TOTAL_BORDER_PADDING;
 
 		// Blank Line
 		println!(

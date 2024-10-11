@@ -3,13 +3,13 @@ use chrono::{Duration, Local};
 use dialoguer::console::style;
 use unicode_width::UnicodeWidthStr;
 
-use crate::modules::{display::hourly::WIDTH, localization::Locales, params::Params, units::Time};
+use crate::modules::{localization::Locales, params::Params, units::Time};
 
 use super::{
 	border::{Border, BorderStyle, Edge, Separator},
 	gui_config::ConfigurableColor,
-	hourly::HourlyForecast,
-	product::Product,
+	hourly::{HourlyForecast, WIDTH},
+	product::{Product, TOTAL_BORDER_PADDING},
 	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 };
@@ -41,7 +41,7 @@ impl Day {
 		} = self;
 
 		let gui = &params.config.gui;
-		let width_no_border_pad = WIDTH - 2;
+		let width_no_border_pad = WIDTH - TOTAL_BORDER_PADDING;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),);

@@ -19,6 +19,7 @@ pub struct Product<'a> {
 
 pub const MIN_WIDTH: usize = 34;
 pub const MIN_CELL_WIDTH: usize = MIN_WIDTH / 2 - 2;
+pub const TOTAL_BORDER_PADDING: usize = 2;
 
 impl Product<'_> {
 	pub fn render(&self, params: &Params) -> Result<()> {

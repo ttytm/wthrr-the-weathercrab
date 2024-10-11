@@ -9,7 +9,7 @@ use super::{
 	border::{Border, BorderStyle, Edge, Separator},
 	current::Dimensions,
 	gui_config::ConfigurableColor,
-	product::{Product, MIN_CELL_WIDTH},
+	product::{Product, MIN_CELL_WIDTH, TOTAL_BORDER_PADDING},
 	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 };
@@ -37,7 +37,7 @@ impl Week {
 			cell_width = std::cmp::max(cell_width, dims.cell_width);
 			width = std::cmp::max(width, dims.width);
 		}
-		let width_no_border_pad = width - 2;
+		let width_no_border_pad = width - TOTAL_BORDER_PADDING;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color));

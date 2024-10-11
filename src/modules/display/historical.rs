@@ -14,7 +14,7 @@ use super::{
 	border::{Border, BorderStyle, Edge, Separator},
 	gui_config::ConfigurableColor,
 	hourly::HourlyForecast,
-	product::Product,
+	product::{Product, TOTAL_BORDER_PADDING},
 	utils::pad_string_to_width,
 	weathercode::WeatherCode,
 };
@@ -46,7 +46,7 @@ impl HistoricalWeather {
 		} = self;
 
 		let gui = &params.config.gui;
-		let width_no_border_pad = WIDTH - 2;
+		let width_no_border_pad = WIDTH - TOTAL_BORDER_PADDING;
 
 		// Border Top
 		println!("{}", &Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color));
