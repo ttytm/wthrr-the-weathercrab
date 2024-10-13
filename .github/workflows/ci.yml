@@ -69,4 +69,5 @@ jobs:
 
   Release:
     needs: Test
+    if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
