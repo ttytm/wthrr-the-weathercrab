@@ -41,6 +41,9 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 scopeguard = "1.2"
 unicode-width = "0.2"
 
+[dev-dependencies]
+strip-ansi-escapes = "0.2"
+
 [profile.release]
 strip = true
 lto = true
