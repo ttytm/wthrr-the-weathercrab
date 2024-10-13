@@ -121,3 +121,39 @@ pub fn prep(product: &Product, params: &Params, current_dimensions: Option<Dimen
 
 	Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::modules::display::utils::common_tests::{
+		init_test_params, init_test_product, TEST_PARAMS, TEST_PRODUCT,
+	};
+	use strip_ansi_escapes;
+
+	#[test]
+	fn output() {
+		let test_product = TEST_PRODUCT.get_or_init(|| init_test_product());
+		let test_params = TEST_PARAMS.get_or_init(|| init_test_params());
+
+		let want = "\
+╭──────────────────────────────────────────────────────╮
+│ Mon,  7 Oct     15.1°C/6.8°C    Slight Rain Showers │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Tue,  8 Oct     20.3°C/12.0°C           Slight Rain │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Wed,  9 Oct     17.9°C/13.7°C         Moderate Rain │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Thu, 10 Oct     20.2°C/13.7°C           Slight Rain │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Fri, 11 Oct     13.2°C/7.9°C               Overcast │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Sat, 12 Oct     12.2°C/4.8°C               Overcast │
+├┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+│ Sun, 13 Oct     10.9°C/5.6°C    Slight Rain Showers │
+╰──────────────────────────────────────────────────────╯";
+
+		let lines = prep(test_product, test_params, None).unwrap();
+		let have = strip_ansi_escapes::strip_str(lines.join("\n"));
+		assert_eq!(want, have);
+	}
+}
