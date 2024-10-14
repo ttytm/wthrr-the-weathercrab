@@ -212,8 +212,8 @@ mod tests {
 
 	#[test]
 	fn output_without_forecast() {
-		let test_product = TEST_PRODUCT.get_or_init(|| init_test_product());
-		let test_params = TEST_PARAMS.get_or_init(|| init_test_params());
+		let test_product = TEST_PRODUCT.get_or_init(init_test_product);
+		let test_params = TEST_PARAMS.get_or_init(init_test_params);
 
 		let want = "\
 ╭──────────────────────────────────────╮
@@ -234,8 +234,8 @@ mod tests {
 
 	#[test]
 	fn output_with_hourly_forecast() {
-		let test_product = TEST_PRODUCT.get_or_init(|| init_test_product());
-		let test_params = TEST_PARAMS.get_or_init(|| init_test_params());
+		let test_product = TEST_PRODUCT.get_or_init(init_test_product);
+		let test_params = TEST_PARAMS.get_or_init(init_test_params);
 
 		let want = "\
 ╭────────────────────────────────────────────────────────────────────────╮

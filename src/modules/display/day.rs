@@ -146,8 +146,8 @@ mod tests {
 
 	#[test]
 	fn output() {
-		let test_product = TEST_PRODUCT.get_or_init(|| init_test_product());
-		let test_params = TEST_PARAMS.get_or_init(|| init_test_params());
+		let test_product = TEST_PRODUCT.get_or_init(init_test_product);
+		let test_params = TEST_PARAMS.get_or_init(init_test_params);
 
 		let want = "\
 ╭────────────────────────────────────────────────────────────────────────╮
@@ -167,6 +167,7 @@ mod tests {
 │⁰⁰˙⁰⁰    ⁰³˙⁰⁰    ⁰⁶˙⁰⁰    ⁰⁹˙⁰⁰    ¹²˙⁰⁰    ¹⁵˙⁰⁰    ¹⁸˙⁰⁰    ²¹˙⁰⁰    │
 ╰────────────────────────────────────────────────────────────────────────╯";
 
+		// FIXME: index
 		let lines = prep(test_product, test_params, 1).unwrap();
 		let have = strip_ansi_escapes::strip_str(lines.join("\n"));
 		assert_eq!(want, have);
