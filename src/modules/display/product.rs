@@ -1,10 +1,10 @@
 use anyhow::Result;
-use chrono::NaiveDate;
+use chrono::{Datelike, NaiveDate};
 use scopeguard::defer;
 use std::collections::HashMap;
 
 use crate::modules::{
-	forecast::get_forecast_indices,
+	forecast,
 	params::Params,
 	weather::{OptionalWeather, Weather},
 };
@@ -44,7 +44,8 @@ impl Product<'_> {
 			return Ok(());
 		}
 
-		let forecast_indices = get_forecast_indices(&params.config.forecast);
+		let current_date = NaiveDate::parse_from_str(&self.weather.current_weather.time, "%Y-%m-%dT%H:%M")?;
+		let forecast_indices = forecast::get_indices(&params.config.forecast, current_date.weekday());
 
 		if forecast_indices.contains(&0) && forecast_indices.contains(&7) {
 			// Current day with hours & weekly overview

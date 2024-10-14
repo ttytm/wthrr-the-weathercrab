@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{Duration, Local};
+use chrono::{Duration, NaiveDate};
 use dialoguer::console::style;
 use unicode_width::UnicodeWidthStr;
 
@@ -50,14 +50,15 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	);
 	let precipitation_probability_max = format!("❲{}󰖎❳", weather.daily.precipitation_probability_max[day_index]);
 
-	let dt = Local::now() + Duration::days(day_index.try_into()?);
+	let dt = NaiveDate::parse_from_str(&product.weather.current_weather.time, "%Y-%m-%dT%H:%M")?
+		+ Duration::days(day_index.try_into()?);
 	let lang = &params.config.language;
 	let date = format!(
 		" {}",
 		if lang == "en_US" || lang == "en" {
 			dt.format("%a, %e %b").to_string()
 		} else {
-			Locales::localize_date(dt.date_naive(), lang)?
+			Locales::localize_date(dt, lang)?
 		}
 	);
 	let sunrise = format!(" {sunrise}");

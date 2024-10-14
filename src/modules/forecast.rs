@@ -4,11 +4,7 @@ use std::collections::HashSet;
 
 use super::args::Forecast;
 
-pub fn get_forecast_indices(forecast: &HashSet<Forecast>) -> Vec<usize> {
-	get_indices(forecast, Local::now().weekday())
-}
-
-fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
+pub fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 	let dist_from_ref_day = curr_day.number_from_monday();
 
 	// Indices for forecasts that should be rendered. 7 will be used as a special value
