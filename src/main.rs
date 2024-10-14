@@ -1,16 +1,9 @@
-#![deny(
-	clippy::semicolon_if_nothing_returned,
-	clippy::wildcard_imports,
-	clippy::cloned_instead_of_copied,
-	clippy::single_match_else,
-	clippy::match_wildcard_for_single_variants,
-	clippy::match_bool,
-	clippy::if_not_else,
-	clippy::unused_async,
-	clippy::uninlined_format_args,
-	clippy::implicit_clone,
-	clippy::inconsistent_struct_constructor,
-	clippy::use_self
+#![deny(clippy::all)]
+#![warn(clippy::pedantic)]
+#![allow(
+	clippy::module_name_repetitions,
+	clippy::cast_possible_truncation,
+	clippy::cast_sign_loss
 )]
 
 mod modules;
