@@ -14,6 +14,7 @@ use std::{
 
 #[optional_struct(LocalesFile)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(clippy::unsafe_derive_deserialize)]
 pub struct Locales {
 	pub greeting: String,
 	pub search_station: String,
@@ -177,16 +178,17 @@ impl Locales {
 		Ok(texts)
 	}
 
+	#[allow(clippy::cast_ptr_alignment)]
 	async fn translate_all(&mut self, lang: &str) -> Result<()> {
 		let size = std::mem::size_of_val(self);
-		let ptr = self as *mut Self as *mut u8;
+		let ptr = (self as *mut Self).cast::<u8>();
 
 		// Iterate over each field in the struct, create a future to translate the current field's value
 		let translated_values: Vec<_> = (0..size)
 			.step_by(std::mem::size_of::<String>())
-			.map(|offset| {
-				let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
-				let field_value = unsafe { &*field_ptr };
+			.map(|offset| unsafe {
+				let field_ptr = ptr.add(offset);
+				let field_value = &*(field_ptr.cast::<String>());
 				Self::translate_str(lang, field_value)
 			})
 			.collect::<FuturesOrdered<_>>()
@@ -196,8 +198,10 @@ impl Locales {
 
 		// Iterate over each field in the struct again, update current field value with the translated value
 		for (offset, translated_value) in (0..size).step_by(std::mem::size_of::<String>()).zip(translated_values) {
-			let field_ptr = unsafe { (ptr.add(offset)) as *mut String };
-			unsafe { *field_ptr = translated_value };
+			unsafe {
+				let field_ptr = ptr.add(offset);
+				field_ptr.cast::<String>().write(translated_value);
+			}
 		}
 
 		Ok(())
@@ -246,6 +250,7 @@ impl Locales {
 			.join(format!("{lang}.json"))
 	}
 
+	#[allow(clippy::unnecessary_wraps)]
 	pub fn localize_date(dt: NaiveDate, lang: &str) -> Result<String> {
 		let matching_locale = DATETIME_LOCALES.lines().skip(1).find(|line| line == &lang).or_else(|| {
 			DATETIME_LOCALES.lines().skip(1).find(|line| {

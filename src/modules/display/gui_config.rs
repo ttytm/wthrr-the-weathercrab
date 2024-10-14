@@ -37,25 +37,25 @@ impl Default for Gui {
 }
 
 pub trait ConfigurableColor<'a> {
-	fn plain_or_bright_black(self, config_color: &ColorVariant) -> StyledObject<&'a str>;
-	fn plain_or_yellow(self, config_color: &ColorVariant) -> StyledObject<&'a str>;
-	fn plain_or_blue(self, config_color: &ColorVariant) -> StyledObject<&'a str>;
+	fn plain_or_bright_black(self, config_color: ColorVariant) -> StyledObject<&'a str>;
+	fn plain_or_yellow(self, config_color: ColorVariant) -> StyledObject<&'a str>;
+	fn plain_or_blue(self, config_color: ColorVariant) -> StyledObject<&'a str>;
 }
 
 impl<'a> ConfigurableColor<'a> for &'a str {
-	fn plain_or_bright_black(self, config_color: &ColorVariant) -> StyledObject<&'a str> {
+	fn plain_or_bright_black(self, config_color: ColorVariant) -> StyledObject<&'a str> {
 		match config_color {
 			ColorVariant::plain => style(self),
 			ColorVariant::default => style(self).black().bright(),
 		}
 	}
-	fn plain_or_yellow(self, config_color: &ColorVariant) -> StyledObject<&'a str> {
+	fn plain_or_yellow(self, config_color: ColorVariant) -> StyledObject<&'a str> {
 		match config_color {
 			ColorVariant::plain => style(self),
 			ColorVariant::default => style(self).yellow(),
 		}
 	}
-	fn plain_or_blue(self, config_color: &ColorVariant) -> StyledObject<&'a str> {
+	fn plain_or_blue(self, config_color: ColorVariant) -> StyledObject<&'a str> {
 		match config_color {
 			ColorVariant::plain => style(self),
 			ColorVariant::default => style(self).blue(),

@@ -23,6 +23,7 @@ pub struct Cli {
 	pub units: Vec<UnitArg>,
 
 	/// Output language [e.g.: en_US]
+	#[allow(clippy::doc_markdown)]
 	#[arg(short, long, value_parser = parse_language_code)]
 	pub language: Option<String>,
 

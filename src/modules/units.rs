@@ -51,7 +51,7 @@ pub enum Precipitation {
 }
 
 impl Units {
-	pub fn merge(arg_units: &[UnitArg], cfg_units: &Self) -> Self {
+	pub fn merge(arg_units: &[UnitArg], cfg_units: Self) -> Self {
 		cfg_units.assign_unit_args(arg_units)
 	}
 
@@ -85,7 +85,7 @@ mod tests {
 		let cfg_units = Units::default();
 
 		assert_eq!(
-			Units::merge(&arg_units, &cfg_units),
+			Units::merge(&arg_units, cfg_units),
 			Units {
 				temperature: Temperature::fahrenheit,
 				speed: Speed::mph,
@@ -105,7 +105,7 @@ mod tests {
 			precipitation: Precipitation::inch,
 		};
 
-		assert_eq!(Units::merge(&arg_units, &cfg_units), cfg_units);
+		assert_eq!(Units::merge(&arg_units, cfg_units), cfg_units);
 	}
 
 	#[test]
@@ -119,7 +119,7 @@ mod tests {
 		};
 
 		assert_eq!(
-			Units::merge(&arg_units, &cfg_units),
+			Units::merge(&arg_units, cfg_units),
 			Units {
 				temperature: Temperature::fahrenheit,
 				speed: cfg_units.speed,

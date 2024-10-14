@@ -50,7 +50,7 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	);
 	let precipitation_probability_max = format!("❲{}󰖎❳", weather.daily.precipitation_probability_max[day_index]);
 
-	let dt = Local::now() + Duration::days(day_index as i64);
+	let dt = Local::now() + Duration::days(day_index.try_into()?);
 	let lang = &params.config.language;
 	let date = format!(
 		" {}",
@@ -73,26 +73,26 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	// Border Top
 	result.push(format!(
 		"{}",
-		&Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		&Edge::Top.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Address / Title
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(&address, width_no_border_pad)).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Separator
 	result.push(format!(
 		"{}",
 		&match &gui.border {
-			BorderStyle::double => Separator::Double.fmt(WIDTH, &gui.border),
-			BorderStyle::solid => Separator::Solid.fmt(WIDTH, &gui.border),
-			_ => Separator::Single.fmt(WIDTH, &gui.border),
+			BorderStyle::double => Separator::Double.fmt(WIDTH, gui.border),
+			BorderStyle::solid => Separator::Solid.fmt(WIDTH, gui.border),
+			_ => Separator::Single.fmt(WIDTH, gui.border),
 		}
-		.plain_or_bright_black(&gui.color),
+		.plain_or_bright_black(gui.color),
 	));
 
 	// Temperature & Weathercode
@@ -102,24 +102,24 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	);
 	result.push(format!(
 		"{} {}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(
 			&temperature_and_weathercode,
 			width_no_border_pad - date.width()
 		))
 		.bold(),
 		date,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Apparent Temperature & Sun Rise & Sun Set
 	let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 	result.push(format!(
 		"{} {}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		pad_string_to_width(&apparent_temp_max_min, width_no_border_pad - sunrise_and_sunset.width()),
 		sunrise_and_sunset,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Hourly Forecast
@@ -130,7 +130,7 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	// Border Bottom
 	result.push(format!(
 		"{}",
-		Edge::Bottom.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		Edge::Bottom.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	Ok(result)

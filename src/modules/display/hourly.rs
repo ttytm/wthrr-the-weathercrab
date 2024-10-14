@@ -27,6 +27,7 @@ struct WeatherSummary {
 	precipitation_probability_max: u8,
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<String>> {
 	let weather = &product.weather;
 	let current_dt = NaiveDateTime::parse_from_str(&product.weather.current_weather.time, "%Y-%m-%dT%H:%M")?;
@@ -132,7 +133,7 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	// Blank Line
 	result.push(format!(
 		"{}",
-		&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),
+		&Separator::Blank.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Set Measurement Unit Symbols
@@ -149,21 +150,21 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	// Hourly Forecast Heading
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(&params.texts.weather.hourly_forecast, width_no_border_pad)).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Day Max/Mix Temperature + Max Precipitation
 	if let Some(summary) = summary {
 		result.push(format!(
 			"{} {} ❲{}{}❳{: <WIDTH$} {}",
-			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 			summary.temp_max_min,
 			summary.precipitation_probability_max,
 			style("󰖎").bold(),
 			"",
-			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 			WIDTH = WIDTH - 5 - summary.temp_max_min.len() - summary.precipitation_probability_max.to_string().len()
 		));
 	}
@@ -172,11 +173,11 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	match time_indicator_col {
 		Some(col) => result.push(format!(
 			"{}",
-			prepare_separator(col, &gui.border, WIDTH, '╤').plain_or_bright_black(&gui.color)
+			prepare_separator(col, gui.border, WIDTH, '╤').plain_or_bright_black(gui.color)
 		)),
 		_ => result.push(format!(
 			"{}",
-			Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+			Separator::Dashed.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 		)),
 	};
 
@@ -184,17 +185,17 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	let temps = prepare_temperatures(temperatures, weather_codes, sunrise_sunset, &params.texts.weather.weather_code)?;
 	result.push(format!(
 		"{} {: <WIDTH$}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		temps.plain_or_yellow(&gui.color).bold(),
-		temperature_unit.plain_or_yellow(&gui.color).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		temps.plain_or_yellow(gui.color).bold(),
+		temperature_unit.plain_or_yellow(gui.color).bold(),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		WIDTH = WIDTH - 3
 	));
 
 	// Blank Line
 	result.push(format!(
 		"{}",
-		&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		&Separator::Blank.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	let graph = Graph::prepare_graph(temperatures, &params.config.gui.graph);
@@ -202,32 +203,32 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	if graph.1.chars().count() > 0 {
 		result.push(format!(
 			"{}{}{}",
-			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			graph.1.plain_or_yellow(&gui.color),
-			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+			graph.1.plain_or_yellow(gui.color),
+			Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		));
 	}
 	// Graph Row 2
 	result.push(format!(
 		"{}{}{}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		graph.0.plain_or_yellow(&gui.color),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		graph.0.plain_or_yellow(gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Precipitation
 	let precipitation = prepare_precipitation(&precipitation);
 	result.push(format!(
 		"{} {: <WIDTH$}{}{}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		precipitation.plain_or_blue(&gui.color).bold(),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		precipitation.plain_or_blue(gui.color).bold(),
 		if units.precipitation == Precipitation::probability {
 			// to enlarge the water percent icon we use bold as a hack
-			precipitation_unit.plain_or_blue(&gui.color).bold()
+			precipitation_unit.plain_or_blue(gui.color).bold()
 		} else {
-			precipitation_unit.plain_or_blue(&gui.color)
+			precipitation_unit.plain_or_blue(gui.color)
 		},
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		WIDTH = WIDTH - 1 - precipitation_unit.chars().count()
 	));
 
@@ -235,16 +236,16 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	match time_indicator_col {
 		Some(col) => result.push(format!(
 			"{}",
-			prepare_separator(col, &gui.border, WIDTH, '╧').plain_or_bright_black(&gui.color)
+			prepare_separator(col, gui.border, WIDTH, '╧').plain_or_bright_black(gui.color)
 		)),
 		_ => result.push(format!(
 			"{}",
-			Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+			Separator::Dashed.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 		)),
 	};
 
 	// Graph Hours Row
-	let mut hours_row = format!("{}", Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color));
+	let mut hours_row = format!("{}", Border::L.fmt(gui.border).plain_or_bright_black(gui.color));
 	let hours = match units.time {
 		Time::am_pm => ["¹²˙⁰⁰ₐₘ", "³˙⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 		Time::military => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
@@ -252,7 +253,7 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 	for hour in hours {
 		hours_row.push_str(&format!("{hour: <9}"));
 	}
-	hours_row.push_str(&format!("{}", Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color)));
+	hours_row.push_str(&format!("{}", Border::R.fmt(gui.border).plain_or_bright_black(gui.color)));
 	result.push(hours_row);
 
 	Ok(result)
@@ -260,7 +261,7 @@ pub fn prep(product: &Product, params: &Params, day_index: usize) -> Result<Vec<
 
 fn prepare_separator(
 	time_indicator_col: usize,
-	border_variant: &BorderStyle,
+	border_variant: BorderStyle,
 	width: usize,
 	time_indicator_glyph: char,
 ) -> String {
@@ -318,6 +319,7 @@ fn prepare_precipitation(precipitation: &[u8]) -> String {
 	result
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec<String>> {
 	// If it's the last possible requested day, the last index(start_index of the 7th day) is not available.
 	// Therefore we'll extend the values by 1. For this we simply use the last value of the array twice.
@@ -354,7 +356,7 @@ pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec
 	// Blank Line
 	result.push(format!(
 		"{}",
-		&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color),
+		&Separator::Blank.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Set Measurement Unit Symbols
@@ -371,32 +373,32 @@ pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec
 	// Hourly Forecast Heading
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(&params.texts.weather.daily_overview, width_no_border_pad)).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Graph Border Top
 	result.push(format!(
 		"{}",
-		Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		Separator::Dashed.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Temperatures
 	let temps = prepare_temperatures(temperatures, weather_codes, sunrise_sunset, &params.texts.weather.weather_code)?;
 	result.push(format!(
 		"{} {: <WIDTH$}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		temps.plain_or_yellow(&gui.color).bold(),
-		temperature_unit.plain_or_yellow(&gui.color).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		temps.plain_or_yellow(gui.color).bold(),
+		temperature_unit.plain_or_yellow(gui.color).bold(),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		WIDTH = WIDTH - 3
 	));
 
 	// Blank Line
 	result.push(format!(
 		"{}",
-		&Separator::Blank.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		&Separator::Blank.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	let graph = Graph::prepare_graph(temperatures, &params.config.gui.graph);
@@ -404,43 +406,43 @@ pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec
 	if graph.1.chars().count() > 0 {
 		result.push(format!(
 			"{}{}{}",
-			Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-			graph.1.plain_or_yellow(&gui.color),
-			Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+			graph.1.plain_or_yellow(gui.color),
+			Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		));
 	}
 	// Graph Row 2
 	result.push(format!(
 		"{}{}{}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		graph.0.plain_or_yellow(&gui.color),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		graph.0.plain_or_yellow(gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Precipitation
 	let precipitation = prepare_precipitation(&precipitation);
 	result.push(format!(
 		"{} {: <WIDTH$}{}{}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
-		precipitation.plain_or_blue(&gui.color).bold(),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
+		precipitation.plain_or_blue(gui.color).bold(),
 		if units.precipitation == Precipitation::probability {
 			// to enlarge the water percent icon we use bold as a hack
-			precipitation_unit.plain_or_blue(&gui.color).bold()
+			precipitation_unit.plain_or_blue(gui.color).bold()
 		} else {
-			precipitation_unit.plain_or_blue(&gui.color)
+			precipitation_unit.plain_or_blue(gui.color)
 		},
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		WIDTH = WIDTH - 1 - precipitation_unit.chars().count()
 	));
 
 	// Graph Border Bottom
 	result.push(format!(
 		"{}",
-		Separator::Dashed.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		Separator::Dashed.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Graph Hours Row
-	let mut hours_row = format!("{}", Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color));
+	let mut hours_row = format!("{}", Border::L.fmt(gui.border).plain_or_bright_black(gui.color));
 	let hours = match units.time {
 		Time::am_pm => ["¹²˙⁰⁰ₐₘ", "³˙⁰⁰ₐₘ", "⁶˙⁰⁰ₐₘ", "⁹˙⁰⁰ₐₘ", "¹²˙⁰⁰ₚₘ", "³˙⁰⁰ₚₘ", "⁶˙⁰⁰ₚₘ", "⁹˙⁰⁰ₚₘ"],
 		Time::military => ["⁰⁰˙⁰⁰", "⁰³˙⁰⁰", "⁰⁶˙⁰⁰", "⁰⁹˙⁰⁰", "¹²˙⁰⁰", "¹⁵˙⁰⁰", "¹⁸˙⁰⁰", "²¹˙⁰⁰"],
@@ -448,7 +450,7 @@ pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec
 	for hour in hours {
 		hours_row.push_str(&format!("{hour: <9}"));
 	}
-	hours_row.push_str(&format!("{}", Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color)));
+	hours_row.push_str(&format!("{}", Border::R.fmt(gui.border).plain_or_bright_black(gui.color)));
 	result.push(hours_row);
 
 	Ok(result)

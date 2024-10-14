@@ -22,12 +22,12 @@ async fn main() -> Result<()> {
 	let params = Params::merge(&config, &args).await?;
 
 	run(&params).await?.render(&params)?;
-	params.handle_next(args, config)?;
+	params.handle_next(args, &config)?;
 
 	Ok(())
 }
 
-pub async fn run(params: &Params) -> Result<Product> {
+async fn run(params: &Params) -> Result<Product> {
 	let loc = Location::get(&params.config.address, &params.config.language).await?;
 	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
 	let historical_weather = if params.historical_weather.is_empty() {

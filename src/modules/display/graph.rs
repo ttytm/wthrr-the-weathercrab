@@ -62,6 +62,7 @@ struct GraphLvls {
 }
 
 impl Graph {
+	#[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 	pub fn prepare_graph(temperatures: &[f32], graph_opts: &GraphOpts) -> Self {
 		let mut graph = Self(String::new(), String::new());
 		let style = graph_opts.style;
@@ -77,7 +78,7 @@ impl Graph {
 			next: 0,
 			last: None,
 		};
-		graph_lvls.glyphs = GraphLvls::get_glyphs(&style, &rowspan);
+		graph_lvls.glyphs = GraphLvls::get_glyphs(&style, rowspan);
 		graph_lvls.margin = (max_temp - min_temp) / (graph_lvls.glyphs.len() - 1) as f32;
 
 		// Create Graph - calculate and push three characters per iteration to graph strings
@@ -250,6 +251,7 @@ impl Graph {
 				break;
 			}
 
+			#[allow(clippy::cast_possible_wrap)]
 			let lvl_diff = graph_lvls.next as isize - graph_lvls.current as isize;
 
 			graph_lvls.last = if lvl_diff.is_negative() && lvl_diff < -1 {
@@ -266,7 +268,7 @@ impl Graph {
 }
 
 impl GraphLvls {
-	fn get_glyphs(graph_style: &GraphStyle, graph_rows: &GraphRows) -> Vec<char> {
+	fn get_glyphs(graph_style: &GraphStyle, graph_rows: GraphRows) -> Vec<char> {
 		let mut glyphs = match graph_style {
 			GraphStyle::lines(style) => match style {
 				LineVariant::solid => vec!['▁', '🭻', '🭺', '🭹', '🭸', '🭷', '🭶', '▔'],
@@ -283,7 +285,7 @@ impl GraphLvls {
 			}
 		};
 
-		if graph_rows == &GraphRows::double {
+		if graph_rows == GraphRows::double {
 			glyphs.append(&mut glyphs.clone());
 		}
 

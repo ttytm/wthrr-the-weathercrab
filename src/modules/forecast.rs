@@ -30,7 +30,7 @@ fn get_indices(forecast: &HashSet<Forecast>, curr_day: Weekday) -> Vec<usize> {
 		})
 		.collect();
 
-	forecast_indices.sort();
+	forecast_indices.sort_unstable();
 	forecast_indices
 }
 

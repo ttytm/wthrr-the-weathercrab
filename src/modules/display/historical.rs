@@ -19,11 +19,12 @@ use super::{
 	weathercode::WeatherCode,
 };
 
-pub fn prep(product: &Product, params: &Params, date: &NaiveDate) -> Result<Vec<String>> {
+#[allow(clippy::too_many_lines)]
+pub fn prep(product: &Product, params: &Params, date: NaiveDate) -> Result<Vec<String>> {
 	let address = Product::trunc_address(product.address.clone(), 60);
 
 	// Helpers
-	let weather = &product.historical_weather.as_ref().unwrap()[date];
+	let weather = &product.historical_weather.as_ref().unwrap()[&date];
 	let weather_daily_units = weather.daily_units.as_ref().unwrap();
 	let lang = &params.config.language;
 	// Times
@@ -70,7 +71,7 @@ pub fn prep(product: &Product, params: &Params, date: &NaiveDate) -> Result<Vec<
 		if lang == "en_US" || lang == "en" {
 			date.format("%a, %-d %b %Y").to_string()
 		} else {
-			Locales::localize_date(*date, lang)?
+			Locales::localize_date(date, lang)?
 		}
 	);
 	let sunrise = format!(" {sunrise}");
@@ -89,26 +90,26 @@ pub fn prep(product: &Product, params: &Params, date: &NaiveDate) -> Result<Vec<
 	// Border Top
 	result.push(format!(
 		"{}",
-		&Edge::Top.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		&Edge::Top.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Address / Title
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(&address, width_no_border_pad)).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Separator
 	result.push(format!(
 		"{}",
-		&match &gui.border {
-			BorderStyle::double => Separator::Double.fmt(WIDTH, &gui.border),
-			BorderStyle::solid => Separator::Solid.fmt(WIDTH, &gui.border),
-			_ => Separator::Single.fmt(WIDTH, &gui.border),
+		&match gui.border {
+			BorderStyle::double => Separator::Double.fmt(WIDTH, gui.border),
+			BorderStyle::solid => Separator::Solid.fmt(WIDTH, gui.border),
+			_ => Separator::Single.fmt(WIDTH, gui.border),
 		}
-		.plain_or_bright_black(&gui.color)
+		.plain_or_bright_black(gui.color)
 	));
 
 	// Temperature & Weathercode
@@ -118,24 +119,24 @@ pub fn prep(product: &Product, params: &Params, date: &NaiveDate) -> Result<Vec<
 	);
 	result.push(format!(
 		"{} {}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(
 			&temperature_and_weathercode,
 			width_no_border_pad - date.width()
 		))
 		.bold(),
 		date,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Apparent Temperature & Sun Rise & Sun Set
 	let sunrise_and_sunset = format!("{sunrise}  {sunset}");
 	result.push(format!(
 		"{} {}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		pad_string_to_width(&apparent_temp_max_min, width_no_border_pad - sunrise_and_sunset.width()),
 		sunrise_and_sunset,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Hourly Overview
@@ -152,7 +153,7 @@ pub fn prep(product: &Product, params: &Params, date: &NaiveDate) -> Result<Vec<
 	// Border Bottom
 	result.push(format!(
 		"{}",
-		Edge::Bottom.fmt(WIDTH, &gui.border).plain_or_bright_black(&gui.color)
+		Edge::Bottom.fmt(WIDTH, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	Ok(result)

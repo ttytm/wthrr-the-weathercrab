@@ -26,7 +26,7 @@ impl Product<'_> {
 	pub fn render(&self, params: &Params) -> Result<()> {
 		defer! {
 			// Disclaimer
-			println!(" {}", "Weather data by Open-Meteo.com\n".plain_or_bright_black(&params.config.gui.color))
+			println!(" {}", "Weather data by Open-Meteo.com\n".plain_or_bright_black(params.config.gui.color))
 		}
 
 		if params.config.forecast.is_empty() && params.historical_weather.is_empty() {
@@ -37,7 +37,7 @@ impl Product<'_> {
 		}
 
 		for date in &params.historical_weather {
-			Self::print_lines(historical::prep(self, params, date)?);
+			Self::print_lines(historical::prep(self, params, *date)?);
 		}
 
 		if params.config.forecast.is_empty() {
@@ -71,6 +71,8 @@ impl Product<'_> {
 	}
 
 	fn print_lines(lines: Vec<String>) {
-		lines.iter().for_each(|line| println!("{line}"));
+		for line in lines {
+			println!("{line}");
+		}
 	}
 }

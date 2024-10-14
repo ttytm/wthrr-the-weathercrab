@@ -18,6 +18,7 @@ pub struct Dimensions {
 	pub cell_width: usize,
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn prep(product: &Product, params: &Params, add_hourly: bool) -> Result<(Vec<String>, Dimensions)> {
 	let weather = &product.weather;
 	let address = Product::trunc_address(product.address.clone(), 60);
@@ -106,83 +107,83 @@ pub fn prep(product: &Product, params: &Params, add_hourly: bool) -> Result<(Vec
 	// Border Top
 	result.push(format!(
 		"{}",
-		&Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color)
+		&Edge::Top.fmt(width, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Address / Title
 	// TODO: restore centered title
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(&address, width_no_border_pad)).bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Separator
 	result.push(format!(
 		"{}",
-		&match &gui.border {
-			BorderStyle::double => Separator::Double.fmt(width, &gui.border),
-			BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
-			_ => Separator::Single.fmt(width, &gui.border),
+		&match gui.border {
+			BorderStyle::double => Separator::Double.fmt(width, gui.border),
+			BorderStyle::solid => Separator::Solid.fmt(width, gui.border),
+			_ => Separator::Single.fmt(width, gui.border),
 		}
-		.plain_or_bright_black(&gui.color),
+		.plain_or_bright_black(gui.color),
 	));
 
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		style(pad_string_to_width(
 			&(wmo_code.icon.to_string() + " " + &wmo_code.interpretation + ", " + &temperature),
 			width_no_border_pad
 		))
 		.bold(),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Apparent Temperature
 	result.push(format!(
 		"{} {} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		pad_string_to_width(&apparent_temperature, width_no_border_pad),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Blank Line
 	result.push(format!(
 		"{}",
-		Separator::Blank.fmt(width, &gui.border).plain_or_bright_black(&gui.color)
+		Separator::Blank.fmt(width, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	// Humidity & Dewpoint
 	result.push(format!(
 		"{} {}{} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		pad_string_to_width(&humidity, cell_width),
 		// NOTE: When using the Thai language, an apparent combining character issue was observed
 		// with the dew point, resulting in the border being displaced by one space or the border
 		// color being removed in some terminal/font configurations.
 		pad_string_to_width(&dewpoint, width_no_border_pad - cell_width),
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 	));
 
 	// Wind & Pressure
 	result.push(format!(
 		"{} {: <cell_width$}{: <width$} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		wind,
 		pressure,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		width = width_no_border_pad - cell_width
 	));
 
 	// Sunrise & Sunset
 	result.push(format!(
 		"{} {: <cell_width$}{: <width$} {}",
-		Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 		sunrise,
 		sunset,
-		Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+		Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		width = width_no_border_pad - cell_width
 	));
 
@@ -196,7 +197,7 @@ pub fn prep(product: &Product, params: &Params, add_hourly: bool) -> Result<(Vec
 	// Border Bottom
 	result.push(format!(
 		"{}",
-		Edge::Bottom.fmt(width, &gui.border).plain_or_bright_black(&gui.color)
+		Edge::Bottom.fmt(width, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	Ok((result, Dimensions { width, cell_width }))

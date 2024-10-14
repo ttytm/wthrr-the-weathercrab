@@ -76,7 +76,7 @@ pub fn prep(product: &Product, params: &Params, current_dimensions: Option<Dimen
 	// Border Top
 	result.push(format!(
 		"{}",
-		&Edge::Top.fmt(width, &gui.border).plain_or_bright_black(&gui.color)
+		&Edge::Top.fmt(width, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	let mut chunks = days.chunks(1).peekable();
@@ -94,19 +94,19 @@ pub fn prep(product: &Product, params: &Params, current_dimensions: Option<Dimen
 		);
 		result.push(format!(
 			"{} {} {}",
-			&Border::L.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			&Border::L.fmt(gui.border).plain_or_bright_black(gui.color),
 			pad_string_to_width(&forecast_day, width_no_border_pad),
-			&Border::R.fmt(&gui.border).plain_or_bright_black(&gui.color),
+			&Border::R.fmt(gui.border).plain_or_bright_black(gui.color),
 		));
 		if chunks.peek().is_some() {
 			result.push(format!(
 				"{}",
-				&match &gui.border {
-					BorderStyle::double => Separator::Double.fmt(width, &gui.border),
-					BorderStyle::solid => Separator::Solid.fmt(width, &gui.border),
-					_ => Separator::Dashed.fmt(width, &gui.border),
+				&match gui.border {
+					BorderStyle::double => Separator::Double.fmt(width, gui.border),
+					BorderStyle::solid => Separator::Solid.fmt(width, gui.border),
+					_ => Separator::Dashed.fmt(width, gui.border),
 				}
-				.plain_or_bright_black(&gui.color)
+				.plain_or_bright_black(gui.color)
 			));
 		}
 
@@ -116,7 +116,7 @@ pub fn prep(product: &Product, params: &Params, current_dimensions: Option<Dimen
 	// Border Bottom
 	result.push(format!(
 		"{}",
-		Edge::Bottom.fmt(width, &gui.border).plain_or_bright_black(&gui.color)
+		Edge::Bottom.fmt(width, gui.border).plain_or_bright_black(gui.color)
 	));
 
 	Ok(result)

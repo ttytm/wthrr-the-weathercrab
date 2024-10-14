@@ -33,7 +33,7 @@ impl Params {
 			std::process::exit(1);
 		}
 
-		let units = Units::merge(&args.units, &config.units);
+		let units = Units::merge(&args.units, config.units);
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
 
@@ -68,7 +68,7 @@ impl Params {
 		})
 	}
 
-	pub fn handle_next(mut self, args: Cli, config_file: Config) -> Result<()> {
+	pub fn handle_next(mut self, args: Cli, config_file: &Config) -> Result<()> {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}

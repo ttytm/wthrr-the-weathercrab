@@ -93,7 +93,7 @@ pub mod common_tests {
 		Product {
 			address: String::from("Berlin, Germany"),
 			weather: weather::Weather {
-				current_weather: weather::CurrentWeather {
+				current_weather: weather::Current {
 					temperature: 14.0,
 					windspeed: 10.7,
 					winddirection: 160.0,

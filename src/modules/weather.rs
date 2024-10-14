@@ -12,7 +12,8 @@ use super::units::{Precipitation, Units};
 #[optional_struct]
 #[derive(Deserialize, Debug)]
 pub struct Weather {
-	pub current_weather: CurrentWeather,
+	#[allow(clippy::struct_field_names)]
+	pub current_weather: Current,
 	#[optional_rename(OptionalHourlyUnits)]
 	pub hourly_units: HourlyUnits,
 	#[optional_rename(OptionalHourly)]
@@ -24,7 +25,7 @@ pub struct Weather {
 
 #[optional_struct]
 #[derive(Deserialize, Debug, Clone, PartialEq)]
-pub struct CurrentWeather {
+pub struct Current {
 	pub temperature: f32,
 	pub windspeed: f32,
 	pub winddirection: f32,

@@ -14,7 +14,7 @@ pub enum Border {
 }
 
 impl Border {
-	pub const fn fmt<'a>(&self, style: &BorderStyle) -> &'a str {
+	pub const fn fmt<'a>(&self, style: BorderStyle) -> &'a str {
 		match self {
 			Self::TL => match style {
 				BorderStyle::single => "┌",
@@ -70,7 +70,7 @@ pub enum Edge {
 }
 
 impl Edge {
-	pub fn fmt(self, width: usize, style: &BorderStyle) -> String {
+	pub fn fmt(self, width: usize, style: BorderStyle) -> String {
 		match self {
 			Self::Top => format!(
 				"{}{: >width$}{}",
@@ -97,7 +97,7 @@ pub enum Separator {
 }
 
 impl Separator {
-	pub fn fmt(self, width: usize, style: &BorderStyle) -> String {
+	pub fn fmt(self, width: usize, style: BorderStyle) -> String {
 		match self {
 			Self::Blank => format!("{}{: >width$}{}", Border::L.fmt(style), "", Border::R.fmt(style)),
 			Self::Dashed => format!("├{:┈>width$}┤", ""),
