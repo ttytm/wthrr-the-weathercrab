@@ -1,9 +1,9 @@
-# 🦀 wthrr-the-weathercrab
+# ww
 
-[![][ci_shield]](https://github.com/ttytm/wthrr-the-weathercrab/actions/workflows/ci.yml?query=branch%3Amain)
-[![][last_commit_shield]](https://github.com/ttytm/wthrr-the-weathercrab/commits/main)
-[![][crates_io_shield]](https://crates.io/crates/wthrr)
-[![][msrv_shield]](https://github.com/ttytm/wthrr-the-weathercrab)
+[![][ci_shield]](https://github.com/andygeorge/ww/actions/workflows/ci.yml?query=branch%3Amain)
+[![][last_commit_shield]](https://github.com/andygeorge/ww/commits/main)
+[![][crates_io_shield]](https://crates.io/crates/ww)
+[![][msrv_shield]](https://github.com/andygeorge/ww)
 
 <div align="center">
 
@@ -11,34 +11,34 @@
 
 </div>
 
-`wthrr` lives in your terminal and her passion is meteorology.
+`ww` lives in your terminal and her passion is meteorology.
 
 If you spend time in the TUI, you'll have a little companion nearby who knows about the weather.
 
 ## Contents
 
-- [How to use?](https://github.com/ttytm/wthrr-the-weathercrab#how-to-use)
-- [Showcase](https://github.com/ttytm/wthrr-the-weathercrab#showcase)
-- [Config](https://github.com/ttytm/wthrr-the-weathercrab#config)
-- [Installation](https://github.com/ttytm/wthrr-the-weathercrab#installation)
-- [Outlook](https://github.com/ttytm/wthrr-the-weathercrab#outlook)
-- [Credits](https://github.com/ttytm/wthrr-the-weathercrab#credits)
+- [How to use?](https://github.com/andygeorge/ww#how-to-use)
+- [Showcase](https://github.com/andygeorge/ww#showcase)
+- [Config](https://github.com/andygeorge/ww#config)
+- [Installation](https://github.com/andygeorge/ww#installation)
+- [Outlook](https://github.com/andygeorge/ww#outlook)
+- [Credits](https://github.com/andygeorge/ww#credits)
 
 ## How to use?
 
 **Just call**
 
 ```
-wthrr
+ww
 ```
 
-Without having added an address or options, wthrr uses the [config](https://github.com/ttytm/wthrr-the-weathercrab#config) saved as default.<br>
-If you haven't configured anything as default yet, wthrr can try to search for a weather station near you and save the searched location as default.
+Without having added an address or options, ww uses the [config](https://github.com/andygeorge/ww#config) saved as default.<br>
+If you haven't configured anything as default yet, ww can try to search for a weather station near you and save the searched location as default.
 
 **It's always possible to specify an address.** E.g.,
 
 ```
-wthrr melbourne
+ww melbourne
 ```
 
 Depending on the place you are looking for, you might need to be more specific.
@@ -48,21 +48,21 @@ If the address contains spaces, separate them with a hyphen or enclose them in q
 To search explicitly for a weather station in the vicinity, call
 
 ```
-wthrr auto
+ww auto
 ```
 
-As a final example, we instruct wthrr to use Fahrenheit and mph as units and add the hourly forecast for the day
+As a final example, we instruct ww to use Fahrenheit and mph as units and add the hourly forecast for the day
 
 ```
-wthrr -u f,mph -f d
+ww -u f,mph -f d
 ```
 
 ### Find further usage parameters in the help information
 
 ```
-> wthrr -h
+> ww -h
 
-Usage: wthrr [OPTIONS] [ADDRESS]
+Usage: ww [OPTIONS] [ADDRESS]
 
 Arguments:
   [ADDRESS]
@@ -80,7 +80,7 @@ Options:
   -s, --save
           Save the supplied values as default
   -r, --reset
-          Wipe wthrr's configuration data
+          Wipe ww's configuration data
   -h, --help
           Print help
   -V, --version
@@ -98,16 +98,16 @@ Options:
 |                                         |                                         |
 
 <sup>\*Rendering and colors are influenced by the terminal used and its theme and font.<br>
-E.g., the first of the above screenshots show wthrr in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows wthrr in Yakuake/Konsole, also with a Dracula color scheme.</sup>
+E.g., the first of the above screenshots show ww in nvim(toggleterm) using kitty as terminal with a Dracula theme and JetBrainsMono Nerd font. The last screenshot shows ww in Yakuake/Konsole, also with a Dracula color scheme.</sup>
 
 ## Config
 
-The address, units and default forecast can be saved as default values in wthrr's config file by adding the `-s` flag to a run. This will save the config in `wthrr.ron`.
+The address, units and default forecast can be saved as default values in ww's config file by adding the `-s` flag to a run. This will save the config in `ww.ron`.
 
 **Platform locations:**<br>
-Lin: `~/.config/weathercrab/`<br>
-Mac: `~/Library/Application Support/weathercrab/`<br>
-Win: `%USERPROFILE%\AppData\Roaming\weathercrab\`
+Lin: `~/.config/ww/`<br>
+Mac: `~/Library/Application Support/ww/`<br>
+Win: `%USERPROFILE%\AppData\Roaming\ww\`
 
 **Default values**
 
@@ -132,21 +132,22 @@ Win: `%USERPROFILE%\AppData\Roaming\weathercrab\`
             rowspan: double, // Graph height: `double` | `single`
             time_indicator: true, // Indication of the current time in the graph: `true` | `false`
         ),
-        greeting: true, // Display greeting message: `true` | `false`
+        greeting: false, // Display greeting message: `true` | `false`
     ),
 )
 ```
 
 ## Installation
 
-Use rusts package manger to install wthrr.
+Use rusts package manger to install ww.
+
 
 **From crates.io**
 
 |             |                       |
 | ----------- | --------------------- |
 | **Version** | **Command**           |
-| release     | `cargo install wthrr` |
+| release     | `cargo install ww` |
 |             |                       |
 | development | _not available_       |
 |             |                       |
@@ -156,28 +157,28 @@ Use rusts package manger to install wthrr.
 |             |                                                                                   |
 | ----------- | --------------------------------------------------------------------------------- |
 | **Version** | **Command**                                                                       |
-| release     | `cargo install --git https://github.com/ttytm/wthrr-the-weathercrab --tag v1.1.1` |
+| release     | `cargo install --git https://github.com/andygeorge/ww --tag v1.1.1` |
 |             |                                                                                   |
-| development | `cargo install --git https://github.com/ttytm/wthrr-the-weathercrab`              |
+| development | `cargo install --git https://github.com/andygeorge/ww`              |
 |             |                                                                                   |
 
-**Requirements and alternative, platform-specific installation instructions can be found in [`INSTALL.md`](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md).**
+**Requirements and alternative, platform-specific installation instructions can be found in [`INSTALL.md`](https://github.com/andygeorge/ww/blob/main/INSTALL.md).**
 
 > **Important**
 > To display symbols correctly, the used terminal must be configured to use a NerdFont.
 
 ## Outlook
 
-The [issues](https://github.com/ttytm/wthrr-the-weathercrab/issues) section lists some of the features that are being worked on.
+The [issues](https://github.com/andygeorge/ww/issues) section lists some of the features that are being worked on.
 
 Contributions like 🐛bug reports, ⭐️stars and 💡suggestions are welcome alike!
 
-A simple changelog can be found on the [releases page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
+A simple changelog can be found on the [releases page](https://github.com/andygeorge/ww/releases).
 
 ## Contributors
 
-<a href="https://github.com/ttytm/wthrr-the-weathercrab/graphs/contributors">
-  <img height='48' src="https://contrib.rocks/image?repo=ttytm/wthrr-the-weathercrab&columns=24" />
+<a href="https://github.com/andygeorge/ww/graphs/contributors">
+  <img height='48' src="https://contrib.rocks/image?repo=andygeorge/ww&columns=24" />
 </a>
 
 ## Credits
@@ -188,10 +189,10 @@ A simple changelog can be found on the [releases page](https://github.com/ttytm/
 
 <!-- Images -->
 
-[preview]: https://github.com/ttytm/wthrr-the-weathercrab/assets/34311583/58780205-816b-4cfd-95f8-9453e754eb94
-[crates_io_shield]: https://img.shields.io/crates/v/wthrr?style=flat-square&color=DEA584
-[ci_shield]: https://img.shields.io/github/actions/workflow/status/ttytm/wthrr-the-weathercrab/ci.yml?branch=main&style=flat-square
-[last_commit_shield]: https://img.shields.io/github/last-commit/ttytm/wthrr-the-weathercrab?style=flat-square
+[preview]: https://github.com/andygeorge/ww/assets/34311583/58780205-816b-4cfd-95f8-9453e754eb94
+[crates_io_shield]: https://img.shields.io/crates/v/ww?style=flat-square&color=DEA584
+[ci_shield]: https://img.shields.io/github/actions/workflow/status/andygeorge/ww/ci.yml?branch=main&style=flat-square
+[last_commit_shield]: https://img.shields.io/github/last-commit/andygeorge/ww?style=flat-square
 [msrv_shield]: https://img.shields.io/badge/MSRV-1.74.0-DEA584?style=flat-square
 [first_run]: https://user-images.githubusercontent.com/34311583/219735581-8036590f-8354-47fb-a31f-055be79c9229.png
 [hourly_forecast]: https://user-images.githubusercontent.com/34311583/219735474-d8e2899d-c209-46d3-a5cd-bea4ed41ac3c.png
