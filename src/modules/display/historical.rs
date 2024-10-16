@@ -140,7 +140,6 @@ pub fn prep(product: &Product, params: &Params, date: NaiveDate) -> Result<Vec<S
 	));
 
 	// Hourly Overview
-	// Adjust forecast config to use values that are compatible with historical weather.
 	for line in hourly::prep_historical(weather, &params)? {
 		result.push(line);
 	}
