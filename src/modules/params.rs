@@ -68,13 +68,10 @@ impl Params {
 		})
 	}
 
-	pub fn handle_next(mut self, args: Cli, config_file: &Config) -> Result<()> {
+	pub fn handle_next(self, args: Cli, config_file: &Config) -> Result<()> {
 		if !args.save && !config_file.address.is_empty() {
 			return Ok(());
 		}
-
-		// Restore time_indicator config setting in case it was disabled for a weekday / historical forecast.
-		self.config.gui.graph.time_indicator = config_file.gui.graph.time_indicator;
 
 		if config_file.address.is_empty() {
 			// Prompt to save
