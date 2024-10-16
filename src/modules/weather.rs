@@ -128,7 +128,7 @@ latitude={lat}
 &timezone=auto",
 			units.temperature.as_ref(),
 			units.speed.as_ref(),
-			if units.precipitation == Precipitation::probability { "mm" } else {units.precipitation.as_ref()},
+			if units.precipitation == Precipitation::probability { "mm" } else { units.precipitation.as_ref() },
 		);
 
 		let res = reqwest::get(url)
