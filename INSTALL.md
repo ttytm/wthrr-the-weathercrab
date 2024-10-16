@@ -13,22 +13,17 @@
 This app uses font symbols and Unicode characters. Since it runs in the terminal, it depends on the fonts available on the system and the terminal's font configuration.
 This is not a pre-installation requirement. If fonts appear to be missing, you can also install them after the app was installed.
 
-On windows it is advised to use [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) instead of the standard terminal.
-
 ## Fonts
 
 A Nerd Font must be used as terminal font and a Unicode symbol font must be installed on the system.
 
 ### Direct Download
 
-To download font files directly and install them using your systems font installer, use the links below.
+To download font files directly for manual installation, use the links below. Platform-specific instructions can be found in the following togglable section.
 
-1. A font that is patched to include Nerd icons (e.g. JetBrainsMono) - should be configured as terminal font\
-   [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip)
+1. [JetBrainsMono.zip](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip) - A font that is patched to include Nerd icons (other patched fonts would work as well). It should be configured as terminal font.
 
-2. A font that adds Emoji and Unicode support - no config changes required\
-   [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf)\
-   [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf)
+2. [NotoColorEmoji.ttf](https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf), [NotoSansSymbols2-Regular.ttf](https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansSymbols2/unhinted/ttf/NotoSansSymbols2-Regular.ttf) - Fonts that add Unicode support. They should be installed on the System - no configuration changes are required.
 
 <details>
 <summary><kbd>toggle</kbd> <h3>Font download instructions with additional and platform-specific information</h3></summary>
@@ -46,7 +41,7 @@ Package manager installation examples are shown below.
 - On macOS, using `brew`
 
   ```sh
-  brew tap homebrew/cask-fonts   # This is only required once
+  brew tap homebrew/cask-fonts  # This is only required once
   brew install font-jetbrains-mono-nerd-font  # Or any other nerd-font
   ```
 
@@ -70,8 +65,8 @@ Package manager installation examples are shown below.
 
 A Unicode symbol font("emoji-font") needs to be available on the system.
 It is likely already installed if you see emojis correctly rendered in your browser and in other applications.
-It will also allow to display Unicode line characters that are used in wthrrs daily weather graphs.
-Noto fonts provide support for symbol and emoji fonts and are usually available via the package manager.
+It will also allow to display line characters that are used in wthrrs daily weather graphs.
+Noto fonts that add support for Unicode glyphs are usually available via the package manager.
 
 - macOS
 
@@ -88,7 +83,7 @@ Noto fonts provide support for symbol and emoji fonts and are usually available 
 It's enough to install the font, there is no need for configuration changes.
 
 > **Note**
-> Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
+> Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
 
 </details>
 
@@ -110,7 +105,7 @@ It's enough to install the font, there is no need for configuration changes.
 
 There are several alternatives to the installation via `cargo`.
 
-- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the the [GitHub release page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
+- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the [GitHub release page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
 
 - If you are on NetBSD, a package is available from the official repositories.
   To install it, simply run
@@ -143,4 +138,4 @@ cd wthrr-the-weathercrab
 cargo build --release
 ```
 
-When the build has finished, you will find the `wthrr` binary inside the `./target/release` directory.
+The resulting `wthrr` binary will be placed in the `./target/release` directory.
