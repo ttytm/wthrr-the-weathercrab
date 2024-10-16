@@ -367,7 +367,9 @@ pub fn prep_historical(weather: &OptionalWeather, params: &Params) -> Result<Vec
 	let precipitation_unit = match units.precipitation {
 		Precipitation::mm => "ₘₘ",
 		Precipitation::inch => "ᵢₙ",
-		Precipitation::probability => "󰖎 ",
+		// In case the `probability` unit is configured while making a historical request,
+		// "mm" is set for precipitation (ref. weather.rs). Adjust the displayed unit accordingly.
+		Precipitation::probability => "ₘₘ",
 	};
 
 	// Hourly Forecast Heading
