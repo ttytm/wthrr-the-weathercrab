@@ -31,7 +31,7 @@ pub struct Cli {
 	#[arg(short, long, action, group = "config_file_action")]
 	pub save: bool,
 
-	/// Wipe wthrr's configuration data
+	/// Wipe ww's configuration data
 	#[arg(short, long, action, group = "config_file_action")]
 	pub reset: bool,
 }

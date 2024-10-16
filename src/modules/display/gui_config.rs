@@ -31,7 +31,7 @@ impl Default for Gui {
 			border: BorderStyle::default(),
 			color: ColorVariant::default,
 			graph: GraphOpts::default(),
-			greeting: true,
+			greeting: false,
 		}
 	}
 }

@@ -45,8 +45,8 @@ impl Default for Config {
 	}
 }
 
-pub const CONFIG_DIR_NAME: &str = "weathercrab";
-const CONFIG_FILE_NAME: &str = "wthrr.ron";
+pub const CONFIG_DIR_NAME: &str = "ww";
+const CONFIG_FILE_NAME: &str = "ww.ron";
 
 impl Config {
 	pub fn get() -> Self {

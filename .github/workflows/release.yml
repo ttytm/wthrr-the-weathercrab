@@ -56,21 +56,21 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir "${{ matrix.target }}"
-          artifact=wthrr-${{ matrix.target }}
-          binary=wthrr
+          artifact=ww-${{ matrix.target }}
+          binary=ww
           if [[ $RUNNER_OS == "Windows" ]]; then
             ext=.exe
           elif [[ $RUNNER_OS == "Linux" ]]; then
-            mv ./target/appimage/wthrr.AppImage "./${{ matrix.target }}/$artifact.AppImage"
-            mv ./target/debian/wthrr*.deb "./${{ matrix.target }}/$artifact.deb"
+            mv ./target/appimage/ww.AppImage "./${{ matrix.target }}/$artifact.AppImage"
+            mv ./target/debian/ww*.deb "./${{ matrix.target }}/$artifact.deb"
           fi
           mv "./target/release/$binary$ext" "./${{ matrix.target }}/$artifact$ext"
           ls ${{ matrix.target }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wthrr-${{ matrix.target }}
-          path: ${{ matrix.target }}/wthrr*
+          name: ww-${{ matrix.target }}
+          path: ${{ matrix.target }}/ww*
       - name: Prepare release
         if: >
           github.repository_owner == 'ttytm'
@@ -79,7 +79,7 @@ jobs:
           if [ "$GITHUB_REF_TYPE" == tag ]; then
             {
               echo "TAG=$GITHUB_REF_NAME";
-              echo "TITLE=wthrr ${GITHUB_REF_NAME:1}"; # v1.0.0 -> wthrr 1.0.0
+              echo "TITLE=ww ${GITHUB_REF_NAME:1}"; # v1.0.0 -> ww 1.0.0
             } >> "$GITHUB_ENV"
           else
             {
@@ -102,7 +102,7 @@ jobs:
           && ((github.ref_name == 'main' && github.event_name == 'push') || github.ref_type == 'tag')
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ matrix.target }}/wthrr*
+          files: ${{ matrix.target }}/ww*
           tag_name: ${{ env.TAG }}
           body: ${{ env.BODY }}
           name: ${{ env.TITLE }}

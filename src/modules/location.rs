@@ -67,7 +67,7 @@ impl From<&OpenMeteoGeoObj> for Location {
 
 impl Location {
 	pub async fn get(address: &str, lang: &str) -> Result<Self> {
-		let client = Client::builder().user_agent("wthrr-the-weathercrab").build()?;
+		let client = Client::builder().user_agent("ww").build()?;
 		let results = Self::search_osm(&client, address, lang).await;
 
 		match results {

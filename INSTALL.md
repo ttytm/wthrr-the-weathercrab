@@ -2,11 +2,11 @@
 
 ## Contents
 
-- [Requirements](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#requirements)
-  - [Fonts](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#fonts)
-  - [Other requirements](https://github.com/ttytm/wthrr-the-weathercrab#other-requirements)
-- [Alternative installation methods](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#alternative-installation-methods)
-  - [Build from source](https://github.com/ttytm/wthrr-the-weathercrab/blob/main/INSTALL.md#build-from-source)
+- [Requirements](https://github.com/andygeorge/ww/blob/main/INSTALL.md#requirements)
+  - [Fonts](https://github.com/andygeorge/ww/blob/main/INSTALL.md#fonts)
+  - [Other requirements](https://github.com/andygeorge/ww#other-requirements)
+- [Alternative installation methods](https://github.com/andygeorge/ww/blob/main/INSTALL.md#alternative-installation-methods)
+  - [Build from source](https://github.com/andygeorge/ww/blob/main/INSTALL.md#build-from-source)
 
 # Requirements
 
@@ -83,7 +83,7 @@ Noto fonts that add support for Unicode glyphs are usually available via the pac
 It's enough to install the font, there is no need for configuration changes.
 
 > **Note**
-> Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/ttytm/wthrr-the-weathercrab#config).
+> Depending on the used system and terminal another font package might be necessary. If you encounter missing glyphs in the graph: Instead of searching for the correct font package, you can also try setting a different graph style in the [config](https://github.com/andygeorge/ww#config).
 
 </details>
 
@@ -105,27 +105,27 @@ It's enough to install the font, there is no need for configuration changes.
 
 There are several alternatives to the installation via `cargo`.
 
-- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the [GitHub release page](https://github.com/ttytm/wthrr-the-weathercrab/releases).
+- Prebuilt binaries for GNU/Linux, macOS and Windows can be downloaded from the [GitHub release page](https://github.com/andygeorge/ww/releases).
 
 - If you are on NetBSD, a package is available from the official repositories.
   To install it, simply run
   ```sh
-  pkgin install wthrr
+  pkgin install ww
   ```
 - A Nix flake is also available
   ```sh
-  nix profile install "github:ttytm/wthrr-the-weathercrab"
+  nix profile install "github:andygeorge/ww"
   ```
   ```sh
-  nix run "github:tobealive/wthrr-the-weathercrab"
+  nix run "github:andygeorge/ww"
   ```
-- On Arch Linux, `wthrr` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=wthrr&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
+- On Arch Linux, `ww` can be installed from the [AUR](https://aur.archlinux.org/packages?O=0&SeB=nd&K=ww&outdated=&SB=p&SO=d&PP=50&submit=Go) using an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers). For example:
   ```
-  paru -S wthrr
+  paru -S ww
   ```
 - On macOS, you can use Homebrew
   ```
-  brew install wthrr
+  brew install ww
   ```
 
 ## Build from source
@@ -133,9 +133,9 @@ There are several alternatives to the installation via `cargo`.
 To compile the app yourself, clone the repository and build the release version.
 
 ```sh
-git clone https://github.com/ttytm/wthrr-the-weathercrab.git
-cd wthrr-the-weathercrab
+git clone https://github.com/andygeorge/ww.git
+cd ww
 cargo build --release
 ```
 
-The resulting `wthrr` binary will be placed in the `./target/release` directory.
+The resulting `ww` binary will be placed in the `./target/release` directory.
