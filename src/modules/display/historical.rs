@@ -140,7 +140,7 @@ pub fn prep(product: &Product, params: &Params, date: NaiveDate) -> Result<Vec<S
 	));
 
 	// Hourly Overview
-	for line in hourly::prep_historical(weather, &params)? {
+	for line in hourly::prep_historical(weather, params)? {
 		result.push(line);
 	}
 
