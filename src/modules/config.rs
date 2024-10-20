@@ -51,26 +51,26 @@ const CONFIG_FILE_NAME: &str = "wthrr.ron";
 impl Config {
 	pub fn get() -> Self {
 		let mut config = Self::default();
-		let path = Self::get_path();
 
-		if let Ok(file) = fs::read_to_string(&path) {
-			match Options::default()
-				.with_default_extension(Extensions::IMPLICIT_SOME)
-				.from_str::<ConfigFile>(&file)
-			{
-				Ok(contents) => contents.apply_to(&mut config),
-				Err(error) => {
-					let warning_sign = style(" Warning:").yellow();
-					eprintln!(
-						"{warning_sign} {}\n{: >4}At: {error}.\n{: >4}Falling back to default values.\n",
-						path.display(),
-						"",
-						"",
-					);
-					return config;
-				}
-			};
-		}
+		let path = Self::get_path();
+		let file = fs::read_to_string(&path);
+		let file = if let Ok(f) = file { f } else { return config };
+
+		match Options::default()
+			.with_default_extension(Extensions::IMPLICIT_SOME)
+			.from_str::<ConfigFile>(&file)
+		{
+			Ok(contents) => contents.apply_to(&mut config),
+			Err(error) => {
+				let warning = style(" Warning:").yellow();
+				eprintln!(
+					"{warning} {0}\n{1: >4}At: {error}.\n{1: >4}Falling back to default values.\n",
+					path.display(),
+					"",
+				);
+				return config;
+			}
+		};
 
 		config
 	}
