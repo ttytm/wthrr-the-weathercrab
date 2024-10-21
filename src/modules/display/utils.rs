@@ -44,11 +44,7 @@ pub fn style_number(mut num: i32, sub: bool) -> String {
 	let mut result = String::new();
 
 	if num == 0 {
-		result.push(if sub {
-			SUBSCRIPT_DIGITS[0]
-		} else {
-			SUPERSCRIPT_DIGITS[0]
-		});
+		result.push(if sub { SUBSCRIPT_DIGITS[0] } else { SUPERSCRIPT_DIGITS[0] });
 		return result;
 	}
 
