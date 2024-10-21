@@ -53,9 +53,7 @@ impl Config {
 		let mut config = Self::default();
 
 		let path = Self::get_path();
-		let Ok(file) = fs::read_to_string(&path) else {
-			return config;
-		};
+		let Ok(file) = fs::read_to_string(&path) else { return config };
 
 		match Options::default()
 			.with_default_extension(Extensions::IMPLICIT_SOME)
