@@ -15,7 +15,7 @@ use super::{current, day, gui_config::ConfigurableColor, historical, week};
 pub struct Product<'a> {
 	pub address: String,
 	pub weather: Weather,
-	pub historical_weather: Option<HashMap<&'a NaiveDate, OptionalWeather>>,
+	pub historical_weather: HashMap<&'a NaiveDate, OptionalWeather>,
 }
 
 pub const MIN_WIDTH: usize = 34;

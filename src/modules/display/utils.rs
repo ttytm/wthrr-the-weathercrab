@@ -79,7 +79,7 @@ pub mod common_tests {
 	use crate::modules::localization;
 	use crate::modules::params::Params;
 	use crate::modules::weather;
-	use std::collections::HashSet;
+	use std::collections::{HashMap, HashSet};
 	use std::sync::OnceLock;
 
 	pub static TEST_PRODUCT: OnceLock<Product> = OnceLock::new();
@@ -242,7 +242,7 @@ pub mod common_tests {
 					precipitation_sum: None,
 				},
 			},
-			historical_weather: None,
+			historical_weather: HashMap::new(),
 		}
 	}
 

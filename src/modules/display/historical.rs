@@ -24,7 +24,7 @@ pub fn prep(product: &Product, params: &Params, date: NaiveDate) -> Result<Vec<S
 	let address = Product::trunc_address(product.address.clone(), 60);
 
 	// Helpers
-	let weather = &product.historical_weather.as_ref().unwrap()[&date];
+	let weather = &product.historical_weather[&date];
 	let weather_daily_units = weather.daily_units.as_ref().unwrap();
 	let lang = &params.config.language;
 	// Times
