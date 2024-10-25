@@ -34,7 +34,7 @@ async fn run(params: &Params) -> Result<Product> {
 		Weather::get_dates(&params.historical_weather, loc.lat, loc.lon, &params.config.units).await?;
 
 	Ok(Product {
-		address: loc.name.to_string(),
+		address: loc.name,
 		weather,
 		historical_weather,
 	})
