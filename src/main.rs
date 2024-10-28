@@ -30,14 +30,11 @@ async fn main() -> Result<()> {
 async fn run(params: &Params) -> Result<Product> {
 	let loc = Location::get(&params.config.address, &params.config.language).await?;
 	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
-	let historical_weather = if params.historical_weather.is_empty() {
-		None
-	} else {
-		Some(Weather::get_dates(&params.historical_weather, loc.lat, loc.lon, &params.config.units).await?)
-	};
+	let historical_weather =
+		Weather::get_dates(&params.historical_weather, loc.lat, loc.lon, &params.config.units).await?;
 
 	Ok(Product {
-		address: loc.name.to_string(),
+		address: loc.name,
 		weather,
 		historical_weather,
 	})
