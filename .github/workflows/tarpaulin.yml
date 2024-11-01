@@ -50,7 +50,7 @@ jobs:
           && echo '```' >> message.txt
 
       - name: comment
-        uses: thollander/actions-comment-pull-request@v2.5.0
+        uses: thollander/actions-comment-pull-request@v3.0.0
         with:
-          comment_tag: tarpaulin
-          filePath: message.txt
+          comment-tag: tarpaulin
+          file-path: message.txt
