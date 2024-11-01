@@ -63,9 +63,9 @@ Package manager installation examples are shown below.
 
 #### 2. Unicode symbol font
 
-A Unicode symbol font("emoji-font") needs to be available on the system.
+A Unicode symbol font ("emoji-font") needs to be available on the system.
 It is likely already installed if you see emojis correctly rendered in your browser and in other applications.
-It will also allow to display line characters that are used in wthrrs daily weather graphs.
+It will also allow to display line characters that are used in `ww`'s daily weather graphs.
 Noto fonts that add support for Unicode glyphs are usually available via the package manager.
 
 - macOS
