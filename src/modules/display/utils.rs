@@ -63,7 +63,7 @@ pub fn style_number(mut num: i32, sub: bool) -> String {
 		power_of_ten /= 10;
 		if digit != 0 || started {
 			started = true;
-			result.push(digits[digit as usize])
+			result.push(digits[digit as usize]);
 		}
 	}
 
