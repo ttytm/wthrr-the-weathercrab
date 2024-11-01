@@ -70,4 +70,4 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: suzuki-shunsuke/github-action-renovate-config-validator@v1
+      - uses: suzuki-shunsuke/github-action-renovate-config-validator@v1.1.0
