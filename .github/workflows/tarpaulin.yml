@@ -21,17 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cargo
-        uses: taiki-e/install-action@v2.44.58
+        uses: taiki-e/install-action@v2
         with:
           tool: cargo-tarpaulin
 
       - name: python
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
       - name: checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -40,7 +40,7 @@ jobs:
         run: echo pycobertura >> requirements.txt
 
       - name: dependencies
-        uses: py-actions/py-dependency-install@v4.1.0
+        uses: py-actions/py-dependency-install@v4
 
       - name: tarpaulin
         run: |
@@ -50,7 +50,7 @@ jobs:
           && echo '```' >> message.txt
 
       - name: comment
-        uses: thollander/actions-comment-pull-request@v3.0.0
+        uses: thollander/actions-comment-pull-request@v3
         with:
           comment-tag: tarpaulin
           file-path: message.txt
