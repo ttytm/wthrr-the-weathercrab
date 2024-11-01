@@ -43,10 +43,14 @@ jobs:
           mv "${artifact}/cargo-msrv" ./
       - name: Detect MSRV changes
         run: |
-          defined_msrv="$(./cargo-msrv show --output-format json 2>&1 | ./jq -r '.result.version' | tail -n 1)"
-          dependency_msrv="$(./cargo-msrv list --output-format json 2>&1 | ./jq -r '.result.list.[0].msrv' | tail -n 1)"
+          defined_msrv="$(./cargo-msrv show --output-format json 2>&1 | jq -r '.result.version' | tail -n 1)"
+          dependency_msrv="$(./cargo-msrv list --output-format json 2>&1 | jq -r '.result.list[0].msrv' | tail -n 1)"
           echo "defined_msrv=$defined_msrv"
           echo "dependency_msrv=$dependency_msrv"
+          if [ -z "$defined_msrv" ] || [ -z "$dependency_msrv" ]; then
+            echo "::error::Failed to detect MSRV"
+            exit 1
+          fi
           if [ "$defined_msrv" != "$dependency_msrv" ]; then
             echo "::error::MSRV changed | defined: '$defined_msrv', absolute: '$dependency_msrv'"
             exit 1
