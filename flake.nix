@@ -1,24 +1,18 @@
 {
 	inputs = {
-		nixpkgs = {
-			url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-		};
-
-		flake-utils = {
-			url = "github:numtide/flake-utils";
-		};
+		utils.url = "github:numtide/flake-utils";
 	};
 	outputs =
-		inputs@{
+		{
 			self,
 			nixpkgs,
-			flake-utils,
+			utils,
 			...
 		}:
-		flake-utils.lib.eachDefaultSystem (
+		utils.lib.eachDefaultSystem (
 			system:
 			let
-				pkgs = nixpkgs.legacyPackages.${system};
+				pkgs = import nixpkgs { inherit system; };
 				wthrr-the-weathercrab =
 					{
 						lib,
