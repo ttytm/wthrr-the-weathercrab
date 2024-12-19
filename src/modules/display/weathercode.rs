@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 
 use crate::modules::localization::WeatherCodeLocales;
 
@@ -38,7 +38,7 @@ impl WeatherCode {
 			95 => (&t.thunderstorm, if is_night { '' } else { '' }),
 			96 => (&t.thunderstorm_slight_hail, if is_night { '' } else { '' }),
 			99 => (&t.thunderstorm_heavy_hail, if is_night { '' } else { '' }),
-			_ => return Err(anyhow!("Unknown weather code")),
+			_ => bail!("Unknown weather code"),
 		};
 
 		Ok(Self {

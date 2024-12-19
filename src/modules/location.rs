@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, bail, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm};
 use reqwest::Client;
 use serde::Deserialize;
@@ -106,7 +106,7 @@ impl Location {
 
 	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {
 		if arg_address.is_empty() && config.address == "arg_input" {
-			return Err(anyhow!("Your configuration requires you to specify a city."));
+			bail!("Your configuration requires you to specify a city.");
 		};
 
 		let prompt_user = arg_address.is_empty() && config.address.is_empty();

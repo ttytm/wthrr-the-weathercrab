@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 use strum_macros::Display;
 
 #[derive(Display)]
@@ -24,7 +24,7 @@ impl WindDirection {
 			wd if (202.5..247.5).contains(&wd) => Self::SW,
 			wd if (247.5..292.5).contains(&wd) => Self::W,
 			wd if (292.5..337.5).contains(&wd) => Self::NW,
-			_ => return Err(anyhow!("Wind from another dimension")),
+			_ => bail!("Wind from another dimension"),
 		};
 
 		Ok(direction)
