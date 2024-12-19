@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 use chrono::NaiveDate;
 use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
@@ -28,11 +28,11 @@ pub struct Cli {
 	pub language: Option<String>,
 
 	/// Save the supplied values as default
-	#[arg(short, long, action, group = "config_file_action")]
+	#[arg(short, long, group = "config_file_action")]
 	pub save: bool,
 
 	/// Wipe wthrr's configuration data
-	#[arg(short, long, action, group = "config_file_action")]
+	#[arg(short, long, group = "config_file_action")]
 	pub reset: bool,
 }
 
@@ -91,8 +91,7 @@ pub enum UnitArg {
 
 fn parse_language_code(s: &str) -> Result<String> {
 	if s.len() < 2 {
-		Err(anyhow!("\n  The language code must be at least two characters long."))
-	} else {
-		Ok(s.to_string())
+		bail!("\n  The language code must be at least two characters long.")
 	}
+	Ok(s.to_string())
 }
