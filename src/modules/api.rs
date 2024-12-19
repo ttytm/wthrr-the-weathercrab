@@ -2,7 +2,7 @@ pub trait Api {
 	fn assemble(&self) -> String;
 }
 
-impl<'a> Api for Box<dyn 'a + Api> {
+impl Api for Box<dyn '_ + Api> {
 	fn assemble(&self) -> String {
 		self.as_ref().assemble()
 	}
@@ -54,7 +54,7 @@ impl<'a> ApiQuery<'a> {
 	}
 }
 
-impl<'a> Default for ApiQuery<'a> {
+impl Default for ApiQuery<'_> {
 	fn default() -> Self {
 		Self {
 			api: ApiName::OpenMeteo,
@@ -81,7 +81,7 @@ pub struct OpenMeteoLocationQuery<'a> {
 	language: &'a str,
 }
 
-impl<'a> Api for OpenMeteoLocationQuery<'a> {
+impl Api for OpenMeteoLocationQuery<'_> {
 	fn assemble(&self) -> String {
 		format!(
 			"https://geocoding-api.open-meteo.com/v1/search?name={}&language={}",
@@ -95,7 +95,7 @@ pub struct OpenStreetMapLocationQuery<'a> {
 	language: &'a str,
 }
 
-impl<'a> Api for OpenStreetMapLocationQuery<'a> {
+impl Api for OpenStreetMapLocationQuery<'_> {
 	fn assemble(&self) -> String {
 		format!(
 			"https://nominatim.openstreetmap.org/search?q={}&accept-language={}&limit=1&format=jsonv2",

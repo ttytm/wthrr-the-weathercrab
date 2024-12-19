@@ -261,7 +261,7 @@ mod tests {
 │⁰⁰˙⁰⁰    ⁰³˙⁰⁰    ⁰⁶˙⁰⁰    ⁰⁹˙⁰⁰    ¹²˙⁰⁰    ¹⁵˙⁰⁰    ¹⁸˙⁰⁰    ²¹˙⁰⁰    │
 ╰────────────────────────────────────────────────────────────────────────╯";
 
-		let (lines, _) = prep(&test_product, &test_params, true).unwrap();
+		let (lines, _) = prep(test_product, test_params, true).unwrap();
 		let have = strip_ansi_escapes::strip_str(lines.join("\n"));
 		assert_eq!(want, have);
 	}

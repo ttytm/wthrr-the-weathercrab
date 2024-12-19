@@ -83,6 +83,7 @@ pub mod common_tests {
 	pub static TEST_PRODUCT: OnceLock<Product> = OnceLock::new();
 	pub static TEST_PARAMS: OnceLock<Params> = OnceLock::new();
 
+	#[allow(clippy::too_many_lines)]
 	pub fn init_test_product() -> Product<'static> {
 		Product {
 			address: String::from("Berlin, Germany"),
