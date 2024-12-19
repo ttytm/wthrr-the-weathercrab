@@ -1,6 +1,5 @@
 use anyhow::{Context, Result};
 use chrono::{Local, NaiveDate};
-use directories::ProjectDirs;
 use futures::{stream::FuturesOrdered, TryStreamExt};
 use optional_struct::{optional_struct, Applicable};
 use reqwest::Url;
@@ -243,9 +242,9 @@ impl Locales {
 	}
 
 	pub fn get_path(lang: &str) -> PathBuf {
-		ProjectDirs::from("", "", crate::modules::config::CONFIG_DIR_NAME)
+		dirs::config_dir()
 			.unwrap()
-			.config_dir()
+			.join(super::config::CONFIG_DIR_NAME)
 			.join("locales")
 			.join(format!("{lang}.json"))
 	}

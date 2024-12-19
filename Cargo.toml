@@ -26,8 +26,8 @@ clap = { version = "4.5", default-features = false, features = [
 	"error-context",
 	"suggestions",
 ] }
-directories = "5.0"
 dialoguer = { version = "0.11", default-features = false }
+dirs = "5.0"
 futures = "0.3"
 optional_struct = "0.5"
 regex = { version = "1.10" }

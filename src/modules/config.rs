@@ -1,6 +1,5 @@
 use anyhow::Result;
 use dialoguer::console::style;
-use directories::ProjectDirs;
 use optional_struct::{optional_struct, Applicable};
 use ron::{
 	extensions::Extensions,
@@ -90,9 +89,6 @@ impl Config {
 	}
 
 	pub fn get_path() -> PathBuf {
-		ProjectDirs::from("", "", CONFIG_DIR_NAME)
-			.unwrap()
-			.config_dir()
-			.join(CONFIG_FILE_NAME)
+		dirs::config_dir().unwrap().join(CONFIG_DIR_NAME).join(CONFIG_FILE_NAME)
 	}
 }
