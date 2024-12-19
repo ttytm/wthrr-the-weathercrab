@@ -1,5 +1,4 @@
-# This file was auto generated from the available localedata in pure-rust-locales.git.
-
+# This file was generated from the localedata in 'github.com/chronotope/pure-rust-locales'.
 POSIX
 aa_DJ
 aa_ER
