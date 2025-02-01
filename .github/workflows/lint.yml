@@ -27,7 +27,7 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: clechasseur/rs-clippy-check@v3
+      - uses: clechasseur/rs-clippy-check@v4
 
   msrv:
     runs-on: ubuntu-latest
