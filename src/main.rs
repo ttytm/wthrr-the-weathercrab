@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 	Ok(())
 }
 
-async fn run(params: &Params) -> Result<Product> {
+async fn run(params: &Params) -> Result<Product<'_>> {
 	let loc = Location::get(&params.config.address, &params.config.language).await?;
 	let weather = Weather::get(loc.lat, loc.lon, &params.config.units).await?;
 	let historical_weather =
