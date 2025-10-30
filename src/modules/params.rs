@@ -7,7 +7,7 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use super::{
 	args::{Cli, Forecast},
 	config::Config,
-	json,
+	json::to_json,
 	localization::{ConfigLocales, Locales},
 	location::Location,
 	units::Units,
@@ -34,13 +34,14 @@ impl Params {
 			std::process::exit(1);
 		}
 
-		if args.headless {
-			std::process::exit(0);
-		}
-
 		let units = Units::merge(&args.units, config.units);
 
 		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
+
+		if args.headless {
+			to_json(&address, &language, &units).await?;
+			std::process::exit(0);
+		}
 
 		let forecast = if args.forecast.contains(&Forecast::disable)
 			|| (args.forecast.is_empty() && !args.historical_weather.is_empty())
