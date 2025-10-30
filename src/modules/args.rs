@@ -34,6 +34,10 @@ pub struct Cli {
 	/// Wipe wthrr's configuration data
 	#[arg(short, long, group = "config_file_action")]
 	pub reset: bool,
+
+	/// Outputs weather data to json file
+	#[arg(long, group = "config_file_action")]
+	pub headless: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, AsRefStr, Serialize, Deserialize, Hash)]

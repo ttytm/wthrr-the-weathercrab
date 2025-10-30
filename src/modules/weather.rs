@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use chrono::{Local, NaiveDate};
 use optional_struct::{optional_struct, Applicable};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
 use super::units::{Precipitation, Units};
@@ -10,7 +10,7 @@ use super::units::{Precipitation, Units};
 // E.g., London:
 // https://api.open-meteo.com/v1/forecast?latitude=51.5002&longitude=-0.1262&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,windspeed_10m,precipitation,weathercode&daily=weathercode,sunrise,sunset,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto
 #[optional_struct]
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct Weather {
 	#[allow(clippy::struct_field_names)]
 	pub current_weather: Current,
@@ -24,7 +24,7 @@ pub struct Weather {
 }
 
 #[optional_struct]
-#[derive(Deserialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Serialize)]
 pub struct Current {
 	pub temperature: f32,
 	pub windspeed: f32,
@@ -34,7 +34,7 @@ pub struct Current {
 }
 
 #[optional_struct]
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct HourlyUnits {
 	pub temperature_2m: String,
 	pub relativehumidity_2m: String,
@@ -46,7 +46,7 @@ pub struct HourlyUnits {
 }
 
 #[optional_struct]
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct Hourly {
 	pub temperature_2m: Vec<f32>,
 	pub relativehumidity_2m: Vec<f32>,
@@ -58,14 +58,14 @@ pub struct Hourly {
 	pub weathercode: Vec<u8>,
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Serialize)]
 pub struct DailyUnits {
 	pub temperature_2m_max: String,
 	pub temperature_2m_min: String,
 }
 
 #[optional_struct]
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct Daily {
 	pub time: Vec<String>,
 	pub weathercode: Vec<u8>,

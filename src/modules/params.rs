@@ -7,6 +7,7 @@ use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use super::{
 	args::{Cli, Forecast},
 	config::Config,
+	json,
 	localization::{ConfigLocales, Locales},
 	location::Location,
 	units::Units,
@@ -31,6 +32,10 @@ impl Params {
 		if args.reset {
 			Self::reset(&texts.config)?;
 			std::process::exit(1);
+		}
+
+		if args.headless {
+			std::process::exit(0);
 		}
 
 		let units = Units::merge(&args.units, config.units);
