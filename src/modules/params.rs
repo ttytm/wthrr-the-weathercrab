@@ -36,7 +36,8 @@ impl Params {
 
 		let units = Units::merge(&args.units, config.units);
 
-		let address = Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts).await?;
+		let address =
+			Location::resolve_input(args.address.as_deref().unwrap_or_default(), config, &texts, args.headless).await?;
 
 		if args.headless {
 			to_json(&address, &language, &units).await?;

@@ -104,13 +104,13 @@ impl Location {
 			.map(Self::from)
 	}
 
-	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales) -> Result<String> {
+	pub async fn resolve_input(arg_address: &str, config: &Config, texts: &Locales, headless: bool) -> Result<String> {
 		if arg_address.is_empty() && config.address == "arg_input" {
 			bail!("Your configuration requires you to specify a city.");
-		};
+		}
 
 		let show_station_search_prompt = arg_address.is_empty() && config.address.is_empty();
-		if config.gui.greeting {
+		if config.gui.greeting && !headless {
 			println!("{} 🦀  {}", if show_station_search_prompt { "" } else { " " }, texts.greeting);
 		}
 

@@ -68,7 +68,7 @@ impl Config {
 				);
 				return config;
 			}
-		};
+		}
 
 		config
 	}
@@ -79,7 +79,7 @@ impl Config {
 		let cfg_dir = path.parent().unwrap();
 		if !cfg_dir.is_dir() {
 			fs::create_dir_all(cfg_dir)?;
-		};
+		}
 
 		let mut file = File::create(path)?;
 		let output = to_string_pretty(self, PrettyConfig::default()).unwrap();
